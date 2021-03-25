@@ -90,18 +90,18 @@ public class StringDemo {
 		boolean foundIt = false;
 		int max = string.length() - subString.length();
 
-		test:
+		
 		for (int i = 0; i < max; i++) {
 		    int n = subString.length();
 		    int j = 0;
 		    int k = 0;
 		    while (n-- != 0) {
 			if (subString.charAt(j++) != string.charAt(k++)) {
-			    continue test;
+			    continue;
 			}
 		    }
 		    foundIt = true;
-		    break test;
+		    break;
 		}
 
 		System.out.println ("9 Проверить содержит ли строка слово " + subString);
