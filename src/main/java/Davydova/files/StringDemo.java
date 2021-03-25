@@ -19,7 +19,8 @@ public class StringDemo {
 	
 	/** 
 	* 2 Сравнить 2 строки без учета регистра
-	*@param string1, string2 are the strings to be compared
+	*@param string1 is the string to be compared
+	*@param string2 is the string to be compared
 	*/
         public void compareStrings (String string1, String string2) {
         	System.out.println("2 Сравнить 2 строки без учета регистра\n" + string1.toLowerCase().equals(string2.toLowerCase()));
