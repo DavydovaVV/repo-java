@@ -66,7 +66,6 @@ public class Storage <T> {
      */
     public void delete() {
         if (cache.isPresentElement(getLast())) {
-            System.out.println("мы в методе if");
             cache.delete(getLast());
             storage[i] = null;
             i = i - 1;

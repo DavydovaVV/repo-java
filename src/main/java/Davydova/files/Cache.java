@@ -66,11 +66,8 @@ public class Cache<T> {
      */
     public boolean isPresentElement(T element) {
         for (int i = 0; i < capacity; i++) {
-            System.out.println("Мы в цикле");
             if (cache[i] != null) {
-                System.out.println("Мы в if1");
                 if(cache[i].getElement().equals(element)) {
-                    System.out.println("Мы в if1");
                     foundIt = true;
                 }
             }
