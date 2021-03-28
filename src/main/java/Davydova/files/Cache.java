@@ -9,22 +9,33 @@ public class Cache<T> {
     private int capacity;
     private static int i;
     private CacheElement<T>[] cache;
+    private static boolean foundIt = false;
 
     @SuppressWarnings("unchecked")
+
+    /**
+     * Конструктор, который создает массив элементов CacheElement
+     */
     public Cache(int capacity) {
         this.capacity = capacity;
         cache = new CacheElement[capacity];
     }
 
+    /**
+     * Добавить элемент, имеющий аргумент типа Т и индекс, в массив CacheElement
+     * @param element элемент массива
+     * @param index индекс элемента массива
+     */
     public void add(T element, int index) {
         CacheElement<T> newElement = new CacheElement<>(element, index);
-        if (i < capacity - 1) {
+        boolean isPresent = isPresentElement(element);
+        if ((i < capacity - 1) && (!isPresent)) {
             cache[i] = newElement;
         }
-        if (i == capacity - 1) {
+        if ((i == capacity - 1) && (!isPresent)) {
             cache[i] = newElement;
             }
-            if (i > capacity - 1) {
+            if ((i > capacity - 1) && (!isPresent)) {
                 for (int j = 1; j < capacity; j++) {
                     cache[j - 1] = cache[j];
                 }
@@ -33,6 +44,10 @@ public class Cache<T> {
             i++;
     }
 
+    /**
+     * Удалить элемент из массива CacheElement
+     * @param element элемент, который нужно удалить
+     */
     public void delete(T element) {
         for (int i = 0; i < cache.length; i++) {
             if ((cache[i] != null) && (cache[i].getElement().equals(element))) {
@@ -44,57 +59,65 @@ public class Cache<T> {
         }
     }
 
+    /**
+     * Проверить наличие элемента в массиве по значению элемента
+     * @param element элемент, который нужно проверить
+     * @return возвращает true или false, есть ли элемент в массиве CacheElement
+     */
     public boolean isPresentElement(T element) {
-        System.out.print("Искомый элемент [" + element + "] находится в кэше: ");
-        boolean foundIt = false;
         for (int i = 0; i < capacity; i++) {
+            System.out.println("Мы в цикле");
             if (cache[i] != null) {
-                boolean isPresent = (cache[i].getElement().equals(element));
-                if (isPresent) {
+                System.out.println("Мы в if1");
+                if(cache[i].getElement().equals(element)) {
+                    System.out.println("Мы в if1");
                     foundIt = true;
-                    break;
                 }
             }
         }
-        System.out.println(foundIt);
         return foundIt;
     }
 
+    /**
+     * Проверить наличие элемента в массиве CacheElement по индексу
+     * @param index индекс, который нужно проверить
+     * @return возвращает true или false, есть ли элемент в массиве CacheElement
+     */
     public boolean isPresentIndex(int index) {
-        System.out.print("Искомый элемент с индексом [ " + index + " ] находится в кэше: ");
-        boolean foundIt = false;
         for (int i = 0; i < capacity; i++) {
             if (cache[i] != null) {
-                boolean isPresent = (cache[i].getIndex() == index);
-                if (isPresent) {
-                    foundIt = true;
-                    break;
+                foundIt = (cache[i].getIndex() == index);
                 }
             }
-        }
         System.out.println(foundIt);
         return foundIt;
-    }
+        }
 
-    public void get(int index) {
-        for (int i = 0; i < capacity; i++) {
-            if (cache[i].getIndex() != index) {
-                continue;
-            }
-            if (cache[i].getIndex() == index) {
-                System.out.println("Искомый элемент с индексом [ " + index + " ]: " + cache[i].getElement());
-                CacheElement<T> foundElement = cache[i];
-                for (int j = i + 1; j < capacity; j++) {
-                    cache[j - 1] = cache[j];
+    /**
+     * Найти элемент массива CacheElement и поместить в конец массива, сдвинув все элементы справа от него на одну позцию влево
+     * @param index индекс, по которому нужно найти элемент
+     * @return возвращает найденный элемент
+     */
+    public T get(int index) {
+        int j = 0;
+        for(; j < capacity; j++) {
+            if ((cache[j].getIndex() == index) && (cache[j] != null)) {
+                T foundElement = cache[j].getElement();
+                int foundIndex = cache[j].getIndex();
+                if ((j < capacity) && (cache[j] != null)) {
+                    for (int i = j + 1; i < capacity; i++) {
+                        cache[i - 1] = cache[i];
+                    }
                 }
-                cache[capacity - 1] = foundElement;
-                break;
-            } else {
-                System.out.println("Искомый элементы с индексом [ " + index + " ] не найден");
+                add(foundElement, foundIndex);
             }
         }
+        return cache[i-1].getElement();
     }
 
+    /**
+     * Очистить массив CacheElement
+     */
     public void clear() {
         for (int i = 0; i < capacity; i++) {
             cache[i] = null;
@@ -103,19 +126,33 @@ public class Cache<T> {
         System.out.println("Кэш очисщен");
     }
 
-    private class CacheElement<T> {
+    /*Вложенный класс CacheElement*/
+    public class CacheElement<T> {
         T element;
         int index;
 
+        /**
+         * Конструктор CacheElement, в котором инициализируются поля element и index
+         * @param element элемент массива CacheElement
+         * @param index индекс элемента массива CacheElement
+         */
         private CacheElement(T element, int index) {
             this.element = element;
             this.index = index;
         }
 
+        /**
+         * Получить элемент массива CacheElement
+         * @return возвращает элемент массива CacheElement
+         */
         public T getElement() {
             return element;
         }
 
+        /**
+         * Получить индекс, относящийся к элементу массива CacheElement
+         * @return возвращает индекс, относящийся к элемент массива
+         */
         public int getIndex() {
             return index;
         }
