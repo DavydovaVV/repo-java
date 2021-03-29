@@ -54,13 +54,24 @@ public class Storage <T> {
                 }
             }
         }else{
-            Object [] temp = new Object[(int) (1.5*storage.length)];
+            increaseArray(storage);
             for (int i = 0; i < storage.length; i++) {
-                temp[i] = storage[i];
+                if (storage[i].equals((null))) {
+                    storage[i] = element;
+                }
             }
-            temp[storage.length] = element;
-            storage = temp;
         }
+    }
+
+    /**
+     * Увеличить размер передаваемого массива
+     */
+    public Object[] increaseArray (Object[] array) {
+        Object [] temp = new Object[(int) (1.5 * array.length)];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
+        }
+        return temp;
     }
 
     /**
