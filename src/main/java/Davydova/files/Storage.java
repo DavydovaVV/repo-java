@@ -30,11 +30,7 @@ public class Storage <T> {
         storage = new Object[10];
         cache = new Cache<>(10);
         if (array.length > storage.length) {
-           Object [] temp = new Object[array.length];
-            for (int i = 0; i < array.length; i++) {
-                temp[i] = array[i];
-            }
-            storage = temp;
+           increaseArray(storage);
         }else{
             for (int i = 0; i < array.length; i++) {
                 storage[i] = array[i];
