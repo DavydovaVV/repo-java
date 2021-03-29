@@ -24,11 +24,9 @@ public class Cache<T> {
      * @param index индекс элемента массива
      */
     public void add(T element, int index) {
-        if (!isPresentElement(element)) {
+        if (!isPresent(element)) {
             if (!(cache[capacity-1] == null)) {
-                for (int i = 1; i < capacity; i++) {
-                    cache[i-1] = cache[i];
-                }
+                System.arraycopy(cache, 1, cache, 0, capacity - 1);
                 cache[capacity-1] = new CacheElement<>(element, index);
             }
             if (cache[capacity-1] == null) {
@@ -50,25 +48,24 @@ public class Cache<T> {
     public void delete(T element) {
         for (int i = 0; i < capacity; i++) {
             if ((cache[i] != null) && (cache[i].getElement().equals(element))) {
-                for (int j = i + 1; j < capacity - i - 1; j++) {
-                    cache[j - 1] = cache[j];
+                System.arraycopy(cache, i + 1, cache, i , capacity - (i + 1));
                 }
                 System.out.println("Элемент удален");
                 break;
             }
         }
-    }
 
     /**
      * Проверить наличие элемента в массиве по значению элемента
      * @param element элемент, который нужно проверить
      * @return возвращает true или false, есть ли элемент в массиве CacheElement
      */
-    public boolean isPresentElement(T element) {
+    public boolean isPresent (T element) {
         boolean foundIt = false;
         for (int i = 0; i < capacity; i++) {
             if ((cache[i] != null) && (cache[i].getElement().equals(element))) {
                 foundIt = true;
+                break;
             }
         }
         return foundIt;
@@ -79,11 +76,12 @@ public class Cache<T> {
      * @param index индекс, который нужно проверить
      * @return возвращает true или false, есть ли элемент в массиве CacheElement
      */
-    public boolean isPresentIndex(int index) {
+    public boolean isPresent (int index) {
         boolean foundIt = false;
         for (int i = 0; i < capacity; i++) {
             if ((cache[i] != null) && (cache[i].getIndex() == index)) {
                 foundIt = true;
+                break;
             }
         }
         return foundIt;
@@ -95,13 +93,11 @@ public class Cache<T> {
      * @return возвращает найденный элемент
      */
     public void get(int index) {
-        if (isPresentIndex(index)) {
+        if (isPresent(index)) {
             for (int i = 0; i < capacity; i++) {
                 if (cache[i].getIndex() == index) {
                     T foundElement = cache[i].getElement();
-                    for (int j = i + 1; j < capacity; j++) {
-                        cache[j - 1] = cache[j];
-                    }
+                    System.arraycopy(cache, i + 1, cache, i , capacity - (i + 1));
                     add(foundElement, index);
                 }
                 break;

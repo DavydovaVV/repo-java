@@ -30,9 +30,7 @@ public class Storage <T> {
         if (array.length > storage.length) {
            increaseArray(storage);
         }else{
-            for (int i = 0; i < array.length; i++) {
-                storage[i] = array[i];
-            }
+            System.arraycopy(array, 0, storage, 0, array.length);
         }
     }
 
@@ -41,14 +39,14 @@ public class Storage <T> {
      * @param element элемент, добавляемый в массив Object
      */
     public void add(T element) {
-        if (getLast()==null) {
-            for (int i = 0; i < storage.length; i++) {
-                if (storage[i] == null) {
-                    storage[i] = element;
-                    break;
-                }
+        for (int i = 0; i < storage.length; i++) {
+            if (storage[i] != null) {
+                continue;
             }
-        }else{
+                storage[i] = element;
+                break;
+            }
+        if (storage[storage.length-1] != null){
             increaseArray(storage);
             for (int i = 0; i < storage.length; i++) {
                 if (storage[i] == null) {
@@ -64,9 +62,7 @@ public class Storage <T> {
      */
     public Object[] increaseArray (Object[] array) {
         Object [] temp = new Object[(int) (1.5 * array.length)];
-        for (int i = 0; i < array.length; i++) {
-            temp[i] = array[i];
-        }
+        System.arraycopy(array, 0, temp, 0, array.length);
         return temp;
     }
 
@@ -74,10 +70,15 @@ public class Storage <T> {
      * Удалить последний элемент массива Object
      */
     public void delete() {
-        if (cache.isPresentElement(getLast())) {
-            cache.delete(getLast());
-            T lastElement = getLast();
-            lastElement = null;
+        T lastElement = getLast();
+        if (cache.isPresent(lastElement)) {
+            cache.delete(lastElement);
+            for (int i = 0; i < storage.length; i++) {
+                if (storage[i] == null) {
+                    storage[i-1] = null;
+                    break;
+                }
+            }
         }
     }
 
@@ -91,7 +92,7 @@ public class Storage <T> {
     }
 
     /**
-     * Получить последний элементы массива Object
+     * Получить последний записанный элемент массива Object
      * @return возвращает последний элемент массива Object
      */
     public T getLast() {
@@ -110,7 +111,7 @@ public class Storage <T> {
      * @return возвращает элемент массива Object
      */
     public T get(int index) {
-        if (!cache.isPresentIndex(index)) {
+        if (!cache.isPresent(index)) {
             cache.add((T) storage[index], index);
         }
     return (T) storage[index];
