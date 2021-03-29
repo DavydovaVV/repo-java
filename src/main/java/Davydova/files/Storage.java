@@ -11,15 +11,15 @@ import java.util.Arrays;
 public class Storage <T> {
     Object [] storage;
     Cache<T> cache;
-    private static int i = 0;
-    private static boolean foundIt = false;
+    //private static int i = 0;
+    //private static boolean foundIt = false;
 
     /**
      * Дефолтный конструктор, в котором создается массив Object и объект типа Cache
      */
     public Storage() {
-        storage = new Object[10];
-        cache = new Cache(10);
+        this.storage = new Object[10];
+        this.cache = new Cache<>(10);
     }
 
     /**
@@ -28,19 +28,18 @@ public class Storage <T> {
      */
     public Storage(T[] array) {
         storage = new Object[10];
-        cache = new Cache<T>(10);
-        if (array.length >= storage.length) {
+        cache = new Cache<>(10);
+        if (array.length > storage.length) {
            Object [] temp = new Object[array.length];
-            for (; i < array.length; i++) {
+            for (int i = 0; i < array.length; i++) {
                 temp[i] = array[i];
             }
             storage = temp;
         }else{
-            for (; i < array.length; i++) {
+            for (int i = 0; i < array.length; i++) {
                 storage[i] = array[i];
             }
         }
-        i = array.length - 1;
     }
 
     /**
@@ -48,17 +47,20 @@ public class Storage <T> {
      * @param element элемент, добавляемый в массив Object
      */
     public void add(T element) {
-        if (i < storage.length-1) {
-            storage[i] = element;
+        if (getLast().equals(null)) {
+            for (int i = 0; i < storage.length; i++) {
+                if (storage[i].equals((null))) {
+                    storage[i] = element;
+                }
+            }
         }else{
             Object [] temp = new Object[(int) (1.5*storage.length)];
-            for (int j = 0; j < storage.length; j++) {
-                temp[j] = storage[j];
+            for (int i = 0; i < storage.length; i++) {
+                temp[i] = storage[i];
             }
-            temp[i+1] = element;
+            temp[storage.length] = element;
             storage = temp;
         }
-        i++;
     }
 
     /**
@@ -67,8 +69,8 @@ public class Storage <T> {
     public void delete() {
         if (cache.isPresentElement(getLast())) {
             cache.delete(getLast());
-            storage[i] = null;
-            i = i - 1;
+            T lastElement = getLast();
+            lastElement = null;
         }
     }
 
@@ -78,7 +80,6 @@ public class Storage <T> {
     public void clear() {
         cache.clear();
         Arrays.fill(storage, null);
-        i = 0;
         System.out.println("storage очисщен");
     }
 
@@ -87,11 +88,12 @@ public class Storage <T> {
      * @return возвращает последний элемент массива Object
      */
     public T getLast() {
-        int j = 0;
-        while(storage[j] != null) {
-            j++;
+        int i = 0;
+        while(storage[i] != null) {
+            i++;
         }
-        return (T)storage[j-1];
+        System.out.println((T)storage[i-1]);
+        return (T)storage[i-1];
     }
 
     /**
@@ -100,12 +102,10 @@ public class Storage <T> {
      * @return возвращает элемент массива Object
      */
     public T get(int index) {
-        if (cache.isPresentIndex(index)) {
-            foundIt = true;
-        } else {
+        if (!cache.isPresentIndex(index)) {
             cache.add((T) storage[index], index);
         }
-    return cache.get(index);
+    return (T) storage[index];
     }
 
 }
