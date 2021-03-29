@@ -7,9 +7,7 @@
 
 public class Cache<T> {
     private int capacity;
-    //private static int i;
     private CacheElement<T>[] cache;
-    //private static boolean foundIt = false;
 
     /**
      * Конструктор, который создает массив элементов CacheElement
@@ -27,18 +25,17 @@ public class Cache<T> {
      */
     public void add(T element, int index) {
         boolean isPresent = isPresentElement(element);
-        System.out.println("Мы в методе эдд" + cache[capacity-1].equals(null));
-        if (!(cache[capacity-1].equals(null)) && (!isPresent)) {
+        if (!(cache[capacity-1] == null) && (!isPresent)) {
             for (int i = 1; i < capacity; i++) {
                 cache[i-1] = cache[i];
             }
             cache[capacity-1] = new CacheElement<>(element, index);
-            System.out.println("Элемент = " + element + "," + index + "добавлен");
         }
-        if ((cache[capacity-1].equals(null)) && (!isPresent)){
+        if ((cache[capacity-1] == null) && (!isPresent)){
             for (int i = 0; i < capacity; i++) {
-                if (cache[i].equals(null)) {
+                if (cache[i] == null) {
                     cache[i] = new CacheElement<>(element, index);
+                    break;
                 }
             }
         }
@@ -51,10 +48,11 @@ public class Cache<T> {
     public void delete(T element) {
         for (int i = 0; i < capacity; i++) {
             if ((cache[i] != null) && (cache[i].getElement().equals(element))) {
-                for (int j = i + 1; j < capacity - i; j++) {
+                for (int j = i + 1; j < capacity - i - 1; j++) {
                     cache[j - 1] = cache[j];
                 }
                 System.out.println("Элемент удален");
+                break;
             }
         }
     }

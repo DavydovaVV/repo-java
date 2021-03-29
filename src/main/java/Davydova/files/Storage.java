@@ -11,8 +11,6 @@ import java.util.Arrays;
 public class Storage <T> {
     Object [] storage;
     Cache<T> cache;
-    //private static int i = 0;
-    //private static boolean foundIt = false;
 
     /**
      * Дефолтный конструктор, в котором создается массив Object и объект типа Cache
@@ -43,17 +41,19 @@ public class Storage <T> {
      * @param element элемент, добавляемый в массив Object
      */
     public void add(T element) {
-        if (getLast().equals(null)) {
+        if (getLast()==null) {
             for (int i = 0; i < storage.length; i++) {
-                if (storage[i].equals((null))) {
+                if (storage[i] == null) {
                     storage[i] = element;
+                    break;
                 }
             }
         }else{
             increaseArray(storage);
             for (int i = 0; i < storage.length; i++) {
-                if (storage[i].equals((null))) {
+                if (storage[i] == null) {
                     storage[i] = element;
+                    break;
                 }
             }
         }
@@ -96,10 +96,11 @@ public class Storage <T> {
      */
     public T getLast() {
         int i = 0;
-        while(storage[i] != null) {
-            i++;
+        for (; i < storage.length; i++) {
+            if (storage[i] == null) {
+                break;
+            }
         }
-        System.out.println((T)storage[i-1]);
         return (T)storage[i-1];
     }
 
