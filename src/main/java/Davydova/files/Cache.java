@@ -24,22 +24,24 @@ public class Cache<T> {
      * @param index индекс элемента массива
      */
     public void add(T element, int index) {
-        boolean isPresent = isPresentElement(element);
-        if (!(cache[capacity-1] == null) && (!isPresent)) {
-            for (int i = 1; i < capacity; i++) {
-                cache[i-1] = cache[i];
+        if (!isPresentElement(element)) {
+            if (!(cache[capacity-1] == null)) {
+                for (int i = 1; i < capacity; i++) {
+                    cache[i-1] = cache[i];
+                }
+                cache[capacity-1] = new CacheElement<>(element, index);
             }
-            cache[capacity-1] = new CacheElement<>(element, index);
-        }
-        if ((cache[capacity-1] == null) && (!isPresent)){
-            for (int i = 0; i < capacity; i++) {
-                if (cache[i] == null) {
-                    cache[i] = new CacheElement<>(element, index);
-                    break;
+            if (cache[capacity-1] == null) {
+                for (int i = 0; i < capacity; i++) {
+                    if (cache[i] == null) {
+                        cache[i] = new CacheElement<>(element, index);
+                        break;
+                    }
                 }
             }
         }
     }
+
 
     /**
      * Удалить элемент из массива CacheElement
