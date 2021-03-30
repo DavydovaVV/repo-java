@@ -123,7 +123,7 @@ public class Cache<T> {
     }
 
     /*Вложенный класс CacheElement*/
-    public static class CacheElement<T> {
+    private class CacheElement<T> {
         private T element;
         private int index;
 
