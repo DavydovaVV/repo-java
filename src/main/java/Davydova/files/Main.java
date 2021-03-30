@@ -16,5 +16,11 @@ public class Main {
 		storage1.get(0);
 		storage1.get(1);
 		storage1.clear();
+		Storage<String> storage2 = new Storage<>();
+		Cache.CacheElement <String> cacheElement1 = new Cache.CacheElement<>("5",2);
+		Cache.CacheElement <String> cacheElement2 = new Cache.CacheElement<>("3",2);
+		cacheElement1.equals(cacheElement2);
+		cacheElement1.getElement();
+		cacheElement2.getIndex();
 	}
 }

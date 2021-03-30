@@ -123,16 +123,16 @@ public class Cache<T> {
     }
 
     /*Вложенный класс CacheElement*/
-    public class CacheElement<T> {
-        T element;
-        int index;
+    public static class CacheElement<T> {
+        private T element;
+        private int index;
 
         /**
          * Конструктор CacheElement, в котором инициализируются поля element и index
          * @param element элемент массива CacheElement
-         * @param index индекс элемента массива CacheElement
+         * @param index   индекс элемента массива CacheElement
          */
-        private CacheElement(T element, int index) {
+        public CacheElement(T element, int index) {
             this.element = element;
             this.index = index;
         }
@@ -147,10 +147,27 @@ public class Cache<T> {
 
         /**
          * Получить индекс, относящийся к элементу массива CacheElement
-         * @return возвращает индекс, относящийся к элемент массива
+         * @return возвращает индекс, относящийся к элементу массива
          */
         public int getIndex() {
             return index;
+        }
+
+        /**
+         * @param object это передаваемый объект для сравнения
+         * @return возвращает результат сравнения двух объектов
+         */
+        @SuppressWarnings("unchecked")
+        public boolean equals(Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object == null || object.getClass() != this.getClass()) {
+                return false;
+            }
+            CacheElement<T> cacheElement = (CacheElement<T>) object;
+            return element == cacheElement.element &&
+                    index == cacheElement.index;
         }
     }
 }
