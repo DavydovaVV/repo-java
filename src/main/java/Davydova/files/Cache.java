@@ -48,7 +48,7 @@ public class Cache<T> {
      */
     public void delete(T element) {
         for (int i = 0; i < capacity; i++) {
-            if ((cache[i] != null) && (cache[i].getElement()==element)) {
+            if ((cache[i] != null) && (cache[i].getElement().equals(element))) {
                 System.arraycopy(cache, i + 1, cache, i , capacity - (i + 1));
                 System.out.println("Элемент удален");
                 return;
