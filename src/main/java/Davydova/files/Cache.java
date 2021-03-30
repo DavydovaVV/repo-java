@@ -41,20 +41,21 @@ public class Cache<T> {
         }
     }
 
-
     /**
      * Удалить элемент из массива CacheElement
      * @param element элемент, который нужно удалить
      */
     public void delete(T element) {
         for (int i = 0; i < capacity; i++) {
-            if ((cache[i] != null) && (cache[i].getElement().equals(element))) {
-                System.arraycopy(cache, i + 1, cache, i , capacity - (i + 1));
-                System.out.println("Элемент удален");
-                return;
+            if (cache[i] != null) {
+                if (cache[i].getElement().equals(element)) {
+                    System.arraycopy(cache, i + 1, cache, i, capacity - (i + 1));
+                    System.out.println("Элемент удален");
+                    return;
                 }
             }
         }
+    }
 
     /**
      * Проверить наличие элемента в массиве по значению элемента
@@ -62,14 +63,14 @@ public class Cache<T> {
      * @return возвращает true или false, есть ли элемент в массиве CacheElement
      */
     public boolean isPresent (T element) {
-        boolean foundIt = false;
         for (int i = 0; i < capacity; i++) {
-            if ((cache[i] != null) && (cache[i].getElement().equals(element))) {
-                foundIt = true;
-                break;
+            if (cache[i] != null) {
+                if (cache[i].getElement().equals(element)) {
+                    return true;
+                }
             }
         }
-        return foundIt;
+        return false;
     }
 
     /**
@@ -78,14 +79,14 @@ public class Cache<T> {
      * @return возвращает true или false, есть ли элемент в массиве CacheElement
      */
     public boolean isPresent (int index) {
-        boolean foundIt = false;
         for (int i = 0; i < capacity; i++) {
-            if ((cache[i] != null) && (cache[i].getIndex() == index)) {
-                foundIt = true;
-                break;
+            if (cache[i] != null) {
+                if (cache[i].getIndex() == index) {
+                    return true;
+                }
             }
         }
-        return foundIt;
+        return false;
     }
 
     /**
@@ -105,7 +106,7 @@ public class Cache<T> {
                     break;
                 }
             }
-        } else {
+        }else{
             System.out.println("Элемент не найден");
         }
         return (cacheElement);

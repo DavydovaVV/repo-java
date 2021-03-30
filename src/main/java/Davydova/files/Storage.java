@@ -49,7 +49,7 @@ public class Storage <T> {
             }
         }else{
             for (int i = 0; i < storage.length; i++) {
-                if (storage[i] != null) {
+                if (storage[i] == null) {
                     storage[i] = element;
                     return;
                 }
