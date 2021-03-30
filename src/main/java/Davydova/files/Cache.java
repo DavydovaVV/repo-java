@@ -28,12 +28,13 @@ public class Cache<T> {
             if (!(cache[capacity-1] == null)) {
                 System.arraycopy(cache, 1, cache, 0, capacity - 1);
                 cache[capacity-1] = new CacheElement<>(element, index);
+                return;
             }
             if (cache[capacity-1] == null) {
                 for (int i = 0; i < capacity; i++) {
                     if (cache[i] == null) {
                         cache[i] = new CacheElement<>(element, index);
-                        break;
+                        return;
                     }
                 }
             }
@@ -47,11 +48,11 @@ public class Cache<T> {
      */
     public void delete(T element) {
         for (int i = 0; i < capacity; i++) {
-            if ((cache[i] != null) && (cache[i].getElement().equals(element))) {
+            if ((cache[i] != null) && (cache[i].getElement()==element)) {
                 System.arraycopy(cache, i + 1, cache, i , capacity - (i + 1));
-                }
                 System.out.println("Элемент удален");
-                break;
+                return;
+                }
             }
         }
 
@@ -92,19 +93,22 @@ public class Cache<T> {
      * @param index индекс, по которому нужно найти элемент
      * @return возвращает найденный элемент
      */
-    public void get(int index) {
+    public CacheElement<T> get(int index) {
+        CacheElement<T> cacheElement = null;
         if (isPresent(index)) {
             for (int i = 0; i < capacity; i++) {
                 if (cache[i].getIndex() == index) {
+                    cacheElement = cache[i];
                     T foundElement = cache[i].getElement();
                     System.arraycopy(cache, i + 1, cache, i , capacity - (i + 1));
                     add(foundElement, index);
+                    break;
                 }
-                break;
             }
         } else {
             System.out.println("Элемент не найден");
         }
+        return (cacheElement);
     }
 
     /**
@@ -114,7 +118,7 @@ public class Cache<T> {
         for (int i = 0; i < capacity; i++) {
             cache[i] = null;
         }
-        System.out.println("Кэш очисщен");
+        System.out.println("Кэш очищен");
     }
 
     /*Вложенный класс CacheElement*/

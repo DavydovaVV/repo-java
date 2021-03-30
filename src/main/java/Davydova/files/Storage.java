@@ -39,20 +39,21 @@ public class Storage <T> {
      * @param element элемент, добавляемый в массив Object
      */
     public void add(T element) {
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] != null) {
-                continue;
-            }
-                storage[i] = element;
-                break;
-            }
         if (storage[storage.length-1] != null){
             increaseArray(storage);
             for (int i = 0; i < storage.length; i++) {
                 if (storage[i] == null) {
                     storage[i] = element;
-                    break;
+                    return;
                 }
+            }
+        }else{
+            for (int i = 0; i < storage.length; i++) {
+                if (storage[i] != null) {
+                    continue;
+                }
+            storage[i] = element;
+            return;
             }
         }
     }
@@ -76,7 +77,7 @@ public class Storage <T> {
             for (int i = 0; i < storage.length; i++) {
                 if (storage[i] == null) {
                     storage[i-1] = null;
-                    break;
+                    return;
                 }
             }
         }
@@ -88,7 +89,7 @@ public class Storage <T> {
     public void clear() {
         cache.clear();
         Arrays.fill(storage, null);
-        System.out.println("storage очисщен");
+        System.out.println("storage очищен");
     }
 
     /**
@@ -114,7 +115,6 @@ public class Storage <T> {
         if (!cache.isPresent(index)) {
             cache.add((T) storage[index], index);
         }
-    return (T) storage[index];
+        return (T) storage[index];
     }
-
 }
