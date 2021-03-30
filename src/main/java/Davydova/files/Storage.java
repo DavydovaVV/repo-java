@@ -50,10 +50,9 @@ public class Storage <T> {
         }else{
             for (int i = 0; i < storage.length; i++) {
                 if (storage[i] != null) {
-                    continue;
+                    storage[i] = element;
+                    return;
                 }
-            storage[i] = element;
-            return;
             }
         }
     }
@@ -97,13 +96,12 @@ public class Storage <T> {
      * @return возвращает последний элемент массива Object
      */
     public T getLast() {
-        int i = 0;
-        for (; i < storage.length; i++) {
+        for (int i = 0; i < storage.length; i++) {
             if (storage[i] == null) {
-                break;
+                return (T)storage[i-1];
             }
         }
-        return (T)storage[i-1];
+        return null;
     }
 
     /**
