@@ -61,7 +61,6 @@ public class Human implements Comparable<Human> {
      * @param list лист элементов, который подлежит сортировке
      */
    public static void sortAge(List<Human> list) {
-
         Collections.sort(list);
    }
 

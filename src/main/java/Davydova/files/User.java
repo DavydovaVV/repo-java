@@ -28,8 +28,6 @@ public class User {
         map.put(Role.ADMIN, "Приветствуем " + user + " с ролью " + user.role);
         map.put(Role.MODERATOR, "Приветствуем " + user + " с ролью " + user.role);
         map.put(Role.USER, "Приветствуем " + user + " с ролью " + user.role);
-
-        System.out.println(map.getOrDefault(role, "Такой роли нет"));
     }
 
     /**
