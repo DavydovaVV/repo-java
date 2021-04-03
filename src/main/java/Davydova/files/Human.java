@@ -1,14 +1,15 @@
 import java.util.*;
 
 /**
- * This is the class with methods to implement operations on Collestions
+ * This is the class for creating Collections
  * @author DavydovaVV
  * version 1.0 04/02/2021
  */
 public class Human implements Comparable<Human> {
-    String fio;
-    int age;
-    Address address;
+    private String fio;
+    private int age;
+    private Address address;
+    private ArrayList<Human> people;
 
     /**
      * Конструктор класса Human, в котором производится инициализация полей
@@ -23,66 +24,55 @@ public class Human implements Comparable<Human> {
     }
 
     /**
-     * Найти и вывести в консаоль дубликаты элементов из списка
-     * @param list лист элементов класса Human
+     * Дефолтный конструктор класса Human
      */
-    public static void findDupl (List<Human> list) {
-        for (int i = 0; i < list.size(); i++) {
-            for (int j = i+1; j < list.size(); j++) {
-                if (list.get(i).equals(list.get(j))) {
-                    System.out.println(list.get(j));
-                }
-            }
-        }
+    public Human() {
+
     }
 
     /**
-     * Удалить дубликаты
-     * @param list лист элементов, из которого удаляются элементы
-     * @return возвращает лист без дубликатов
+     * Получить коллекцию ArrayList класса Human
+     * @return возвращает коллекцию ArrayList класса Human
      */
-   public static List<Human> deleteDupl (List<Human> list) {
-       LinkedHashSet<Human> singular = new LinkedHashSet<>(list);
-       list.clear();
-       list.addAll(singular);
-       return list;
-   }
+    public ArrayList<Human> getHumanList() {
+        address = new Address();
+
+        Human human1 = new Human("Иванов И.И.", 55, address.getAddressList().get(0));
+        Human human2 = new Human("Петров П.П.", 14, address.getAddressList().get(1));
+        Human human3 = new Human("Козлов К.К.", 42, address.getAddressList().get(3));
+        Human human4 = new Human("Полевой П.П.", 23, address.getAddressList().get(4));
+        Human human5 = new Human("Сидоров С.С.", 20, address.getAddressList().get(2));
+        Human human6 = new Human("Пасечный П.П.", 25, address.getAddressList().get(6));
+        Human human7 = new Human("Сухой С.С.", 56, address.getAddressList().get(5));
+        Human human8 = new Human("Сидоров С.С.", 20, address.getAddressList().get(2));
+        Human human9 = new Human("Полевой П.П.", 23, address.getAddressList().get(4));
+        Human human10 = new Human("Сухой С.С.", 56, address.getAddressList().get(5));
+
+        people = new ArrayList<>();
+        Collections.addAll(people, human1, human2, human3, human4, human5, human6, human7, human8, human9, human10);
+
+        return people;
+    }
 
     /**
-     * Отсортировать по полю ФИО
-     * @param list лист элементов, который подлежит сортировке
-     */
-   public static void sortFIO(List<Human> list) {
-        list.sort(new FioComparator());
-   }
-
-    /**
-     * Отсортировать по возрасту
-     * @param list лист элементов, который подлежит сортировке
-     */
-   public static void sortAge(List<Human> list) {
-        Collections.sort(list);
-   }
-
-    /**
-     * Отсортировать по адресу
-     * @param list лист элементов, который подлежит сортировке
-     */
-   public static void sortAddress(List<Human> list) {
-        list.sort(new AddressComparator());
-   }
-
-    /**
-     * Получить значение поля ФИО
-     * @return возвращает значение ФИО
+     * Получить значение поля fio
+     * @return возвращает значение fio
      */
     public String getFio() {
         return fio;
     }
 
     /**
-     * Получить значение поля Адрес
-     * @return возвращает значение Адрес
+     * Получить значение поля age
+     * @return возвращает значение age
+     */
+    public int getAge() {
+        return age;
+    }
+
+    /**
+     * Получить значение поля address
+     * @return возвращает значение address
      */
     public Address getAddress() {
         return address;
@@ -93,12 +83,13 @@ public class Human implements Comparable<Human> {
      * @param o экземпляр объекта
      * @return возвращает true, если объекты равны, false, если объекты не равны
      */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Human human = (Human) o;
-        return age == human.age && Objects.equals(fio, human.fio) && Objects.equals(address, human.address);
+        return age == human.age && Objects.equals(fio, human.fio) && Objects.equals(address.toString(), human.address.toString());
     }
 
     /**
@@ -107,7 +98,7 @@ public class Human implements Comparable<Human> {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(fio, age, address);
+        return Objects.hash(people);
     }
 
     /**
@@ -129,67 +120,5 @@ public class Human implements Comparable<Human> {
     @Override
     public int compareTo(Human o) {
         return Integer.compare(this.age, o.age);
-    }
-}
-
-class Address {
-    private String city;
-    private String street;
-    private int building;
-    private int apartment;
-
-    /**
-     * Конструктор класса Address в котором инициализируются поля city, street, building, apartment
-     * @param city
-     * @param street
-     * @param building
-     * @param apartment
-     */
-    public Address(String city, String street, int building, int apartment) {
-        this.city = city;
-        this.street = street;
-        this.building = building;
-        this.apartment = apartment;
-    }
-
-    /**
-     * Переопределение метода toString()
-     * @return возвращает объект в виде строки
-     */
-    @Override
-    public String toString() {
-        return "\nАдрес {" +
-                city + " , " +
-                street + " , " +
-                building + " , " +
-                apartment + "}\n";
-    }
-}
-
-class FioComparator implements Comparator<Human> {
-
-    /**
-     * Переопределение метода compare()
-     * @param o1 экземпляр объекта класса Human
-     * @param o2 экземпляр объекта класса Human
-     * @return возвращает результат сравнения двух объектов класса Human по полю FIO
-     */
-    @Override
-    public int compare(Human o1, Human o2) {
-        return o1.getFio().compareTo(o2.getFio());
-    }
-}
-
-class AddressComparator implements Comparator<Human> {
-
-    /**
-     * Переопределение метода compare()
-     * @param o1 экземпляр объекта класса Human
-     * @param o2 экземпляр объекта класса Human
-     * @return возвращает результат сравнения двух объектов класса Human по полю Address
-     */
-    @Override
-    public int compare(Human o1, Human o2) {
-        return o1.getAddress().toString().compareTo(o2.getAddress().toString());
     }
 }
