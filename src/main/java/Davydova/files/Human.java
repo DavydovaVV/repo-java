@@ -24,37 +24,6 @@ public class Human implements Comparable<Human> {
     }
 
     /**
-     * Дефолтный конструктор класса Human
-     */
-    public Human() {
-
-    }
-
-    /**
-     * Получить коллекцию ArrayList класса Human
-     * @return возвращает коллекцию ArrayList класса Human
-     */
-    public ArrayList<Human> getHumanList() {
-        address = new Address();
-
-        Human human1 = new Human("Иванов И.И.", 55, address.getAddressList().get(0));
-        Human human2 = new Human("Петров П.П.", 14, address.getAddressList().get(1));
-        Human human3 = new Human("Козлов К.К.", 42, address.getAddressList().get(3));
-        Human human4 = new Human("Полевой П.П.", 23, address.getAddressList().get(4));
-        Human human5 = new Human("Сидоров С.С.", 20, address.getAddressList().get(2));
-        Human human6 = new Human("Пасечный П.П.", 25, address.getAddressList().get(6));
-        Human human7 = new Human("Сухой С.С.", 56, address.getAddressList().get(5));
-        Human human8 = new Human("Сидоров С.С.", 20, address.getAddressList().get(2));
-        Human human9 = new Human("Полевой П.П.", 23, address.getAddressList().get(4));
-        Human human10 = new Human("Сухой С.С.", 56, address.getAddressList().get(5));
-
-        people = new ArrayList<>();
-        Collections.addAll(people, human1, human2, human3, human4, human5, human6, human7, human8, human9, human10);
-
-        return people;
-    }
-
-    /**
      * Получить значение поля fio
      * @return возвращает значение fio
      */

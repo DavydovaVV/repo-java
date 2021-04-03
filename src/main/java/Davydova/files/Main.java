@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is the class for testing Collections
@@ -10,7 +8,7 @@ public class Main {
 
 	public static void main (String[] args) {
 
-		Human human = new Human();
+		SortHuman human = new SortHuman();
 		HashMapSort hashMapSort = new HashMapSort();
 
 		SortHuman sortHuman = new SortHuman();

@@ -13,7 +13,7 @@ public class HashMapSort {
      */
     public HashMap<Integer, Human> getMap() {
         HashMap<Integer, Human> map = new HashMap<>();
-        Human human = new Human();
+        SortHuman human = new SortHuman();
 
         map.put(3, human.getHumanList().get(2));
         map.put(65, human.getHumanList().get(3));
@@ -40,7 +40,7 @@ public class HashMapSort {
         sorted.sort(new ValueComparator());
         System.out.println(sorted);
     }
-    class ValueComparator implements Comparator<Map.Entry<Integer, Human>> {
+    private class ValueComparator implements Comparator<Map.Entry<Integer, Human>> {
 
         /**
          * Переопределение метода compare()
@@ -54,7 +54,7 @@ public class HashMapSort {
         }
     }
 
-    class KeyComparator implements Comparator<Map.Entry<Integer, Human>> {
+    private class KeyComparator implements Comparator<Map.Entry<Integer, Human>> {
 
         /**
          * Переопределение метода compare()
