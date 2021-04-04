@@ -7,7 +7,6 @@
 public class Main {
 
 	public static void main (String[] args) {
-
 		SortHuman human = new SortHuman();
 		HashMapSort hashMapSort = new HashMapSort();
 
