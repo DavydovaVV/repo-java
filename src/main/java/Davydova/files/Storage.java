@@ -1,5 +1,4 @@
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 
@@ -9,12 +8,11 @@ import java.util.Arrays;
  * author DavydovaVV
  * version 1.0 03/28/2021
  */
-
+@Slf4j
 @SuppressWarnings("unchecked")
 public class Storage <T> {
     Object [] storage;
     Cache<T> cache;
-    private static final Logger loggerStorage  = LoggerFactory.getLogger(Storage.class);
 
     /**
      * Дефолтный конструктор, в котором создается массив Object и объект типа Cache
@@ -42,29 +40,20 @@ public class Storage <T> {
      * Добавить элемент Т в массив Object
      * @param element элемент, добавляемый в массив Object
      */
-    public void add(T element) throws MyUnCheckedException {
-        loggerStorage.debug("Entering method add(T) in class Storage");
+    public void add(T element) throws ArrayNullPointerException {
+        log.debug("Log from add(T) method of class Storage");
         if (storage[storage.length-1] != null){
-            loggerStorage.debug("Element is not equal to null: {}", storage[storage.length-1] != null);
             increaseArray(storage);
-            loggerStorage.debug("Storage capacity now is: {}", storage.length);
             for (int i = 0; i < storage.length; i++) {
-                loggerStorage.debug("Checking storage in for loop");
                 if (storage[i] == null) {
-                    loggerStorage.debug("Element equals to null: {}", storage[i] == null);
                     storage[i] = element;
-                    loggerStorage.debug("Element is assigned: {}", element);
                     return;
                 }
             }
         } else {
-            loggerStorage.debug("Element is equal to null: {}", storage[storage.length-1] != null);
             for (int i = 0; i < storage.length; i++) {
-                loggerStorage.debug("Checking storage in for loop");
                 if (storage[i] == null) {
-                    loggerStorage.debug("Element equals to null: {}", storage[i] == null);
                     storage[i] = element;
-                    loggerStorage.debug("Element is assigned: {}", element);
                     return;
                 }
             }
@@ -75,12 +64,13 @@ public class Storage <T> {
      * Увеличить размер передаваемого массива
      */
     public Object[] increaseArray (Object[] array) {
+        log.debug("Log from increaseArray(Object[]) method of class Storage");
         Object [] temp = new Object[(int) (1.5 * array.length)];
         System.arraycopy(array, 0, temp, 0, array.length);
         try {
             get((int) (1.5 * array.length));
         } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
+            log.error ("Exception is: ", e);
         }
         return temp;
     }
@@ -104,9 +94,15 @@ public class Storage <T> {
     /**
      * Очистить массив Object и массив CacheElement объекта Cache
      */
-    public void clear() throws MyUnCheckedException {
+    public void clear() {
+        log.debug("Log from clear() method of class Storage");
         cache.clear();
         Arrays.fill(storage, null);
+        try {
+            getLast();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            log.error ("Exception is: ", e);
+        }
         System.out.println("storage очищен");
     }
 

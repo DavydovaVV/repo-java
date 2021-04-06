@@ -1,14 +1,15 @@
-2021-04-06 13:52:04 - Example log from Storage 
-2021-04-06 13:52:04 - Entering method add(T) in class Storage 
-2021-04-06 13:52:04 - Element is equal to null: false 
-2021-04-06 13:52:04 - Checking storage in for loop 
-2021-04-06 13:52:04 - Checking storage in for loop 
-2021-04-06 13:52:04 - Element equals to null: true 
-2021-04-06 13:52:04 - Element is assigned: 7 
-2021-04-06 13:52:04 - Entering method add(T) in class Storage 
-2021-04-06 13:52:04 - Element is equal to null: false 
-2021-04-06 13:52:04 - Checking storage in for loop 
-2021-04-06 13:52:04 - Checking storage in for loop 
-2021-04-06 13:52:04 - Checking storage in for loop 
-2021-04-06 13:52:04 - Element equals to null: true 
-2021-04-06 13:52:04 - Element is assigned: 5 
+2021-04-06 23:46:50 - [main] DEBUG Storage - Log from add(T) method of class Storage
+2021-04-06 23:46:50 - [main] DEBUG Storage - Log from add(T) method of class Storage
+2021-04-06 23:46:50 - [main] DEBUG Storage - Log from increaseArray(Object[]) method of class Storage
+2021-04-06 23:46:50 - [main] ERROR Storage - Exception is: 
+java.lang.ArrayIndexOutOfBoundsException: 15
+	at Storage.get(Storage.java:129)
+	at Storage.increaseArray(Storage.java:71)
+	at Storage.add(Storage.java:46)
+	at Main.main(Main.java:18)
+2021-04-06 23:46:50 - [main] DEBUG Storage - Log from clear() method of class Storage
+2021-04-06 23:46:50 - [main] ERROR Storage - Exception is: 
+java.lang.ArrayIndexOutOfBoundsException: -1
+	at Storage.getLast(Storage.java:116)
+	at Storage.clear(Storage.java:102)
+	at Main.main(Main.java:24)
