@@ -1,0 +1,14 @@
+2021-04-06 13:52:04 - Example log from Storage 
+2021-04-06 13:52:04 - Entering method add(T) in class Storage 
+2021-04-06 13:52:04 - Element is equal to null: false 
+2021-04-06 13:52:04 - Checking storage in for loop 
+2021-04-06 13:52:04 - Checking storage in for loop 
+2021-04-06 13:52:04 - Element equals to null: true 
+2021-04-06 13:52:04 - Element is assigned: 7 
+2021-04-06 13:52:04 - Entering method add(T) in class Storage 
+2021-04-06 13:52:04 - Element is equal to null: false 
+2021-04-06 13:52:04 - Checking storage in for loop 
+2021-04-06 13:52:04 - Checking storage in for loop 
+2021-04-06 13:52:04 - Checking storage in for loop 
+2021-04-06 13:52:04 - Element equals to null: true 
+2021-04-06 13:52:04 - Element is assigned: 5 

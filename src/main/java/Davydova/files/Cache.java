@@ -1,3 +1,7 @@
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * This class Cache<T> includes an array of CacheElements<T> and methods operating with the array
@@ -5,9 +9,11 @@
  * version 1.0 03/28/2021
  */
 
+@Slf4j
 public class Cache<T> {
     private int capacity;
     private CacheElement<T>[] cache;
+    private static final Logger loggerCache  = LoggerFactory.getLogger(Cache.class);
 
     /**
      * Конструктор, который создает массив элементов CacheElement
@@ -24,21 +30,36 @@ public class Cache<T> {
      * @param index индекс элемента массива
      */
     public void add(T element, int index) {
+        loggerCache.info("Entering method add(T, int) in class Cache");
         if (!isPresent(element)) {
+            loggerCache.debug("Element is present in array: {}", !isPresent(element));
             if (!(cache[capacity-1] == null)) {
+                loggerCache.debug("Element is not equal to null: {}", !(cache[capacity-1] == null));
                 System.arraycopy(cache, 1, cache, 0, capacity - 1);
                 cache[capacity-1] = new CacheElement<>(element, index);
+                loggerCache.debug("New element ({}, {}) was added to array", element, index);
                 return;
             }
             if (cache[capacity-1] == null) {
+                loggerCache.debug("Element equals to null: {}", cache[capacity-1] == null);
+                try {
+                    cache[capacity].getElement();
+                } catch (IndexOutOfBoundsException e) {
+                    loggerCache.debug("Processing IndexOutOfBoundsException exception in catch block");
+                    System.out.println("Index is out of bounds");
+                }
                 for (int i = 0; i < capacity; i++) {
+                    loggerCache.debug("Entering for loop");
                     if (cache[i] == null) {
+                        loggerCache.debug("Element equals to null: {}", cache[i] == null);
                         cache[i] = new CacheElement<>(element, index);
+                        loggerCache.debug("Adding a new element: ({}, {})", element, index);
                         return;
                     }
                 }
             }
         }
+        loggerCache.info("Exiting method add(T, int) in class Cache");
     }
 
     /**
@@ -51,6 +72,13 @@ public class Cache<T> {
                 if (cache[i].getElement().equals(element)) {
                     System.arraycopy(cache, i + 1, cache, i, capacity - (i + 1));
                     System.out.println("Элемент удален");
+                    return;
+                }
+            } else {
+                try {
+                    cache[i].getElement();
+                } catch (NullPointerException e) {
+                    System.out.println("NullPointerException");
                     return;
                 }
             }
@@ -106,8 +134,12 @@ public class Cache<T> {
                     break;
                 }
             }
-        }else{
-            System.out.println("Элемент не найден");
+        } else {
+            try {
+                cacheElement.getIndex();
+            } catch (NullPointerException e) {
+                System.out.println("Элемент не найден");
+            }
         }
         return (cacheElement);
     }
@@ -115,9 +147,12 @@ public class Cache<T> {
     /**
      * Очистить массив CacheElement
      */
-    public void clear() {
+    public void clear() throws MyUnCheckedException {
         for (int i = 0; i < capacity; i++) {
             cache[i] = null;
+            if (cache[i] != null) {
+                throw new MyUnCheckedException("Элемент кэша не равен нулю");
+            }
         }
         System.out.println("Кэш очищен");
     }
@@ -165,7 +200,12 @@ public class Cache<T> {
             if (object == null || object.getClass() != this.getClass()) {
                 return false;
             }
-            CacheElement<T> cacheElement = (CacheElement<T>) object;
+            CacheElement<T> cacheElement = null;
+            try {
+                cacheElement = (CacheElement<T>) object;
+            } catch (MyCheckedException e) {
+                e.printStackTrace();
+            }
             return element == cacheElement.element &&
                     index == cacheElement.index;
         }
