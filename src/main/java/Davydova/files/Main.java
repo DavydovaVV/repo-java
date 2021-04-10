@@ -1,3 +1,4 @@
+package Davydova.files;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Scanner;
@@ -11,15 +12,13 @@ public class Main {
     public static void main(String[] args) {
 
         CommandFilter filter = new CommandFilter();
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Type the command name and press Enter:\n" +
                 "add\n" + "delete\n" + "print");
 
-        try {
-
+        try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
                 filter.getCommand(scanner.nextLine());
-                System.out.println("If you ready to exit, type \"exit\" or press Enter to continue");
+                System.out.println("If you are ready to exit, type \"exit\" or press Enter to continue");
                 if (scanner.nextLine().equals("exit")) {
                     scanner.close();
                     return;
@@ -27,8 +26,6 @@ public class Main {
                 System.out.println("Type the command name and press Enter:\n" +
                         "add\n" + "delete\n" + "print");
             }
-        } finally {
-            scanner.close();
         }
     }
 }
