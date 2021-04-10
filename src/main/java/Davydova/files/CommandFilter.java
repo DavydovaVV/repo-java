@@ -239,7 +239,7 @@ public class CommandFilter {
         public void deleteLine() throws IOException {
 
             if (file.length() == 0) {
-                log.info("File is empty: {}", file.length() == 0);
+                log.info("File is empty or not found: {}", file.length() == 0);
             } else if (lineNo.equals("")) {
                 deleteLastLine();
             } else {
@@ -330,7 +330,7 @@ public class CommandFilter {
         public void printLine() throws IOException {
 
             if (file.length() == 0) {
-                log.info("File is empty: {}", file.length() == 0);
+                log.info("File is empty or not found: {}", file.length() == 0);
             } else {
                 printLineOrFile();
             }
