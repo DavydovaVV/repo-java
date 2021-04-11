@@ -19,7 +19,7 @@ public class CommandFilter {
             Command.valueOf(Command.class, command).goToCommandHandler();
         }
         catch (IllegalArgumentException e) {
-            log.error("Exception is: ", e);
+            log.error("There is no such command. Exception is: ", e);
         }
     }
 }
