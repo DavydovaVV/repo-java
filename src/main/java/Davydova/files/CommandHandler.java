@@ -7,8 +7,6 @@ import java.util.TreeMap;
  * This is the abstract class for command handlers
  */
 public abstract class CommandHandler {
-    private String fileName;
-    private String lineNo;
 
     /**
      * Get object map
@@ -16,8 +14,8 @@ public abstract class CommandHandler {
      */
     public TreeMap<Integer, String> getMap() {
         TreeMap<Integer, String> map = new TreeMap<>();
-        map.put(0, fileName);
-        map.put(1, lineNo);
+        map.put(0, "");
+        map.put(1, "");
         return map;
     }
 

@@ -9,9 +9,6 @@ import java.util.TreeMap;
  */
 @Slf4j
 public class AddCommandHandler extends CommandHandler {
-    String fileName;
-    String lineNo;
-    String line;
 
     /**
      * Get Map object
@@ -19,9 +16,9 @@ public class AddCommandHandler extends CommandHandler {
      */
     public TreeMap<Integer, String> getMap() {
         TreeMap<Integer, String> map = new TreeMap<>();
-        map.put(0, fileName);
-        map.put(1, lineNo);
-        map.put(2, line);
+        map.put(0, "");
+        map.put(1, "");
+        map.put(2, "");
         return map;
     }
     /**
