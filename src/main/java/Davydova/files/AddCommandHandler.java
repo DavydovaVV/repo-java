@@ -2,42 +2,46 @@ package Davydova.files;
 
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
-import java.util.Scanner;
+import java.util.TreeMap;
 
 /**
  * This is the class to add lines to File
  */
 @Slf4j
-public class AddCommandHandler {
+public class AddCommandHandler extends CommandHandler {
+    String fileName;
+    String lineNo;
+    String line;
 
+    public TreeMap<Integer, String> getMap() {
+        TreeMap<Integer, String> map = new TreeMap<>();
+        map.put(0, fileName);
+        map.put(1, lineNo);
+        map.put(2, line);
+        return map;
+    }
     /**
      * Add line in file
      * @throws IOException if file does not exits
+     * @param map consist of fileName, line number and line fields
      */
-    public void handle() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Type file name: ");
-        FileToRecord.FILE.setValue(scanner.nextLine());
-        System.out.print("Type line number: ");
-        Add.NUMBER.setNumber(scanner.nextLine());
-        System.out.print("Type line: ");
-        Add.LINE.setValue(scanner.nextLine());
+    public void handle(TreeMap<Integer, String> map) throws IOException {
 
-        File file = new File(FileToRecord.FILE.getValue());
-        String lineNo = Add.NUMBER.getNumber();
+        File file = new File(map.get(0));
+        String lineNo = map.get(1);
 
         if (file.length() == 0) {
             if (lineNo.equals("")) {
-                addLineToEmptyFile();
+                addLineToEmptyFile(map);
             } else {
-                addLineWithNumberToEmptyFile();
+                addLineWithNumberToEmptyFile(map);
             }
         } else if (lineNo.equals("")) {
-            addLineToFilledFile();
+            addLineToFilledFile(map);
         } else if (Integer.parseInt(lineNo) == 0) {
-            addFirstLineToFilledFile();
+            addFirstLineToFilledFile(map);
         } else {
-            addLineWithNumberToFilledFile();
+            addLineWithNumberToFilledFile(map);
         }
         file.delete();
         new File ("Temporary.txt").renameTo(new File("Record.txt"));
@@ -46,11 +50,12 @@ public class AddCommandHandler {
     /**
      * Add line with no number to file
      * @throws IOException if file does not exist
+     * @param map consist of fileName, line number and line fields
      */
-    private void addLineToEmptyFile() throws IOException {
-        String fileName = FileToRecord.FILE.getValue();
-        String lineNo = Add.NUMBER.getNumber();
-        String string = Add.LINE.getValue();
+    private void addLineToEmptyFile(TreeMap<Integer, String> map) throws IOException {
+        String fileName = map.get(0);
+        String lineNo = map.get(1);
+        String string = map.get(2);
 
         try (FileInputStream fis = new FileInputStream(fileName);
              InputStreamReader isr = new InputStreamReader(fis);
@@ -66,11 +71,12 @@ public class AddCommandHandler {
     /**
      * Add line of respective number to file
      * @throws IOException if file does not exist
+     * @param map consist of fileName, line number and line fields
      */
-    private void addLineWithNumberToEmptyFile() throws IOException {
-        String fileName = FileToRecord.FILE.getValue();
-        String lineNo = Add.NUMBER.getNumber();
-        String string = Add.LINE.getValue();
+    private void addLineWithNumberToEmptyFile(TreeMap<Integer, String> map) throws IOException {
+        String fileName = map.get(0);
+        String lineNo = map.get(1);
+        String string = map.get(2);
 
         try (FileInputStream fis = new FileInputStream(fileName);
              InputStreamReader isr = new InputStreamReader(fis);
@@ -95,10 +101,11 @@ public class AddCommandHandler {
     /**
      * Add line with no number to filled file
      * @throws IOException if file does not exist
+     * @param map consist of fileName, line number and line fields
      */
-    private void addLineToFilledFile() throws IOException {
-        String fileName = FileToRecord.FILE.getValue();
-        String string = Add.LINE.getValue();
+    private void addLineToFilledFile(TreeMap<Integer, String> map) throws IOException {
+        String fileName = map.get(0);
+        String string = map.get(2);
 
         try (FileInputStream fis = new FileInputStream(fileName);
              InputStreamReader isr = new InputStreamReader(fis);
@@ -118,10 +125,11 @@ public class AddCommandHandler {
     /**
      * Add line of respective number 0 to filled file
      * @throws IOException if file does not exist
+     * @param map consist of fileName, line number and line fields
      */
-    private void addFirstLineToFilledFile() throws IOException {
-        String fileName = FileToRecord.FILE.getValue();
-        String string = Add.LINE.getValue();
+    private void addFirstLineToFilledFile(TreeMap<Integer, String> map) throws IOException {
+        String fileName = map.get(0);
+        String string = map.get(2);
 
         try (FileInputStream fis = new FileInputStream(fileName);
              InputStreamReader isr = new InputStreamReader(fis);
@@ -146,11 +154,12 @@ public class AddCommandHandler {
     /**
      * Add line of respective number to filled file
      * @throws IOException if file does not exist
+     * @param map consist of fileName, line number and line fields
      */
-    private void addLineWithNumberToFilledFile() throws IOException {
-        String fileName = FileToRecord.FILE.getValue();
-        String lineNo = Add.NUMBER.getNumber();
-        String string = Add.LINE.getValue();
+    private void addLineWithNumberToFilledFile(TreeMap<Integer, String> map) throws IOException {
+        String fileName = map.get(0);
+        String lineNo = map.get(1);
+        String string = map.get(2);
 
         try (FileInputStream fis = new FileInputStream(fileName);
              InputStreamReader isr = new InputStreamReader(fis);

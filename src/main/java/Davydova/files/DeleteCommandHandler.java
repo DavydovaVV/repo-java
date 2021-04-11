@@ -2,34 +2,30 @@ package Davydova.files;
 
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
-import java.util.Scanner;
+import java.util.TreeMap;
 
 /**
  * This is the class to delete lines from File
  */
 @Slf4j
-public class DeleteCommandHandler {
+public class DeleteCommandHandler extends CommandHandler {
 
     /**
      * Handle command to delete line from file
      * @throws IOException if file does not exist
+     * @param map consist of fileName, line number fields
      */
-    public void handle() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Type file name: ");
-        FileToRecord.FILE.setValue(scanner.nextLine());
-        System.out.print("Type line number: ");
-        DeleteAndPrint.NUMBER.setNumber(scanner.nextLine());
+    public void handle(TreeMap<Integer, String> map) throws IOException {
 
-        File file = new File(FileToRecord.FILE.getValue());
-        String lineNo = DeleteAndPrint.NUMBER.getNumber();
+        File file = new File(map.get(0));
+        String lineNo = map.get(1);
 
         if (file.length() == 0) {
             log.info("File is empty or not found: {}", file.length() == 0);
         } else if (lineNo.equals("")) {
-            deleteLastLine();
+            deleteLastLine(map);
         } else {
-            deleteLineWithNumber();
+            deleteLineWithNumber(map);
         }
         file.delete();
         new File ("Temporary.txt").renameTo(new File("Record.txt"));
@@ -38,9 +34,10 @@ public class DeleteCommandHandler {
     /**
      * Delete last line in file
      * @throws IOException if file does not exist
+     * @param map consist of fileName, line number fields
      */
-    private void deleteLastLine() throws IOException {
-        String fileName = FileToRecord.FILE.getValue();
+    private void deleteLastLine(TreeMap<Integer, String> map) throws IOException {
+        String fileName = map.get(0);
 
         try (FileInputStream fis = new FileInputStream(fileName);
              InputStreamReader isr = new InputStreamReader(fis);
@@ -69,10 +66,11 @@ public class DeleteCommandHandler {
     /**
      * Delete line of respective number from file
      * @throws IOException if file does not exist
+     * @param map consist of fileName, line number fields
      */
-    private void deleteLineWithNumber() throws IOException {
-        String fileName = FileToRecord.FILE.getValue();
-        String lineNo = DeleteAndPrint.NUMBER.getNumber();
+    private void deleteLineWithNumber(TreeMap<Integer, String> map) throws IOException {
+        String fileName = map.get(0);
+        String lineNo = map.get(1);
 
         try (FileInputStream fis = new FileInputStream(fileName);
              InputStreamReader isr = new InputStreamReader(fis);
