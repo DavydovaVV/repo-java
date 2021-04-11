@@ -1,3 +1,5 @@
+import lombok.extern.slf4j.Slf4j;
+
 /**
  *
  * This class Cache<T> includes an array of CacheElements<T> and methods operating with the array
@@ -5,6 +7,7 @@
  * version 1.0 03/28/2021
  */
 
+@Slf4j
 public class Cache<T> {
     private int capacity;
     private CacheElement<T>[] cache;
@@ -24,6 +27,7 @@ public class Cache<T> {
      * @param index индекс элемента массива
      */
     public void add(T element, int index) {
+        log.debug("Log from method add(T, int) of class Cache");
         if (!isPresent(element)) {
             if (!(cache[capacity-1] == null)) {
                 System.arraycopy(cache, 1, cache, 0, capacity - 1);
@@ -31,6 +35,11 @@ public class Cache<T> {
                 return;
             }
             if (cache[capacity-1] == null) {
+                try {
+                    cache[capacity].getElement();
+                } catch (IndexOutOfBoundsException e) {
+                    log.error ("Exception is: ", e);
+                }
                 for (int i = 0; i < capacity; i++) {
                     if (cache[i] == null) {
                         cache[i] = new CacheElement<>(element, index);
@@ -46,11 +55,19 @@ public class Cache<T> {
      * @param element элемент, который нужно удалить
      */
     public void delete(T element) {
+        log.debug("Log from delete(T) method of class Cache");
         for (int i = 0; i < capacity; i++) {
             if (cache[i] != null) {
                 if (cache[i].getElement().equals(element)) {
                     System.arraycopy(cache, i + 1, cache, i, capacity - (i + 1));
                     System.out.println("Элемент удален");
+                    return;
+                }
+            } else {
+                try {
+                    cache[i].getElement();
+                } catch (NullPointerException e) {
+                    log.error ("Exception is: ", e);
                     return;
                 }
             }
@@ -95,6 +112,7 @@ public class Cache<T> {
      * @return возвращает найденный элемент
      */
     public CacheElement<T> get(int index) {
+        log.debug("Log from get(int) method of class Cache");
         CacheElement<T> cacheElement = null;
         if (isPresent(index)) {
             for (int i = 0; i < capacity; i++) {
@@ -106,8 +124,12 @@ public class Cache<T> {
                     break;
                 }
             }
-        }else{
-            System.out.println("Элемент не найден");
+        } else {
+            try {
+                cacheElement.getIndex();
+            } catch (NullPointerException e) {
+                log.error ("Exception is: ", e);
+            }
         }
         return (cacheElement);
     }
@@ -115,9 +137,13 @@ public class Cache<T> {
     /**
      * Очистить массив CacheElement
      */
-    public void clear() {
+    public void clear() throws ArrayNullPointerException {
+        log.debug("Log from clear() method of class Cache");
         for (int i = 0; i < capacity; i++) {
             cache[i] = null;
+            if (cache[i] != null) {
+                throw new ArrayNullPointerException("Элемент кэша не равен нулю");
+            }
         }
         System.out.println("Кэш очищен");
     }
@@ -159,13 +185,19 @@ public class Cache<T> {
          */
         @SuppressWarnings("unchecked")
         public boolean equals(Object object) {
+            log.debug("Log from equals(Object) method of class CacheElement");
             if (object == this) {
                 return true;
             }
             if (object == null || object.getClass() != this.getClass()) {
                 return false;
             }
-            CacheElement<T> cacheElement = (CacheElement<T>) object;
+            CacheElement<T> cacheElement = null;
+            try {
+                cacheElement = (CacheElement<T>) object;
+            } catch (CacheElementException e) {
+                log.error ("Exception is: ", e);
+            }
             return element == cacheElement.element &&
                     index == cacheElement.index;
         }

@@ -1,3 +1,5 @@
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 
 /**
@@ -6,7 +8,7 @@ import java.util.Arrays;
  * author DavydovaVV
  * version 1.0 03/28/2021
  */
-
+@Slf4j
 @SuppressWarnings("unchecked")
 public class Storage <T> {
     Object [] storage;
@@ -28,7 +30,7 @@ public class Storage <T> {
         storage = new Object[10];
         cache = new Cache<>(10);
         if (array.length > storage.length) {
-           increaseArray(storage);
+            increaseArray(storage);
         }else{
             System.arraycopy(array, 0, storage, 0, array.length);
         }
@@ -38,7 +40,8 @@ public class Storage <T> {
      * Добавить элемент Т в массив Object
      * @param element элемент, добавляемый в массив Object
      */
-    public void add(T element) {
+    public void add(T element) throws ArrayNullPointerException {
+        log.debug("Log from add(T) method of class Storage");
         if (storage[storage.length-1] != null){
             increaseArray(storage);
             for (int i = 0; i < storage.length; i++) {
@@ -47,7 +50,7 @@ public class Storage <T> {
                     return;
                 }
             }
-        }else{
+        } else {
             for (int i = 0; i < storage.length; i++) {
                 if (storage[i] == null) {
                     storage[i] = element;
@@ -61,8 +64,14 @@ public class Storage <T> {
      * Увеличить размер передаваемого массива
      */
     public Object[] increaseArray (Object[] array) {
+        log.debug("Log from increaseArray(Object[]) method of class Storage");
         Object [] temp = new Object[(int) (1.5 * array.length)];
         System.arraycopy(array, 0, temp, 0, array.length);
+        try {
+            get((int) (1.5 * array.length));
+        } catch (IndexOutOfBoundsException e) {
+            log.error ("Exception is: ", e);
+        }
         return temp;
     }
 
@@ -86,8 +95,14 @@ public class Storage <T> {
      * Очистить массив Object и массив CacheElement объекта Cache
      */
     public void clear() {
+        log.debug("Log from clear() method of class Storage");
         cache.clear();
         Arrays.fill(storage, null);
+        try {
+            getLast();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            log.error ("Exception is: ", e);
+        }
         System.out.println("storage очищен");
     }
 
@@ -112,6 +127,7 @@ public class Storage <T> {
     public T get(int index) {
         if (!cache.isPresent(index)) {
             cache.add((T) storage[index], index);
+            String o = (String)storage[index];
         }
         return (T) storage[index];
     }

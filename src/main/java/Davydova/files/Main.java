@@ -1,6 +1,12 @@
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Main {
+
 	public static void main (String[] args) {
-		Storage<String> storage1 = new Storage<>(new String[]{"5"});
+		log.info("test main");
+
+		Storage<String> storage1 = new Storage<>(new String[]{"5", "1", "2", "3", "4", "6", "7", "8", "9" });
 		storage1.cache.add("3",2);
 		storage1.cache.add("5", 5);
 		storage1.cache.get(2);
@@ -16,6 +22,5 @@ public class Main {
 		storage1.get(0);
 		storage1.get(1);
 		storage1.clear();
-		Storage<String> storage2 = new Storage<>();
 	}
 }
