@@ -17,7 +17,7 @@ public class Main {
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
-                filter.getCommand(scanner.nextLine());
+                filter.getCommand(scanner.nextLine().toUpperCase());
                 System.out.println("If you are ready to exit, type \"exit\" or press Enter to continue");
                 if (scanner.nextLine().equals("exit")) {
                     scanner.close();

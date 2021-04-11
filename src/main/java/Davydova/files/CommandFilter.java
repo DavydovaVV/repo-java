@@ -2,6 +2,7 @@ package Davydova.files;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.util.EnumMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -17,48 +18,18 @@ public class CommandFilter {
      */
     public void getCommand(String command) {
 
-        if (command.equalsIgnoreCase("add")) {
-            ScannerRequest.requestScannerToAdd();
-        } else if (command.equalsIgnoreCase("delete") ||
-                command.equalsIgnoreCase("print")) {
-            ScannerRequest.requestScannerToDeleteOrPrint();
+        try {
+            Command.valueOf(Command.class, command).goToCommandHandler();
         }
-
-        switch (command.toLowerCase()) {
-            case "add":
-                AddToFile add = new AddToFile();
-                try {
-                    add.AddLine();
-                } catch (IOException e) {
-                    log.error("Exception is : ", e);
-                }
-                break;
-            case "delete":
-                DeleteFromFile delete = new DeleteFromFile();
-                try {
-                    delete.deleteLine();
-                } catch (IOException e) {
-                    log.error("Exception is : ", e);
-                }
-                break;
-            case "print":
-                PrintFile print = new PrintFile();
-                try {
-                    print.printLine();
-                } catch (IOException e) {
-                    log.error("Exception is : ", e);
-                }
-                break;
-            default:
-                log.error("Command {} is not found", command);
-                break;
+        catch (IllegalArgumentException e) {
+            log.error("Exception is: ", e);
         }
     }
 
     /**
      * This is the class to add lines to File
      */
-    private class AddToFile {
+    public class AddToFile {
         private File file = new File(FileToRecord.FILE.getValue());
         private String fileName = FileToRecord.FILE.getValue();
         private String lineNo = Add.NUMBER.getNumber();
@@ -66,9 +37,9 @@ public class CommandFilter {
 
         /**
          * Add line in file
-         * @throws IOException
+         * @throws IOException if file does not exits
          */
-        public void AddLine() throws IOException {
+        public void addLine() throws IOException {
 
             if (file.length() == 0) {
                 if (lineNo.equals("")) {
@@ -89,7 +60,7 @@ public class CommandFilter {
 
         /**
          * Add line with no number to file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void addLineToEmptyFile() throws IOException {
 
@@ -106,7 +77,7 @@ public class CommandFilter {
 
         /**
          * Add line of respective number to file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void addLineWithNumberToEmptyFile() throws IOException {
 
@@ -132,7 +103,7 @@ public class CommandFilter {
 
         /**
          * Add line with no number to filled file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void addLineToFilledFile() throws IOException {
 
@@ -153,7 +124,7 @@ public class CommandFilter {
 
         /**
          * Add line of respective number 0 to filled file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void addFirstLineToFilledFile() throws IOException {
 
@@ -179,7 +150,7 @@ public class CommandFilter {
 
         /**
          * Add line of respective number to filled file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void addLineWithNumberToFilledFile() throws IOException {
 
@@ -227,14 +198,14 @@ public class CommandFilter {
     /**
      * This is the class to delete lines from File
      */
-    private class DeleteFromFile {
+    class DeleteFromFile {
         private File file = new File(FileToRecord.FILE.getValue());
         private String fileName = FileToRecord.FILE.getValue();
         private String lineNo = DeleteAndPrint.NUMBER.getNumber();
 
         /**
          * Handle command to delete line from file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void deleteLine() throws IOException {
 
@@ -251,7 +222,7 @@ public class CommandFilter {
 
         /**
          * Delete last line in file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void deleteLastLine() throws IOException {
 
@@ -281,7 +252,7 @@ public class CommandFilter {
 
         /**
          * Delete line of respective number from file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void deleteLineWithNumber() throws IOException {
 
@@ -318,14 +289,14 @@ public class CommandFilter {
     /**
      * This is the class to print lines from File
      */
-    private class PrintFile {
+    class PrintFile {
         private File file = new File(FileToRecord.FILE.getValue());
         private String fileName = FileToRecord.FILE.getValue();
         private String lineNo = DeleteAndPrint.NUMBER.getNumber();
 
         /**
          * Print line of respective number or entire file
-         * @throws IOException
+         * @throws IOException if file does not exist
          */
         public void printLine() throws IOException {
 
@@ -373,19 +344,47 @@ public class CommandFilter {
     }
 }
 
+@Slf4j
+enum Command {
+
+    ADD {
+        public void goToCommandHandler () {
+            AddCommandHandler adder = new AddCommandHandler();
+            try {
+                adder.handle();
+            } catch (IOException e) {
+                log.error("Exception is: ", e);
+            }
+        }
+    },
+
+    DELETE {
+        public void goToCommandHandler () {
+            DeleteCommandHandler deleter = new DeleteCommandHandler();
+            try {
+                deleter.handle();
+            } catch (IOException e) {
+                log.error("Exception is: ", e);
+            }
+        }
+    },
+    PRINT {
+        public void goToCommandHandler () {
+            PrintCommandHandler printer = new PrintCommandHandler();
+            try {
+                printer.handle();
+            } catch (IOException e) {
+                log.error("Exception is: ", e);
+            }
+        }
+    };
+
+    public abstract void goToCommandHandler();
+}
+
 enum FileToRecord {
     FILE;
-    private File file;
     private String value;
-    private String number;
-
-    /**
-     * Getter for field file of enum File
-     * @return
-     */
-    public File getFile() {
-        return file;
-    }
 
     /**
      * Getter for field value of enum File
@@ -396,35 +395,11 @@ enum FileToRecord {
     }
 
     /**
-     * Getter for field number of enum File
-     * @return
-     */
-    public String getNumber() {
-        return number;
-    }
-
-    /**
-     * Setter for field file of enum File
-     * @param file
-     */
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    /**
      * Setter for field value of enum File
      * @param value
      */
     public void setValue(String value) {
         this.value = value;
-    }
-
-    /**
-     * Setter for field number of enum File
-     * @param number
-     */
-    public void setNumber(String number) {
-        this.number = number;
     }
 }
 
@@ -468,16 +443,7 @@ enum Add {
 
 enum DeleteAndPrint {
     NUMBER;
-    private String value;
     private String number;
-
-    /**
-     * Getter for field value of enum DeleteAndPrint
-     * @return
-     */
-    public String getValue() {
-        return value;
-    }
 
     /**
      * Getter for field number of enum DeleteAndPrint
@@ -485,14 +451,6 @@ enum DeleteAndPrint {
      */
     public String getNumber() {
         return number;
-    }
-
-    /**
-     * Setter for field value of enum DeleteAndPrint
-     * @param value
-     */
-    public void setValue(String value) {
-        this.value = value;
     }
 
     /**
