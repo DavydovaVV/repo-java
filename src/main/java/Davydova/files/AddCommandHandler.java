@@ -13,6 +13,10 @@ public class AddCommandHandler extends CommandHandler {
     String lineNo;
     String line;
 
+    /**
+     * Get Map object
+     * @return map
+     */
     public TreeMap<Integer, String> getMap() {
         TreeMap<Integer, String> map = new TreeMap<>();
         map.put(0, fileName);
