@@ -28,8 +28,8 @@ public class Storage <T> {
      * Getter for array of Storage class
      * @return array of Storage class
      */
-    public Storage<T>[] getStorage() {
-        return (Storage<T>[])storage;
+    public Object [] getStorage() {
+        return storage;
     }
 
     /**
@@ -61,7 +61,7 @@ public class Storage <T> {
     public void add(T element) throws ArrayNullPointerException {
         log.debug("Log from add(T) method of class Storage");
         if (storage[storage.length-1] != null){
-            increaseArray(storage);
+            storage = increaseArray(getStorage());
             for (int i = 0; i < storage.length; i++) {
                 if (storage[i] == null) {
                     storage[i] = element;
@@ -80,16 +80,12 @@ public class Storage <T> {
 
     /**
      * Увеличить размер передаваемого массива
+     * @param storage
      */
-    public Object[] increaseArray (Object[] array) {
+    public Object[] increaseArray(Object[] storage) {
         log.debug("Log from increaseArray(Object[]) method of class Storage");
-        Object [] temp = new Object[(int) (1.5 * array.length)];
-        System.arraycopy(array, 0, temp, 0, array.length);
-        try {
-            get((int) (1.5 * array.length));
-        } catch (IndexOutOfBoundsException e) {
-            log.error ("Exception is: ", e);
-        }
+        Object [] temp = new Object[(int) (1.5 * this.storage.length)];
+        System.arraycopy(storage, 0, temp, 0, this.storage.length);
         return temp;
     }
 
@@ -130,16 +126,25 @@ public class Storage <T> {
      */
     public T getLast() {
         for (int i = 0; i < storage.length; i++) {
-            if (storage[i] == null) {
-                return (T)storage[i-1];
+            if ((storage[i] == null) && (i == 0)) {
+                return null;
+            } else if ((storage[i] == null) && (i != 0)) {
+                return (T) storage[i - 1];
+            } else if (storage[i] != null) {
+                if (i == storage.length - 1) {
+                    return (T) storage[storage.length - 1];
+                }
+                continue;
             }
         }
         return null;
     }
 
+
     /**
      * Получить элемент массива CacheElement объекта Cache по индексу или записать в массив CacheElement из массива Object
-     * @param index индекс по которому проверяется наличие элемента массива CacheElement объекта Cache
+     * @param index индекс в массиве класса Storage, по которому проверяется наличие элемента массива CacheElement
+     * объекта Cache
      * @return возвращает элемент массива Object
      */
     public T get(int index) {

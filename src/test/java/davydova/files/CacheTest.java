@@ -3,14 +3,27 @@ package davydova.files;
 import Davydova.files.Cache;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.Test;
 import java.util.Arrays;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @Slf4j
 public class CacheTest<T> {
 
     private Cache<String> cache = new Cache<>(3);
+
+    @Test
+    public void testGetCache() {
+        String[] checkArray = new String[3];
+
+        String expected = Arrays.toString(checkArray);
+        String actual = Arrays.toString(cache.getCache());
+
+        assertEquals(expected, actual);
+    }
 
     @Test
     public void addNewElementToFullCacheElementArray() {
@@ -19,14 +32,14 @@ public class CacheTest<T> {
         cache.add("три", 2);
         cache.add("newElement", 3);
 
-        Assert.assertEquals("newElement", cache.getCache()[2].getElement());
+        assertEquals("newElement", cache.getCache()[2].getElement());
     }
 
     @Test
     public void addNewElementToEmptyCacheElementArray() {
         cache.add("newElement", 0);
 
-        Assert.assertEquals("newElement", cache.getCache()[0].getElement());
+        assertEquals("newElement", cache.getCache()[0].getElement());
     }
 
     @Test
@@ -34,7 +47,7 @@ public class CacheTest<T> {
         cache.add("один", 0);
         cache.add("newElement", 1);
 
-        Assert.assertEquals("newElement", cache.getCache()[1].getElement());
+        assertEquals("newElement", cache.getCache()[1].getElement());
     }
 
     @Test
@@ -47,7 +60,7 @@ public class CacheTest<T> {
         String expected = "два";
         String actual = cache.getCache()[1].getElement();
 
-        Assert.assertNotEquals(expected, actual);
+        assertNotEquals(expected, actual);
     }
 
     @Test
@@ -58,13 +71,13 @@ public class CacheTest<T> {
         boolean expected = true;
         boolean actual = cache.isPresent("presentElement");
 
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test (expected = NullPointerException.class)
     public void isPresentElementInNullCacheElementArray() {
 
-        Assert.assertTrue(null == cache.getCache()[0].getElement());
+        assertTrue(null == cache.getCache()[0].getElement());
     }
 
     @Test
@@ -76,8 +89,7 @@ public class CacheTest<T> {
         boolean expected = true;
         boolean actual = cache.isPresent(5);
 
-        Assert.assertEquals(expected, actual);
-
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -91,8 +103,8 @@ public class CacheTest<T> {
         int expectedIndex = 5;
         int actualIndex = cache.getCache()[1].getIndex();
 
-        Assert.assertEquals(expectedElement, actualResultElement);
-        Assert.assertEquals(expectedIndex, actualIndex);
+        assertEquals(expectedElement, actualResultElement);
+        assertEquals(expectedIndex, actualIndex);
     }
 
     @Test
@@ -107,8 +119,8 @@ public class CacheTest<T> {
         int expectedIndex = 10;
         int actualIndex = cache.getCache()[2].getIndex();
 
-        Assert.assertEquals(expectedElement, actualResultElement);
-        Assert.assertEquals(expectedIndex, actualIndex);
+        assertEquals(expectedElement, actualResultElement);
+        assertEquals(expectedIndex, actualIndex);
     }
 
     @Test(expected = NullPointerException.class)
@@ -124,13 +136,11 @@ public class CacheTest<T> {
         cache.get(0).getElement();
     }
 
-
-
     @Test
     public void testClear() {
         Cache<String> checkCache = new Cache<>(3);
         cache.clear();
 
-        Assert.assertEquals(Arrays.toString(checkCache.getCache()), Arrays.toString(cache.getCache()));
+        assertEquals(Arrays.toString(checkCache.getCache()), Arrays.toString(cache.getCache()));
     }
 }
