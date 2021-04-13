@@ -3,12 +3,11 @@ package davydova.files;
 import Davydova.files.Cache;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 @Slf4j
 public class CacheTest<T> {
@@ -19,10 +18,7 @@ public class CacheTest<T> {
     public void testGetCache() {
         String[] checkArray = new String[3];
 
-        String expected = Arrays.toString(checkArray);
-        String actual = Arrays.toString(cache.getCache());
-
-        assertEquals(expected, actual);
+        assertArrayEquals(checkArray, cache.getCache());
     }
 
     @Test
@@ -71,13 +67,13 @@ public class CacheTest<T> {
         boolean expected = true;
         boolean actual = cache.isPresent("presentElement");
 
-        assertEquals(expected, actual);
+        assertTrue(actual);
     }
 
-    @Test (expected = NullPointerException.class)
+    @Test
     public void isPresentElementInNullCacheElementArray() {
-
-        assertTrue(null == cache.getCache()[0].getElement());
+        assertThrows(NullPointerException.class, () ->
+                assertNull(cache.getCache()[0].getElement()));
     }
 
     @Test
@@ -86,10 +82,7 @@ public class CacheTest<T> {
         cache.add("otherElement", 1);
         cache.isPresent(5);
 
-        boolean expected = true;
-        boolean actual = cache.isPresent(5);
-
-        assertEquals(expected, actual);
+        assertTrue(cache.isPresent(5));
     }
 
     @Test
@@ -123,17 +116,20 @@ public class CacheTest<T> {
         assertEquals(expectedIndex, actualIndex);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getNotPresentElementAndPlaceAtTheEndOfCacheElementArray() {
         cache.add("oneElement", 5);
         cache.add("otherElement", 1);
 
-        cache.get(6).getElement();
+        assertThrows(NullPointerException.class, () ->
+                assertNull(cache.get(6).getElement()));
+
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test//(expected = NullPointerException.class)
     public void getNotPresentElementAndPlaceAtTheEndOfEmptyCacheElementArray() {
-        cache.get(0).getElement();
+        assertThrows(NullPointerException.class, () ->
+                assertNull(cache.get(0).getElement()));
     }
 
     @Test
@@ -141,6 +137,6 @@ public class CacheTest<T> {
         Cache<String> checkCache = new Cache<>(3);
         cache.clear();
 
-        assertEquals(Arrays.toString(checkCache.getCache()), Arrays.toString(cache.getCache()));
+        assertArrayEquals(checkCache.getCache(), cache.getCache());
     }
 }

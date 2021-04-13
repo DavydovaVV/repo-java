@@ -2,7 +2,8 @@ package davydova.files;
 
 import Davydova.files.Cache;
 import Davydova.files.Storage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,10 +21,8 @@ public class StorageTest {
     public void testGetStorageArray() {
         smallStorage.getStorage();
 
-        String expected = Arrays.toString(smallArray);
-        String actual = Arrays.toString((Arrays.copyOfRange(smallStorage.getStorage(), 0, 3)));
-
-        assertEquals(expected, actual);
+        assertArrayEquals(smallArray,
+                Arrays.copyOfRange(smallStorage.getStorage(), 0, 3));
     }
 
 
@@ -40,8 +39,6 @@ public class StorageTest {
     @Test
     public void addElementToFullStorageArray() {
         defaultSizeStorage.add("10");
-
-        System.out.println(Arrays.toString(defaultSizeStorage.getStorage()));
         String expected = "10";
         String actual = defaultSizeStorage.getStorage()[10].toString();
 
@@ -63,7 +60,7 @@ public class StorageTest {
         smallStorage.getCache().add("3", 11);
         smallStorage.delete();
 
-        assertTrue(smallStorage.getStorage()[2] == null);
+        assertNull(smallStorage.getStorage()[2]);
     }
 
     @Test
@@ -73,11 +70,11 @@ public class StorageTest {
 
         defaultSizeStorage.clear();
 
-        assertEquals(Arrays.toString(checkStorage.getStorage()),
-                Arrays.toString(defaultSizeStorage.getStorage()));
+        assertArrayEquals(checkStorage.getStorage(),
+                defaultSizeStorage.getStorage());
 
-        assertEquals(Arrays.toString(checkCache.getCache()),
-                Arrays.toString(defaultSizeStorage.getCache().getCache()));
+        assertArrayEquals(checkCache.getCache(),
+                defaultSizeStorage.getCache().getCache());
     }
 
     @Test
