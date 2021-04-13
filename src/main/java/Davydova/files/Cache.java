@@ -24,6 +24,14 @@ public class Cache<T> {
     }
 
     /**
+     * Getter for array of CacheElement<T> class
+     * @return array of elements of CacheElement<T> class
+     */
+    public CacheElement<T>[] getCache() {
+        return cache;
+    }
+
+    /**
      * Добавить элемент, имеющий аргумент типа Т и индекс, в массив CacheElement
      * @param element элемент массива
      * @param index индекс элемента массива
@@ -151,7 +159,7 @@ public class Cache<T> {
     }
 
     /*Вложенный класс CacheElement*/
-    private class CacheElement<T> {
+    public static class CacheElement<T> {
         private T element;
         private int index;
 

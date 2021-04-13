@@ -25,6 +25,22 @@ public class Storage <T> {
     }
 
     /**
+     * Getter for array of Storage class
+     * @return array of Storage class
+     */
+    public Storage<T>[] getStorage() {
+        return (Storage<T>[])storage;
+    }
+
+    /**
+     * Getter for array of Cache class
+     * @return array of Cache class
+     */
+    public Cache<T> getCache() {
+        return cache;
+    }
+
+    /**
      * Конструктор, который заполняет массив Object
      * @param array массив, который заполняет массив Object
      */
