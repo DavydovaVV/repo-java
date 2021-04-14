@@ -126,14 +126,14 @@ public class CacheTest<T> {
 
     }
 
-    @Test//(expected = NullPointerException.class)
+    @Test
     public void getNotPresentElementAndPlaceAtTheEndOfEmptyCacheElementArray() {
         assertThrows(NullPointerException.class, () ->
                 assertNull(cache.get(0).getElement()));
     }
 
     @Test
-    public void testClear() {
+    public void checkAllElementsOfCacheElementArrayEqualsNull() {
         Cache<String> checkCache = new Cache<>(3);
         cache.clear();
 

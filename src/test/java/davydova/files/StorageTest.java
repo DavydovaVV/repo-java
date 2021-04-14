@@ -46,16 +46,6 @@ public class StorageTest {
     }
 
     @Test
-    public void testIncreaseStorageArray() {
-        Object[] increasedArray = defaultSizeStorage.increaseArray(defaultSizeStorage.getStorage());
-
-        int expected = 15;
-        int actual = increasedArray.length;
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
     public void testDeleteLastElementFromStorageArray() {
         smallStorage.getCache().add("3", 11);
         smallStorage.delete();
