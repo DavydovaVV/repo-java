@@ -54,7 +54,7 @@ public class StorageTest {
     }
 
     @Test
-    public void testClear() {
+    public void checkAllElementsOfCacheAndStorageElementArraysEqualNull() {
         Storage<String> checkStorage = new Storage<>();
         Cache<String> checkCache = new Cache<>(10);
 
