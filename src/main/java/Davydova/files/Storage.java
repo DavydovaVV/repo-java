@@ -81,7 +81,7 @@ public class Storage <T> {
      * Увеличить размер передаваемого массива
      * @param storage
      */
-    public Object[] increaseArray(Object[] storage) {
+    private Object[] increaseArray(Object[] storage) {
         log.debug("Log from increaseArray(Object[]) method of class Storage");
         Object [] temp = new Object[(int) (1.5 * this.storage.length)];
         System.arraycopy(storage, 0, temp, 0, this.storage.length);
