@@ -1,4 +1,4 @@
-package Davydova.files;
+package davydova.files;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 public class Main {
 	
 	public static void main (String[] args) {
-		log.info("My first log message in master branch");
-	
+
 	}
-	
 }
