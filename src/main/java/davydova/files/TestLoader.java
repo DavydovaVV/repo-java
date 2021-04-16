@@ -14,11 +14,13 @@ public class TestLoader {
 
     public static void main(String[] args) {
 
-        File file = new File("D:\\YandexDisk\\Programming\\myapplication");
+        String path = "D:\\YandexDisk\\Programming\\myapplication";
+
+        File file = new File(path);
 
         CustomClassLoader classLoader = new CustomClassLoader();
 
-        Class<?> clazz = classLoader.loadClass(file.getPath(),"HelloWorld");
+        Class<?> clazz = classLoader.loadClass(file.getPath(),"TestClass");
 
         Object obj = null;
 

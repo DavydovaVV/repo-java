@@ -37,15 +37,4 @@ public class CustomClassLoader extends ClassLoader {
         }
         return clazz;
     }
-
-    /**
-     * Find class with the specified binary name
-     * @param name is a name of class
-     * @return instance of class
-     * @throws ClassNotFoundException if the class could not be found
-     */
-    @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        return super.findClass(name);
-    }
 }
