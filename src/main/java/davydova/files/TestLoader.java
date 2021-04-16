@@ -6,19 +6,18 @@ package davydova.files;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 public class TestLoader {
 
-    public static void main(String[] args) {
+    private static final String PATH_TO_CLASS_BE_LOADED = "D:\\YandexDisk\\Programming\\myapplication";
 
-        final String PATH = "D:\\YandexDisk\\Programming\\myapplication";
+    public static void main(String[] args) {
 
         CustomClassLoader classLoader = new CustomClassLoader();
 
-        Class<?> clazz = classLoader.loadClass(PATH,"TestClass");
+        Class<?> clazz = classLoader.loadClass(PATH_TO_CLASS_BE_LOADED,"TestClass");
 
         Object obj = null;
 
