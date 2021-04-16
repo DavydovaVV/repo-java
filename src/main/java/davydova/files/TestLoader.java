@@ -14,9 +14,9 @@ public class TestLoader {
 
     public static void main(String[] args) {
 
-        String path = "D:\\YandexDisk\\Programming\\myapplication";
+        final String PATH = "D:\\YandexDisk\\Programming\\myapplication";
 
-        File file = new File(path);
+        File file = new File(PATH);
 
         CustomClassLoader classLoader = new CustomClassLoader();
 
