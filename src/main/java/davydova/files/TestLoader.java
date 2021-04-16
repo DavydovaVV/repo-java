@@ -16,11 +16,9 @@ public class TestLoader {
 
         final String PATH = "D:\\YandexDisk\\Programming\\myapplication";
 
-        File file = new File(PATH);
-
         CustomClassLoader classLoader = new CustomClassLoader();
 
-        Class<?> clazz = classLoader.loadClass(file.getPath(),"TestClass");
+        Class<?> clazz = classLoader.loadClass(PATH,"TestClass");
 
         Object obj = null;
 
