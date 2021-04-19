@@ -1,4 +1,4 @@
-package java.davydova.files;
+package davydova.files;
 
 import org.junit.jupiter.api.Test;
 
