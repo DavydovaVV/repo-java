@@ -1,4 +1,4 @@
-package davydova.files;
+package java.davydova.files;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,6 @@ public class CacheTest<T> {
         cache.add("presentElement", 5);
         cache.add("otherElement", 1);
 
-        boolean expected = true;
         boolean actual = cache.isPresent("presentElement");
 
         assertTrue(actual);

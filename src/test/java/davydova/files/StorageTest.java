@@ -1,4 +1,4 @@
-package davydova.files;
+package java.davydova.files;
 
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +37,7 @@ public class StorageTest {
     @Test
     public void addElementToFullStorageArray() {
         defaultSizeStorage.add("10");
+
         String expected = "10";
         String actual = defaultSizeStorage.getStorage()[10].toString();
 
@@ -68,9 +69,9 @@ public class StorageTest {
     @Test
     public void getLastNullElementFromEmptyStorageArray() {
         Storage<String> emptyStorage = new Storage<>();
-        System.out.println(emptyStorage.getLast());
 
-        assertNull(emptyStorage.getLast());
+        assertThrows(ArrayNullPointerException.class,
+                emptyStorage::getLast, "Array is empty");
     }
 
     @Test
