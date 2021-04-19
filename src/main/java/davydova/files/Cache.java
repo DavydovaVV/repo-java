@@ -127,11 +127,10 @@ public class Cache<T> {
     public CacheElement<T> get(int index) {
         log.info("Method get(int) of class Cache");
         log.info("Array cache before getting element by index: {}", Arrays.toString(getCache()));
-        CacheElement<T> cacheElement = null;
         if (isPresent(index)) {
             for (int i = 0; i < capacity; i++) {
                 if (cache[i].getIndex() == index) {
-                    cacheElement = cache[i];
+                    CacheElement<T> cacheElement = cache[i];
                     T foundElement = cache[i].getElement();
                     System.arraycopy(cache, i + 1, cache, i, capacity - (i + 1));
                     add(foundElement, index);
