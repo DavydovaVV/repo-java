@@ -1,21 +1,20 @@
-package Davydova.files;
+package davydova.files;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
- * This class Cache<T> includes an array of CacheElements<T> and methods operating with the array
- * author DavydovaVV
- * version 1.0 03/28/2021
+ * This is a class to operate with an array of instances of CacheElement class
  */
 
 @Slf4j
 public class Cache<T> {
+
     private int capacity;
     private CacheElement<T>[] cache;
 
     /**
-     * Конструктор, который создает массив элементов CacheElement
+     * Instantiates Cache class
+     * @param capacity is an array capacity of instances of CacheElement class
      */
     @SuppressWarnings("unchecked")
     public Cache(int capacity) {
@@ -24,20 +23,19 @@ public class Cache<T> {
     }
 
     /**
-     * Getter for array of CacheElement<T> class
-     * @return array of elements of CacheElement<T> class
+     * Get an array of CacheElement class
+     * @return array of instances of CacheElement class
      */
     public CacheElement<T>[] getCache() {
         return cache;
     }
 
     /**
-     * Добавить элемент, имеющий аргумент типа Т и индекс, в массив CacheElement
-     * @param element элемент массива
-     * @param index индекс элемента массива
+     * Add an instance of CacheElement class of type T and index to the array of instances of CacheElement class
+     * @param element is a field of instance of CacheElement class
+     * @param index is a field of instance of CacheElement class
      */
     public void add(T element, int index) {
-        log.debug("Log from method add(T, int) of class Cache");
         if (!isPresent(element)) {
             if (!(cache[capacity-1] == null)) {
                 System.arraycopy(cache, 1, cache, 0, capacity - 1);
@@ -45,11 +43,6 @@ public class Cache<T> {
                 return;
             }
             if (cache[capacity-1] == null) {
-                try {
-                    cache[capacity].getElement();
-                } catch (IndexOutOfBoundsException e) {
-                    log.error ("Exception is: ", e);
-                }
                 for (int i = 0; i < capacity; i++) {
                     if (cache[i] == null) {
                         cache[i] = new CacheElement<>(element, index);
@@ -61,8 +54,8 @@ public class Cache<T> {
     }
 
     /**
-     * Удалить элемент из массива CacheElement
-     * @param element элемент, который нужно удалить
+     * Delete the element from the array of instances of CacheElement class
+     * @param element is a field of instance of CacheElement class
      */
     public void delete(T element) {
         log.debug("Log from delete(T) method of class Cache");
@@ -70,14 +63,6 @@ public class Cache<T> {
             if (cache[i] != null) {
                 if (cache[i].getElement().equals(element)) {
                     System.arraycopy(cache, i + 1, cache, i, capacity - (i + 1));
-                    System.out.println("Элемент удален");
-                    return;
-                }
-            } else {
-                try {
-                    cache[i].getElement();
-                } catch (NullPointerException e) {
-                    log.error ("Exception is: ", e);
                     return;
                 }
             }
@@ -85,9 +70,9 @@ public class Cache<T> {
     }
 
     /**
-     * Проверить наличие элемента в массиве по значению элемента
-     * @param element элемент, который нужно проверить
-     * @return возвращает true или false, есть ли элемент в массиве CacheElement
+     * Check the presence of the instance of CacheElement class in array by the value of element
+     * @param element is a field of instance of CacheElement class
+     * @return true if CacheElement instance is present or false if it is absent
      */
     public boolean isPresent (T element) {
         for (int i = 0; i < capacity; i++) {
@@ -101,9 +86,9 @@ public class Cache<T> {
     }
 
     /**
-     * Проверить наличие элемента в массиве CacheElement по индексу
-     * @param index индекс, который нужно проверить
-     * @return возвращает true или false, есть ли элемент в массиве CacheElement
+     * Check the presence of the instance of CacheElement class in array by the value of index
+     * @param index is an index of CacheElement instance
+     * @return true if CacheElement instance is present or false if it is absent
      */
     public boolean isPresent (int index) {
         for (int i = 0; i < capacity; i++) {
@@ -117,12 +102,11 @@ public class Cache<T> {
     }
 
     /**
-     * Найти элемент массива CacheElement и поместить в конец массива, сдвинув все элементы справа от него на одну позцию влево
-     * @param index индекс, по которому нужно найти элемент
-     * @return возвращает найденный элемент
+     * Shift the array element to the end of the array
+     * @param index index of CacheElement instance
+     * @return found array element
      */
     public CacheElement<T> get(int index) {
-        log.debug("Log from get(int) method of class Cache");
         CacheElement<T> cacheElement = null;
         if (isPresent(index)) {
             for (int i = 0; i < capacity; i++) {
@@ -131,42 +115,32 @@ public class Cache<T> {
                     T foundElement = cache[i].getElement();
                     System.arraycopy(cache, i + 1, cache, i , capacity - (i + 1));
                     add(foundElement, index);
-                    break;
+                    return cacheElement;
                 }
             }
-        } else {
-            try {
-                cacheElement.getIndex();
-            } catch (NullPointerException e) {
-                log.error ("Exception is: ", e);
-            }
         }
-        return (cacheElement);
+        throw new ArrayNullPointerException("There is no element with such an index in the array");
     }
 
     /**
-     * Очистить массив CacheElement
+     * Clear an array of CacheElement instances
      */
-    public void clear() throws ArrayNullPointerException {
-        log.debug("Log from clear() method of class Cache");
+    public void clear() {
         for (int i = 0; i < capacity; i++) {
             cache[i] = null;
-            if (cache[i] != null) {
-                throw new ArrayNullPointerException("Элемент кэша не равен нулю");
-            }
         }
-        System.out.println("Кэш очищен");
+        log.info("Cache is cleared up");
     }
 
-    /*Вложенный класс CacheElement*/
     public static class CacheElement<T> {
-        private T element;
+
         private int index;
+        private T element;
 
         /**
-         * Конструктор CacheElement, в котором инициализируются поля element и index
-         * @param element элемент массива CacheElement
-         * @param index   индекс элемента массива CacheElement
+         * Instantiates CacheElement class
+         * @param element is a variable of CacheElement instance
+         * @param index is a variable of CacheElement instance
          */
         public CacheElement(T element, int index) {
             this.element = element;
@@ -174,40 +148,36 @@ public class Cache<T> {
         }
 
         /**
-         * Получить элемент массива CacheElement
-         * @return возвращает элемент массива CacheElement
+         * Get field element of CacheElement class
+         * @return field element
          */
         public T getElement() {
             return element;
         }
 
         /**
-         * Получить индекс, относящийся к элементу массива CacheElement
-         * @return возвращает индекс, относящийся к элементу массива
+         * Get field index of CacheElement class
+         * @return field index
          */
         public int getIndex() {
             return index;
         }
 
         /**
-         * @param object это передаваемый объект для сравнения
-         * @return возвращает результат сравнения двух объектов
+         * Compare instances if they are equal
+         * @param object is a comparable instance
+         * @return true if they are equal or false is they are not
          */
+        @Override
         @SuppressWarnings("unchecked")
         public boolean equals(Object object) {
-            log.debug("Log from equals(Object) method of class CacheElement");
             if (object == this) {
                 return true;
             }
-            if (object == null || object.getClass() != this.getClass()) {
+            if (!(object instanceof CacheElement)) {
                 return false;
             }
-            CacheElement<T> cacheElement = null;
-            try {
-                cacheElement = (CacheElement<T>) object;
-            } catch (CacheElementException e) {
-                log.error ("Exception is: ", e);
-            }
+            CacheElement<T> cacheElement = (CacheElement<T>) object;
             return element == cacheElement.element &&
                     index == cacheElement.index;
         }

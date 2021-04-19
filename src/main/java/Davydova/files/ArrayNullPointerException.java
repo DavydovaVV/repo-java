@@ -1,15 +1,14 @@
-package Davydova.files;
+package davydova.files;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This is the class of MyUncheckedException
+ * This is a class of my unchecked exception that wraps NullPointerException
  */
 
 @Slf4j
 public class ArrayNullPointerException extends NullPointerException {
     public ArrayNullPointerException(String message) {
         super(message);
-        log.info("an exception has been thrown");
     }
 }

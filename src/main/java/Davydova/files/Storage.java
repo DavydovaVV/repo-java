@@ -1,22 +1,20 @@
-package Davydova.files;
+package davydova.files;
 
 import lombok.extern.slf4j.Slf4j;
 import java.util.Arrays;
 
 /**
- *
- * This is a class Storage<T>
- * author DavydovaVV
- * version 1.0 03/28/2021
+ * This is a class to operate with instances of Storage and Cache class
  */
 @Slf4j
 @SuppressWarnings("unchecked")
 public class Storage <T> {
-    Object [] storage;
-    Cache<T> cache;
+
+    private Object [] storage;
+    private Cache<T> cache;
 
     /**
-     * Дефолтный конструктор, в котором создается массив Object и объект типа Cache
+     * Instantiates arrays of Object and Cache class
      */
     public Storage() {
         this.storage = new Object[10];
@@ -24,24 +22,24 @@ public class Storage <T> {
     }
 
     /**
-     * Getter for array of Storage class
-     * @return array of Storage class
+     * Get the array of Storage class
+     * @return array of instances of Object class
      */
     public Object [] getStorage() {
         return storage;
     }
 
     /**
-     * Getter for array of Cache class
-     * @return array of Cache class
+     * Get the array of Cache class
+     * @return array of instances of Cache class
      */
     public Cache<T> getCache() {
         return cache;
     }
 
     /**
-     * Конструктор, который заполняет массив Object
-     * @param array массив, который заполняет массив Object
+     * Instantiates and fills up the array of Object class
+     * @param array is the array of Object class
      */
     public Storage(T[] array) {
         storage = new Object[10];
@@ -54,11 +52,10 @@ public class Storage <T> {
     }
 
     /**
-     * Добавить элемент Т в массив Object
-     * @param element элемент, добавляемый в массив Object
+     * Add element T to the array of Object class
+     * @param element is the element of the array
      */
-    public void add(T element) throws ArrayNullPointerException {
-        log.debug("Log from add(T) method of class Storage");
+    public void add(T element) {
         if (storage[storage.length-1] != null){
             storage = increaseArray(getStorage());
             for (int i = 0; i < storage.length; i++) {
@@ -78,8 +75,8 @@ public class Storage <T> {
     }
 
     /**
-     * Увеличить размер передаваемого массива
-     * @param storage
+     * Increase the array by 1.5
+     * @param storage is the array to be increased
      */
     private Object[] increaseArray(Object[] storage) {
         log.debug("Log from increaseArray(Object[]) method of class Storage");
@@ -89,7 +86,7 @@ public class Storage <T> {
     }
 
     /**
-     * Удалить последний элемент массива Object
+     * Delete the last element of the array of class Object
      */
     public void delete() {
         T lastElement = getLast();
@@ -105,10 +102,9 @@ public class Storage <T> {
     }
 
     /**
-     * Очистить массив Object и массив CacheElement объекта Cache
+     * Clear up the array of class Object and the array of class Cache
      */
     public void clear() {
-        log.debug("Log from clear() method of class Storage");
         cache.clear();
         Arrays.fill(storage, null);
         try {
@@ -116,12 +112,12 @@ public class Storage <T> {
         } catch (ArrayIndexOutOfBoundsException e) {
             log.error ("Exception is: ", e);
         }
-        System.out.println("storage очищен");
+        log.info("Storage is cleared up");
     }
 
     /**
-     * Получить последний записанный элемент массива Object
-     * @return возвращает последний элемент массива Object
+     * Get the last recorded element of the array of class Object
+     * @return last element of the array
      */
     public T getLast() {
         for (int i = 0; i < storage.length; i++) {
@@ -136,15 +132,15 @@ public class Storage <T> {
                 continue;
             }
         }
-        return null;
+        throw new ArrayNullPointerException("Array is empty");
     }
 
 
     /**
-     * Получить элемент массива CacheElement объекта Cache по индексу или записать в массив CacheElement из массива Object
-     * @param index индекс в массиве класса Storage, по которому проверяется наличие элемента массива CacheElement
-     * объекта Cache
-     * @return возвращает элемент массива Object
+     * Get the array element of class Cache by index of the element from the array of class Object
+     * or record it in the array of class Cache
+     * @param index is the index of the element from array of class Object
+     * @return the value of the element of class Object array
      */
     public T get(int index) {
         if (!cache.isPresent(index)) {
