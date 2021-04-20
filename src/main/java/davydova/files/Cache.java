@@ -1,5 +1,6 @@
 package davydova.files;
 
+import davydova.files.exceptions.ArrayNullPointerException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,15 +25,6 @@ public class Cache<T> {
     public Cache(int capacity) {
         this.capacity = capacity;
         cache = new CacheElement[capacity];
-    }
-
-    /**
-     * Get an array of CacheElement class
-     *
-     * @return array of instances of CacheElement class
-     */
-    public CacheElement<T>[] getCache() {
-        return cache;
     }
 
     /**
@@ -175,24 +167,6 @@ public class Cache<T> {
         public CacheElement(T element, int index) {
             this.element = element;
             this.index = index;
-        }
-
-        /**
-         * Get field element of CacheElement class
-         *
-         * @return field element
-         */
-        public T getElement() {
-            return element;
-        }
-
-        /**
-         * Get field index of CacheElement class
-         *
-         * @return field index
-         */
-        public int getIndex() {
-            return index;
         }
 
         /**

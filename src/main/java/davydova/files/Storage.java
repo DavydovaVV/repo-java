@@ -1,5 +1,6 @@
 package davydova.files;
 
+import davydova.files.exceptions.ArrayNullPointerException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,24 +23,6 @@ public class Storage<T> {
     public Storage() {
         this.storage = new Object[10];
         this.cache = new Cache<>(10);
-    }
-
-    /**
-     * Get the array of Storage class
-     *
-     * @return array of instances of Object class
-     */
-    public Object[] getStorage() {
-        return storage;
-    }
-
-    /**
-     * Get the array of Cache class
-     *
-     * @return array of instances of Cache class
-     */
-    public Cache<T> getCache() {
-        return cache;
     }
 
     /**
@@ -83,18 +66,6 @@ public class Storage<T> {
                 }
             }
         }
-    }
-
-    /**
-     * Increase the array by 1.5
-     *
-     * @param storage is the array to be increased
-     */
-    private Object[] increaseArray(Object[] storage) {
-        log.info("Method increaseArray() of class Storage");
-        Object[] temp = new Object[(int) (1.5 * this.storage.length)];
-        System.arraycopy(storage, 0, temp, 0, this.storage.length);
-        return temp;
     }
 
     /**
@@ -152,7 +123,6 @@ public class Storage<T> {
         throw new ArrayNullPointerException("Array is empty");
     }
 
-
     /**
      * Get the array element of class Cache by index of the element from the array of class Object
      * or record it in the array of class Cache
@@ -168,5 +138,17 @@ public class Storage<T> {
         }
         log.info("Element of storage with index {} is: {}", index, (T) storage[index]);
         return (T) storage[index];
+    }
+
+    /**
+     * Increase the array by 1.5
+     *
+     * @param storage is the array to be increased
+     */
+    private Object[] increaseArray(Object[] storage) {
+        log.info("Method increaseArray() of class Storage");
+        Object[] temp = new Object[(int) (1.5 * this.storage.length)];
+        System.arraycopy(storage, 0, temp, 0, this.storage.length);
+        return temp;
     }
 }

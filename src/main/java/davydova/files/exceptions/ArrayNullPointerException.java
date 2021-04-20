@@ -1,4 +1,4 @@
-package davydova.files;
+package davydova.files.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 

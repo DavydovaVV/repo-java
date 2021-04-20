@@ -1,5 +1,6 @@
 package davydova.files;
 
+import davydova.files.exceptions.ArrayNullPointerException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
