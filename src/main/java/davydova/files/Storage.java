@@ -25,24 +25,6 @@ public class Storage<T> {
     }
 
     /**
-     * Get the array of Storage class
-     *
-     * @return array of instances of Object class
-     */
-    public Object[] getStorage() {
-        return storage;
-    }
-
-    /**
-     * Get the array of Cache class
-     *
-     * @return array of instances of Cache class
-     */
-    public Cache<T> getCache() {
-        return cache;
-    }
-
-    /**
      * Instantiates and fills up the array of Object class
      *
      * @param array is the array of Object class

@@ -27,15 +27,6 @@ public class Cache<T> {
     }
 
     /**
-     * Get an array of CacheElement class
-     *
-     * @return array of instances of CacheElement class
-     */
-    public CacheElement<T>[] getCache() {
-        return cache;
-    }
-
-    /**
      * Add an instance of CacheElement class of type T and index to the array of instances of CacheElement class
      *
      * @param element is a field of instance of CacheElement class
@@ -175,24 +166,6 @@ public class Cache<T> {
         public CacheElement(T element, int index) {
             this.element = element;
             this.index = index;
-        }
-
-        /**
-         * Get field element of CacheElement class
-         *
-         * @return field element
-         */
-        public T getElement() {
-            return element;
-        }
-
-        /**
-         * Get field index of CacheElement class
-         *
-         * @return field index
-         */
-        public int getIndex() {
-            return index;
         }
 
         /**
