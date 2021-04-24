@@ -9,14 +9,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * This is a class to test CheckPojos class
  */
-class CheckPojosTest {
+public class CheckPojosTest {
+
+    CheckPojos pojosCheck = new CheckPojos();
 
     @Test
     public void checkIsPresentEntityAnnotation() {
-        CheckPojos pojosCheck = new CheckPojos();
-
         assertTrue(pojosCheck.checkEntityAnnotation(Person.class));
 
         assertTrue(pojosCheck.checkEntityAnnotation(Cat.class));
+    }
+
+    @Test
+    public void checkValueAnnotationIsPresent() {
+        assertTrue(pojosCheck.checkValueAnnotation(Person.class));
+
+        assertTrue(pojosCheck.checkValueAnnotation(Cat.class));
     }
 }

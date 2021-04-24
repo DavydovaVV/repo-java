@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class CheckPojos {
 
-    private static Logger logger = LoggerFactory.getLogger(PropertyGetter.class);
+    private static final Logger logger = LoggerFactory.getLogger(PropertyGetter.class);
 
     /**
      * Check the instance of Class object if it has annotation Entity
@@ -26,11 +26,11 @@ public class CheckPojos {
      */
     public boolean checkEntityAnnotation(Class<?> object) {
         if (object.isAnnotationPresent(Entity.class)) {
-            logger.info(object + " has annotation Entity: true");
+            logger.info("Entity [" + object.getSimpleName() + "] has annotation Entity: true");
             checkValueHasEntityAnnotation(object);
             return true;
         } else {
-            logger.info(object + " has annotation Entity: false");
+            logger.info("Entity [" + object.getSimpleName() + "] has annotation Entity: false");
             checkValueAnnotation(object);
         }
         return false;
@@ -78,7 +78,8 @@ public class CheckPojos {
             if (method.isAnnotationPresent(Value.class)) {
                 foundAnnotation = true;
                 String methodPath = method.getAnnotation(Value.class).path();
-                if (!methodPath.equals("")) {
+                if ((!methodPath.equals(""))
+                        && (numberOfFieldSets != 0)) {
                     try {
                         bindToValue(properties, methods, object);
                         break;
@@ -100,9 +101,10 @@ public class CheckPojos {
 
         if (!foundAnnotation) {
             try {
-                throw new NoValueAnnotationException("Class does not contain annotation Value");
+                throw new NoValueAnnotationException();
             } catch (NoValueAnnotationException e) {
-                logger.error("Entity [" + object.getSimpleName() + "] has annotation Value: false. Exception is:\n", e);
+                logger.error("Entity [" + object.getSimpleName() + "] has annotation Value: false. " +
+                        "Class does not contain annotation Value");
                 return false;
             }
         }
@@ -121,7 +123,7 @@ public class CheckPojos {
      * @throws NoSuchFieldException
      * @throws ClassNotFoundException
      */
-    private void fillUpFields(Class<?> object, Field[] fields) throws NoSuchMethodException,
+    public void fillUpFields(Class<?> object, Field[] fields) throws NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException,
             ClassNotFoundException {
         Object objectInstance = Class.forName(object.getName()).getConstructor().newInstance();
@@ -158,7 +160,7 @@ public class CheckPojos {
      * @throws IllegalAccessException
      * @throws NoSuchFieldException
      */
-    private void fillUpFields(Class<?> object, Method[] methods) throws ClassNotFoundException,
+    public void fillUpFields(Class<?> object, Method[] methods) throws ClassNotFoundException,
             NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException,
             NoSuchFieldException {
         Object objectInstance = Class.forName(object.getName()).getConstructor().newInstance();
@@ -195,29 +197,25 @@ public class CheckPojos {
      *
      * @param object is an instance of Class class
      */
-    public void checkValueAnnotation(Class<?> object) {
+    public boolean checkValueAnnotation(Class<?> object) {
         Field[] fields = object.getDeclaredFields();
         Method[] methods = object.getMethods();
 
         for (Field field : fields) {
-            if (field.isAnnotationPresent(Value.class)) {
-                try {
-                    throw new IllegalAccessException();
-                } catch (IllegalAccessException e) {
-                    logger.error("Entity [" + object.getSimpleName() + "] has annotation Value: true. Exception is:\n", e);
+            for (Method method : methods) {
+                if ((field.isAnnotationPresent(Value.class))
+                        || (method.isAnnotationPresent(Value.class))) {
+                    try {
+                        throw new IllegalAccessException();
+                    } catch (IllegalAccessException e) {
+                        logger.error("Entity [" + object.getSimpleName() + "] has annotation Value: true, " +
+                                "while annotation Entity is absent");
+                        return true;
+                    }
                 }
             }
         }
-
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(Value.class)) {
-                try {
-                    throw new IllegalAccessException();
-                } catch (IllegalAccessException e) {
-                    logger.error("Entity [" + object.getSimpleName() + "] has annotation Value: true. Exception is:\n", e);
-                }
-            }
-        }
+        return false;
     }
 
     /**
@@ -295,8 +293,7 @@ public class CheckPojos {
                                 try {
                                     method.invoke(objectInstance, Integer.parseInt(properties.get(key).get(i)));
                                 } catch (NumberFormatException e) {
-                                    logger.error("Value is not parsable to int! Default value is assigned."
-                                            + "Exception is:\n", e);
+                                    logger.error("Value is not parsable to int! Default value is assigned");
                                     method.invoke(objectInstance, Integer.parseInt((String) Value.class.getMethod("value")
                                             .getDefaultValue()));
                                 }
