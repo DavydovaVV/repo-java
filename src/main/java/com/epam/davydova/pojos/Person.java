@@ -9,53 +9,19 @@ import com.epam.davydova.annotations.Value;
 @Entity
 public class Person {
 
+    @Value(path = "name")
     private String name;
+    @Value(path = "age")
     private int age;
-
-    /**
-     * Default constructor
-     */
-    public Person() {
-
-    }
-
-    /**
-     * Constructor with all args
-     *
-     * @param name is a field of name
-     * @param age  is a field of age
-     */
-    public Person(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    /**
-     * Getter of field name
-     *
-     * @return value of name
-     */
-    public String getName() {
-        return name;
-    }
 
     /**
      * Setter of field name
      *
      * @param name is a field of name
      */
-    @Value(destination = "D:\\YandexDisk\\Repos\\src\\main\\resources\\Record.txt")
+    @Value(value = "Cris")
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Getter of field age
-     *
-     * @return value of age
-     */
-    public int getAge() {
-        return age;
     }
 
     /**
@@ -63,7 +29,7 @@ public class Person {
      *
      * @param age is a field of age
      */
-    @Value(age = 2)
+    @Value(value = "7")
     public void setAge(int age) {
         this.age = age;
     }

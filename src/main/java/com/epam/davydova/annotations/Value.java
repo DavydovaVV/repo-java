@@ -5,12 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * This is an Annotation class to be applied to fields and methods of POJO classes
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Value {
-    String name() default "random";
+    String value() default "0";
 
-    int age() default 5;
-
-    String destination() default "";
+    String path() default "";
 }

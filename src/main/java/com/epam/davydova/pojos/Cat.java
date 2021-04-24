@@ -1,49 +1,27 @@
 package com.epam.davydova.pojos;
 
+import com.epam.davydova.annotations.Entity;
 import com.epam.davydova.annotations.Value;
 
 /**
  * This is a class of pojo to work with annotations and reflection
  */
+@Entity
 public class Cat {
 
-    @Value
+    @Value(value = "Ginger")
     private String name;
-    @Value(name = "Tom", age = 11)
+    @Value(value = "11")
     private int age;
-
-    /**
-     * Default constructor
-     */
-    public Cat() {
-
-    }
-
-    /**
-     * Getter of field name
-     *
-     * @return value of name
-     */
-    public String getName() {
-        return name;
-    }
 
     /**
      * Setter of field name
      *
      * @param name is a field of name
      */
+    @Value(path = "name")
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Getter of field age
-     *
-     * @return value of age
-     */
-    public int getAge() {
-        return age;
     }
 
     /**
@@ -51,6 +29,7 @@ public class Cat {
      *
      * @param age is a field of age
      */
+    @Value(path = "age")
     public void setAge(int age) {
         this.age = age;
     }
