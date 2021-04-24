@@ -15,15 +15,6 @@ public class Person {
     private int age;
 
     /**
-     * Getter of field name
-     *
-     * @return value of name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * Setter of field name
      *
      * @param name is a field of name

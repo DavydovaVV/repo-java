@@ -13,7 +13,6 @@ public class Main {
             InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         CheckPojos checkPojos = new CheckPojos();
 
-
         Class person = Person.class;
         Field[] personFields = person.getDeclaredFields();
         Method[] personMethods = person.getMethods();

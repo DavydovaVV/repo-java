@@ -10,5 +10,5 @@ name=Sam
 age=15
 name=Din
 
-age=23
+age=+
 name=Mary

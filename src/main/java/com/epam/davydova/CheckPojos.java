@@ -230,9 +230,9 @@ public class CheckPojos {
      * @throws IllegalAccessException
      * @throws NoSuchFieldException
      */
-    private void bindToValue(HashMap<String, ArrayList<String>> properties, Field[] fields, Class<?> object)
+    public String bindToValue(HashMap<String, ArrayList<String>> properties, Field[] fields, Class<?> object)
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException,
-            IllegalAccessException, NoSuchFieldException {
+            NoSuchFieldException, IllegalAccessException {
         Object objectInstance = Class.forName(object.getName()).getConstructor().newInstance();
 
         int numberOfFieldSets = Integer.parseInt(properties.get("numberOfFieldSets").get(0));
@@ -261,6 +261,7 @@ public class CheckPojos {
                 }
             }
         }
+        return object.getSimpleName();
     }
 
     /**
@@ -275,7 +276,7 @@ public class CheckPojos {
      * @throws IllegalAccessException
      * @throws NoSuchFieldException
      */
-    private void bindToValue(HashMap<String, ArrayList<String>> properties, Method[] methods, Class<?> object)
+    public String bindToValue(HashMap<String, ArrayList<String>> properties, Method[] methods, Class<?> object)
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException,
             IllegalAccessException, NoSuchFieldException {
         Object objectInstance = Class.forName(object.getName()).getConstructor().newInstance();
@@ -307,6 +308,7 @@ public class CheckPojos {
                 }
             }
         }
+        return object.getSimpleName();
     }
 }
 
