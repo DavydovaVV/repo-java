@@ -53,7 +53,6 @@ public class FileProcessorWithForLoopTest {
             log.error("Exception is: ", e);
         }
 
-        uuidHashSet.clear();
         new File("TestFile.txt").delete();
     }
 
@@ -62,7 +61,7 @@ public class FileProcessorWithForLoopTest {
         String fileName = "src/main/resources/RecordForTests.txt";
 
         LocalTime localDoomsdayTime = LocalTime.now();
-        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(LocalDate.parse("2024-02-11"),
+        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(LocalDate.parse("2024-02-09"),
                 localDoomsdayTime, ZoneId.of("America/Los_Angeles"));
 
         String expectedResult = zonedDoomsDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a z"));
