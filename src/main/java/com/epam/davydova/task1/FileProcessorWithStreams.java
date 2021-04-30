@@ -2,6 +2,7 @@ package com.epam.davydova.task1;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -21,7 +22,20 @@ import java.util.stream.Stream;
 @Slf4j
 public class FileProcessorWithStreams {
 
-    private final String PATH_TO_FILE_WITH_UUID = "src/main/resources/RecordStream.txt";
+    /**
+     * Record hashset of UUIDs to file
+     */
+    public void recordUuidHashSetToFile(HashSet<UUID> uuidHashSet, String fileName) {
+        try {
+            Files.write(Paths.get(fileName), (Iterable<String>) uuidHashSet
+                    .stream()
+                    .map(UUID::toString)::iterator);
+        } catch (IOException e) {
+            log.error("Exception is: ", e);
+        }
+
+        uuidHashSet.clear();
+    }
 
     /**
      * Fill up hashset by stream
@@ -38,17 +52,31 @@ public class FileProcessorWithStreams {
     }
 
     /**
-     * Record hashset of UUIDs to file
+     * Get date of Dooms Day
      */
-    public void recordUuidHashSetToFile() {
-        try {
-            Files.write(Paths.get(PATH_TO_FILE_WITH_UUID),
-                    (Iterable<String>) fillHashSetWithUuids()
-                            .stream()
-                            .map(UUID::toString)::iterator);
-        } catch (IOException e) {
-            log.error("Exception is:\n", e);
+    public String getDateOfDoomsDay(String fileName) {
+        File file = new File(fileName);
+
+        int encodedMonthsAndDays = 0;
+        if (file.length() != 0) {
+            encodedMonthsAndDays = countUuids(fileName);
+        } else {
+            log.info("File is empty! Fill the file");
         }
+
+        int days = encodedMonthsAndDays % 100;
+        int months = encodedMonthsAndDays / 100;
+
+        LocalDate localDoomsday = LocalDate.now()
+                .plusMonths(months)
+                .plusDays(days);
+        LocalTime localDoomsdayTime = LocalTime.now();
+        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(localDoomsday, localDoomsdayTime, ZoneId.of("America/Los_Angeles"));
+        String doomsDay = zonedDoomsDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a z"));
+
+        log.info("Doomsday is on {}", doomsDay);
+
+        return doomsDay;
     }
 
     /**
@@ -57,9 +85,17 @@ public class FileProcessorWithStreams {
      * @return number of UUIDs
      * @throws IOException
      */
-    public int countUuids() throws IOException {
-        Stream<String> stream = Files.lines(Paths.get(PATH_TO_FILE_WITH_UUID));
-        long number = stream.map(this::getSumOfUuidDigits).filter(integer -> integer > 100).count();
+    private int countUuids(String fileName) {
+        long number = 0;
+        try {
+            number = Files.lines(Paths.get(fileName))
+                    .map(this::getSumOfUuidDigits)
+                    .filter(integer -> integer > 100)
+                    .count();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return (int) number;
     }
 
@@ -79,30 +115,5 @@ public class FileProcessorWithStreams {
             }
         }
         return sumOfDigits;
-    }
-
-    /**
-     * Get date of Dooms Day
-     *
-     * @return Dooms Day in string format
-     */
-    public String getDateOfDoomsDay() {
-        int encodedMonthsAndDays = 0;
-
-        try {
-            encodedMonthsAndDays = countUuids();
-        } catch (IOException e) {
-            log.error("Exception is:\n", e);
-        }
-
-        int days = encodedMonthsAndDays % 100;
-        int months = encodedMonthsAndDays / 100;
-
-        LocalDate today = LocalDate.now().plusMonths(months).plusDays(days);
-        LocalTime todayTime = LocalTime.now();
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(today, todayTime, ZoneId.of("America/Los_Angeles"));
-        String doomsDay = zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a z"));
-        log.info("Doomsday is at {}", doomsDay);
-        return doomsDay;
     }
 }

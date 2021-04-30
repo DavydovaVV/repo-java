@@ -13,18 +13,16 @@ import java.util.*;
 @Slf4j
 public class DetailWithForLoop {
 
-    private final String PATH_TO_FILE_WITH_DETAILS = "src/main/resources/File.txt";
-
     /**
      * Get details from file
      *
-     * @return map with value of fields of class Sausage
+     * @return map with value of fields for class Sausage
      */
-    public Map<String, List<String>> getDetails() {
+    public Map<String, List<String>> getDetails(String fileName) {
         Map<String, List<String>> mapOfDetails = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(
-                new FileReader(PATH_TO_FILE_WITH_DETAILS))) {
+                new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String decodedLine = decodeBase64(line);
@@ -55,8 +53,9 @@ public class DetailWithForLoop {
      * @param encodedLine is a line encoded with Base64 encoding
      * @return decoded line
      */
-    public String decodeBase64(String encodedLine) {
-        byte[] decodedBytes = Base64.getDecoder().decode(encodedLine);
+    private String decodeBase64(String encodedLine) {
+        byte[] decodedBytes = Base64.getDecoder()
+                .decode(encodedLine);
 
         return new String(decodedBytes);
     }

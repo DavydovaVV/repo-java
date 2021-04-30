@@ -8,24 +8,23 @@ import com.epam.davydova.task2.ObjectGenerator;
 import com.epam.davydova.task2.Sausage;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-
 @Slf4j
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         FileProcessorWithForLoop fileProcessorWithForLoop = new FileProcessorWithForLoop();
-        fileProcessorWithForLoop.getDateOfDoomsDay();
+        fileProcessorWithForLoop.recordUuidHashSetToFile(fileProcessorWithForLoop.fillHashSetWithUuids(), "Record.txt");
+        fileProcessorWithForLoop.getDateOfDoomsDay("Record.txt");
 
         FileProcessorWithStreams fileProcessorWithStreams = new FileProcessorWithStreams();
-        fileProcessorWithStreams.getDateOfDoomsDay();
+        fileProcessorWithStreams.getDateOfDoomsDay("Record.txt");
 
         DetailWithStream detailWithStream = new DetailWithStream();
 
         DetailWithForLoop detailWithForLoop = new DetailWithForLoop();
 
         ObjectGenerator objectGenerator = new ObjectGenerator();
-        objectGenerator.generateObject(detailWithStream.getDetails(), Sausage.class);
-        objectGenerator.generateObject(detailWithForLoop.getDetails(), Sausage.class);
+        objectGenerator.generateObject(detailWithStream.getDetails("src/main/resources/File.txt"), Sausage.class);
+        objectGenerator.generateObject(detailWithForLoop.getDetails("src/main/resources/File.txt"), Sausage.class);
     }
 }

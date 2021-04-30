@@ -1,7 +1,6 @@
 # Project exclude paths
 /target/
-/src/main/resources/RecordForLoop.txt
-/src/main/resources/RecordStream.txt
+/Record.txt
 
 ### IntelliJ IDEA ###
 .idea

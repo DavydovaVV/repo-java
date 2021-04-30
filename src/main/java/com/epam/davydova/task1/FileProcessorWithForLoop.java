@@ -18,7 +18,20 @@ import java.util.UUID;
 @Slf4j
 public class FileProcessorWithForLoop implements HashSetUuidFiller {
 
-    private final String PATH_TO_FILE_WITH_UUID = "src/main/resources/RecordForLoop.txt";
+    /**
+     * Record hashset of UUIDs to file
+     */
+    public void recordUuidHashSetToFile(HashSet<UUID> uuidHashSet, String fileName) {
+        try (PrintWriter printWriter = new PrintWriter(fileName)) {
+            for (UUID uuid : uuidHashSet) {
+                printWriter.println(uuid);
+            }
+        } catch (IOException e) {
+            log.error("Exception is: ", e);
+        }
+
+        uuidHashSet.clear();
+    }
 
     /**
      * Fill hashset of UUIDs
@@ -35,16 +48,31 @@ public class FileProcessorWithForLoop implements HashSetUuidFiller {
     }
 
     /**
-     * Record hashset of UUIDs to file
+     * Get date of Dooms Day
      */
-    public void recordUuidHashSetToFile() {
-        try (PrintWriter printWriter = new PrintWriter(PATH_TO_FILE_WITH_UUID)) {
-            for (UUID uuid : fillHashSetWithUuids()) {
-                printWriter.println(uuid);
-            }
-        } catch (IOException e) {
-            log.error("Exception is:\n", e);
+    public String getDateOfDoomsDay(String fileName) {
+        File file = new File(fileName);
+
+        int encodedMonthsAndDays = 0;
+        if (file.length() != 0) {
+            encodedMonthsAndDays = countUuids(fileName);
+        } else {
+            log.info("File is empty! Fill the file");
         }
+
+        int months = encodedMonthsAndDays / 100;
+        int days = encodedMonthsAndDays % 100;
+
+        LocalDate localDoomsday = LocalDate.now()
+                .plusMonths(months)
+                .plusDays(days);
+        LocalTime localDoomsdayTime = LocalTime.now();
+        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(localDoomsday, localDoomsdayTime, ZoneId.of("America/Los_Angeles"));
+        String doomsDay = zonedDoomsDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a z"));
+
+        log.info("Doomsday is on {}", doomsDay);
+
+        return doomsDay;
     }
 
     /**
@@ -52,16 +80,15 @@ public class FileProcessorWithForLoop implements HashSetUuidFiller {
      *
      * @return number of UUIDs
      */
-    private int countUuids() {
+    private int countUuids(String fileName) {
         int count = 0;
-        recordUuidHashSetToFile();
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
-                        new FileInputStream(PATH_TO_FILE_WITH_UUID)))) {
+                        new FileInputStream(fileName)))) {
             String line;
 
-            if (new File(PATH_TO_FILE_WITH_UUID).length() != 0) {
+            if (new File(fileName).length() != 0) {
                 while ((line = reader.readLine()) != null) {
                     if (getSumOfUuidDigits(line) > 100) {
                         count++;
@@ -69,9 +96,8 @@ public class FileProcessorWithForLoop implements HashSetUuidFiller {
                 }
             }
         } catch (IOException e) {
-            log.error("Exception is:\n", e);
+            log.info("File is empty! Fill the file");
         }
-
         return count;
     }
 
@@ -91,25 +117,6 @@ public class FileProcessorWithForLoop implements HashSetUuidFiller {
             }
         }
         return sumOfDigits;
-    }
-
-    /**
-     * Get date of Dooms Day
-     *
-     * @return Dooms Day in string format
-     */
-    public String getDateOfDoomsDay() {
-        int encodedMonthsAndDays = countUuids();
-
-        int months = encodedMonthsAndDays / 100;
-        int days = encodedMonthsAndDays % 100;
-
-        LocalDate today = LocalDate.now().plusMonths(months).plusDays(days);
-        LocalTime todayTime = LocalTime.now();
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(today, todayTime, ZoneId.of("America/Los_Angeles"));
-        String doomsDay = zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a z"));
-        log.info("Doomsday is at {}", doomsDay);
-        return doomsDay;
     }
 }
 

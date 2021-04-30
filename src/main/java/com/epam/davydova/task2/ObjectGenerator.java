@@ -1,10 +1,7 @@
 package com.epam.davydova.task2;
 
-import com.epam.davydova.task2.annotations.Value;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,39 +16,28 @@ public class ObjectGenerator {
      *
      * @param mapOfDetails is a map of the details from file
      * @param object       is an object of Class
+     * @return a number of created objects
      */
-    public void generateObject(Map<String, List<String>> mapOfDetails, Class<?> object) {
-        try {
-            Field[] fields = object.getDeclaredFields();
-            int i = 0;
+    public int generateObject(Map<String, List<String>> mapOfDetails, Class<?> object) {
+        int i = 0;
+        while (i < mapOfDetails.get("type").size()) {
+            String detailType = mapOfDetails.get("type").get(i);
+            String type = detailType.substring(detailType.indexOf("=") + 1);
 
-            while (i < mapOfDetails.get("type").size()) {
-                Object objectInstance = object.getConstructor().newInstance();
-                for (Field field : fields) {
-                    field.setAccessible(true);
-                    String detail = mapOfDetails.get(field.getAnnotation(Value.class).path()).get(i);
-                    String detailValue = detail.substring(detail.indexOf("=") + 1);
+            String detailWeight = mapOfDetails.get("weight").get(i);
+            int weight = Integer.parseInt(detailWeight.substring(detailWeight.indexOf("=") + 1));
 
-                    if (field.getType().equals(String.class)) {
-                        field.set(objectInstance, detailValue);
-                    } else {
-                        try {
-                            field.set(objectInstance, Integer.parseInt(detailValue));
-                        } catch (NumberFormatException e) {
-                            log.error("Value is not parsable! Default value is assigned");
-                            field.set(objectInstance, Integer.parseInt(
-                                    (String) Value.class.getMethod("value").getDefaultValue()));
-                        }
-                    }
-                    log.info("Object [" + i + "] of class [" + object.getSimpleName() + "] " +
-                            field.getName() + " = " + field.get(objectInstance));
-                }
-                System.out.println();
-                i++;
-            }
-        } catch (InstantiationException | IllegalAccessException
-                | InvocationTargetException | NoSuchMethodException e) {
-            log.error("Exception is: ", e);
+            String detailCost = mapOfDetails.get("cost").get(i);
+            long cost = Integer.parseInt(detailCost.substring(detailCost.indexOf("=") + 1));
+
+            Sausage sausage = new Sausage(type, weight, cost);
+
+            log.info("Object [" + (i + 1) + "] of class [" + sausage.getClass().getSimpleName() + "] " +
+                    ", type = " + type +
+                    ", weight = " + weight +
+                    ", cost = " + cost);
+            i++;
         }
+        return i;
     }
 }
