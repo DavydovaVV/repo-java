@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * This is a class to test ObjectGenerator class
  */
 public class ObjectGeneratorTest {
+    private static final String PATH_TO_FILE_WITH_DETAILS = "src/test/resources/File.txt";
 
     ObjectGenerator objectGenerator = new ObjectGenerator();
 
@@ -18,7 +19,7 @@ public class ObjectGeneratorTest {
 
     @Test
     public void generateObject() {
-        Map<String, List<String>> mapOfDetails = detailWithStream.getDetails("src/main/resources/File.txt");
+        Map<String, List<String>> mapOfDetails = detailWithStream.getDetails(PATH_TO_FILE_WITH_DETAILS);
 
         int expectedResult = 10;
         int actualResult = objectGenerator.generateObject(mapOfDetails, Sausage.class);

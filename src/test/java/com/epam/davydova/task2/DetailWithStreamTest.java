@@ -11,12 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * This is a class to test DetailWithStream class
  */
 public class DetailWithStreamTest {
+    private static final String PATH_TO_FILE_WITH_DETAILS = "src/test/resources/File.txt";
 
     DetailWithStream detailWithStream = new DetailWithStream();
 
     @Test
     public void whenGetDetailsThenReturnMapOfDetails() {
-        Map<String, List<String>> mapOfDetails = detailWithStream.getDetails("src/main/resources/File.txt");
+        Map<String, List<String>> mapOfDetails = detailWithStream.getDetails(PATH_TO_FILE_WITH_DETAILS);
 
         int expectedResult = 1306;
 

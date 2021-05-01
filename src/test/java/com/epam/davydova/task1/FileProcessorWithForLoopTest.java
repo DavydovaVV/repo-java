@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 public class FileProcessorWithForLoopTest {
 
+    private static final String PATH_TO_FILE_WITH_UUID = "src/test/resources/RecordForTests.txt";
+
     FileProcessorWithForLoop processorWithForLoop = new FileProcessorWithForLoop();
 
     @Test
@@ -34,6 +36,7 @@ public class FileProcessorWithForLoopTest {
         int actualResult = uuidHashSet.size();
 
         assertEquals(expectedResult, actualResult);
+
         uuidHashSet.clear();
     }
 
@@ -53,19 +56,19 @@ public class FileProcessorWithForLoopTest {
             log.error("Exception is: ", e);
         }
 
+        uuidHashSet.clear();
+
         new File("TestFile.txt").delete();
     }
 
     @Test
     public void whenGetDoomsdayThenReturnDoomsday() {
-        String fileName = "src/main/resources/RecordForTests.txt";
-
         LocalTime localDoomsdayTime = LocalTime.now();
-        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(LocalDate.parse("2024-02-09"),
+        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(LocalDate.parse("2024-02-12"),
                 localDoomsdayTime, ZoneId.of("America/Los_Angeles"));
 
         String expectedResult = zonedDoomsDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a z"));
-        String actualResult = processorWithForLoop.getDateOfDoomsDay(fileName);
+        String actualResult = processorWithForLoop.getDateOfDoomsDay(PATH_TO_FILE_WITH_UUID);
 
         assertEquals(expectedResult, actualResult);
     }

@@ -13,11 +13,12 @@ public class Main {
 
     public static void main(String[] args) {
         FileProcessorWithForLoop fileProcessorWithForLoop = new FileProcessorWithForLoop();
-        fileProcessorWithForLoop.recordUuidHashSetToFile(fileProcessorWithForLoop.fillHashSetWithUuids(), "Record.txt");
-        fileProcessorWithForLoop.getDateOfDoomsDay("Record.txt");
+        fileProcessorWithForLoop.recordUuidHashSetToFile(
+                fileProcessorWithForLoop.fillHashSetWithUuids(), "src/main/resources/Record.txt");
+        fileProcessorWithForLoop.getDateOfDoomsDay("src/main/resources/Record.txt");
 
         FileProcessorWithStreams fileProcessorWithStreams = new FileProcessorWithStreams();
-        fileProcessorWithStreams.getDateOfDoomsDay("Record.txt");
+        fileProcessorWithStreams.getDateOfDoomsDay("src/main/resources/Record.txt");
 
         DetailWithStream detailWithStream = new DetailWithStream();
 

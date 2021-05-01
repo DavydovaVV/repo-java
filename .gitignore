@@ -1,6 +1,6 @@
 # Project exclude paths
 /target/
-/Record.txt
+/src/main/resources/Record.txt
 
 ### IntelliJ IDEA ###
 .idea

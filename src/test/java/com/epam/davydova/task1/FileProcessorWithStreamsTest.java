@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @Slf4j
 public class FileProcessorWithStreamsTest {
+    private static final String PATH_TO_FILE_WITH_UUID = "src/test/resources/RecordForTests.txt";
 
     FileProcessorWithStreams processorWithStreams = new FileProcessorWithStreams();
 
@@ -55,19 +56,18 @@ public class FileProcessorWithStreamsTest {
         }
 
         uuidHashSet.clear();
+
         new File("TestFile.txt").delete();
     }
 
     @Test
     public void whenGetDoomsdayThenReturnDoomsday() {
-        String fileName = "src/main/resources/RecordForTests.txt";
-
         LocalTime localDoomsdayTime = LocalTime.now();
-        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(LocalDate.parse("2024-02-09"),
+        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(LocalDate.parse("2024-02-12"),
                 localDoomsdayTime, ZoneId.of("America/Los_Angeles"));
 
         String expectedResult = zonedDoomsDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a z"));
-        String actualResult = processorWithStreams.getDateOfDoomsDay(fileName);
+        String actualResult = processorWithStreams.getDateOfDoomsDay(PATH_TO_FILE_WITH_UUID);
 
         assertEquals(expectedResult, actualResult);
     }
