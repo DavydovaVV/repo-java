@@ -64,7 +64,7 @@ public class FileProcessorWithForLoopTest {
     @Test
     public void whenGetDoomsdayThenReturnDoomsday() {
         LocalTime localDoomsdayTime = LocalTime.now();
-        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(LocalDate.parse("2024-02-12"),
+        ZonedDateTime zonedDoomsDateTime = ZonedDateTime.of(LocalDate.parse("2024-02-11"),
                 localDoomsdayTime, ZoneId.of("America/Los_Angeles"));
 
         String expectedResult = zonedDoomsDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a z"));
