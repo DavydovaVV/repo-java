@@ -9,11 +9,33 @@
         </layout>
     </appender>
 
-    <logger name="Main" level="debug" additivity="false">
+    <property name="LOG_FILE" value="messenger" />
+    <appender name="FILE-AUDIT"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} - [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_FILE}/archived/info.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>30MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+
+    </appender>
+
+    <logger name="com.epam.davydova.task3" level="info" additivity="false">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE-AUDIT"/>
     </logger>
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>
