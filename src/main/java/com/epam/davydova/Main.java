@@ -9,23 +9,23 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Main {
-	
-	public static void main (String[] args) {
-		RaceConditionDemo raceConditionDemo = new RaceConditionDemo();
-		raceConditionDemo.calculateMismatch();
 
-		DeadLockDemo deadLockDemo = new DeadLockDemo();
-		deadLockDemo.calculateSize();
+    public static void main(String[] args) {
+        RaceConditionDemo raceConditionDemo = new RaceConditionDemo();
+        raceConditionDemo.calculateMismatch();
 
-		RaceConditionSolution raceConditionSolution = new RaceConditionSolution();
-		raceConditionSolution.calculateMismatch();
+        DeadLockDemo deadLockDemo = new DeadLockDemo();
+        deadLockDemo.calculateSize();
 
-		DeadLockSolution deadLockSolution = new DeadLockSolution();
-		deadLockSolution.calculateSize();
+        RaceConditionSolution raceConditionSolution = new RaceConditionSolution();
+        raceConditionSolution.calculateMismatch();
 
-		Chat chat = new Chat();
-		chat.writeMessage(2);
-		chat.readMessage(5);
-		chat.modifyMessage(3);
-	}
+        DeadLockSolution deadLockSolution = new DeadLockSolution();
+        deadLockSolution.calculateSize();
+
+        Chat chat = new Chat();
+        chat.writeMessage(25);
+        chat.readMessage(15);
+        chat.modifyMessage(5);
+    }
 }
