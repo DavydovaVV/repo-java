@@ -3,17 +3,18 @@ package com.epam.davydova.task2;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This is a class to demonstrate DeadLock condition
+ * This is a class to resolve DeadLock
  */
 @Slf4j
 public class DeadLockSolution {
-    private ArrayList<Integer> arrayList1 = new ArrayList<>();
-    private ArrayList<Integer> arrayList2 = new ArrayList<>();
+    private List<Integer> arrayList1 = new ArrayList<>();
+    private List<Integer> arrayList2 = new ArrayList<>();
     private Lock lock1 = new ReentrantLock();
     private Lock lock2 = new ReentrantLock();
 
@@ -21,11 +22,11 @@ public class DeadLockSolution {
      * Calculate ArrayList size
      */
     public void calculateSize() {
-        Thread thread1 = new Thread(() -> {
+        var thread1 = new Thread(() -> {
             fillArrayList(lock1, lock2);
         });
 
-        Thread thread2 = new Thread(() -> {
+        var thread2 = new Thread(() -> {
             fillArrayList(lock2, lock1);
         });
 
@@ -44,10 +45,10 @@ public class DeadLockSolution {
     }
 
     /**
-     * Fill an ArrayList with 1000 random elements
+     * Fill an ArrayList with 10 random elements
      */
     private void fillArrayList(Lock lock1, Lock lock2) {
-        for (int i = 0; i < 1000; i++) {
+        for (var i = 0; i < 10; i++) {
             takeLocks();
 
             try {
@@ -64,8 +65,8 @@ public class DeadLockSolution {
      * Lock both locks for the current thread or unlock one if another was taken
      */
     private void takeLocks() {
-        boolean firstLockPresent = false;
-        boolean secondLockPresent = false;
+        var firstLockPresent = false;
+        var secondLockPresent = false;
 
         while (true) {
             try {
@@ -73,11 +74,28 @@ public class DeadLockSolution {
                 secondLockPresent = lock2.tryLock();
             } finally {
                 if (firstLockPresent && secondLockPresent) {
+                    log.debug("All locks are locked by the current thread");
                     return;
                 } else if (firstLockPresent) {
+                    log.debug("[{}] is locked in DEADLOCK", lock1);
                     lock1.unlock();
+                    log.debug("[{}] is unlocked to be locked by another thread as another lock has been already taken", lock1);
+                    try {
+                        Thread.sleep(1);
+                        log.debug("Current thread is sleeping, so another thread has time to lock");
+                    } catch (InterruptedException e) {
+                        log.error("Exception is: ", e);
+                    }
                 } else if (secondLockPresent) {
+                    log.debug("[{}] is locked in DEADLOCK", lock2);
                     lock2.unlock();
+                    log.debug("[{}] is unlocked to be locked by another thread as another lock has been already taken", lock2);
+                    try {
+                        Thread.sleep(1);
+                        log.debug("Current thread is sleeping, so another thread has time to lock");
+                    } catch (InterruptedException e) {
+                        log.error("Exception is: ", e);
+                    }
                 }
             }
         }

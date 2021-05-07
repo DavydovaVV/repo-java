@@ -18,11 +18,11 @@ public class Chat {
      * @param numberOfThreads is a number of threads that write messages
      */
     public void writeMessage(int numberOfThreads) {
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(numberOfThreads);
+        var service = Executors.newScheduledThreadPool(numberOfThreads);
 
-        for (int i = 0; i < numberOfThreads; i++) {
+        for (var i = 0; i < numberOfThreads; i++) {
             service.scheduleAtFixedRate(() -> {
-                String message = "id:" + new Random().nextInt(100);
+                var message = "id:" + new Random().nextInt(100);
 
                 try {
                     smsQueue.put(message);
@@ -31,12 +31,11 @@ public class Chat {
                 }
 
                 if (smsQueue.size() == 25) {
-                    log.debug("Chat capacity is full");
+                    log.debug("Chat capacity is loaded. Message will not be written until read");
                 }
 
-                log.info("Thread [{}], has written the message \"[{}]\" to the Chat. " +
-                                "Current capacity of the Chat is [{}]",
-                        Thread.currentThread().getId(), message, smsQueue.size());
+                log.info("Thread, has written the message \"[{}]\" to the Chat. " +
+                                "Current capacity of the Chat is [{}]", message, smsQueue.size());
 
             }, 0, 20 + new Random().nextInt(39), TimeUnit.SECONDS);
         }
@@ -48,9 +47,9 @@ public class Chat {
      * @param numberOfThreads is a number of threads that read messages from chat
      */
     public void readMessage(int numberOfThreads) {
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(numberOfThreads);
+        var service = Executors.newScheduledThreadPool(numberOfThreads);
 
-        for (int i = 0; i < numberOfThreads; i++) {
+        for (var i = 0; i < numberOfThreads; i++) {
             service.scheduleAtFixedRate(() -> {
                 String message = "";
 
@@ -60,9 +59,8 @@ public class Chat {
                     log.error("Exception is: ", e);
                 }
 
-                log.info("Thread [{}], has read the message \"[{}]\" from the Chat. " +
-                                "Current capacity of the Chat is [{}]",
-                        Thread.currentThread().getId(), message, smsQueue.size());
+                log.info("Thread, has read the message \"[{}]\" from the Chat. " +
+                                "Current capacity of the Chat is [{}]", message, smsQueue.size());
             }, 0, 30 + new Random().nextInt(19), TimeUnit.SECONDS);
         }
     }
@@ -73,12 +71,12 @@ public class Chat {
      * @param numberOfThreads is a number of threads that modify messages
      */
     public void modifyMessage(int numberOfThreads) {
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(numberOfThreads);
+        var service = Executors.newScheduledThreadPool(numberOfThreads);
 
-        for (int i = 0; i < numberOfThreads; i++) {
+        for (var i = 0; i < numberOfThreads; i++) {
             service.scheduleAtFixedRate(() -> {
-                String message = "";
-                String modifiedMessage = "";
+                var message = "";
+                var modifiedMessage = "";
 
                 try {
                     message = smsQueue.take();
@@ -89,12 +87,12 @@ public class Chat {
                 }
 
                 if (smsQueue.size() == 25) {
-                    log.debug("Chat capacity is full");
+                    log.debug("Chat capacity is loaded. Message will not be written until read");
                 }
 
-                log.info("Thread [{}], has modified the message \"[{}]\" from Chat. " +
+                log.info("Thread, has modified the message \"[{}]\" from Chat. " +
                                 "Modified message is \"[{}]\". Current capacity of the Chat is [{}]",
-                        Thread.currentThread().getId(), message, modifiedMessage, smsQueue.size());
+                        message, modifiedMessage, smsQueue.size());
             }, 0, 65, TimeUnit.SECONDS);
         }
     }

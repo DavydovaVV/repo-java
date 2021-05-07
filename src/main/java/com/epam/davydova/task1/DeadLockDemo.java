@@ -3,17 +3,18 @@ package com.epam.davydova.task1;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This is a class to demonstrate DeadLock condition
+ * This is a class to demonstrate DeadLock
  */
 @Slf4j
 public class DeadLockDemo {
-    private ArrayList<Integer> arrayList1 = new ArrayList<>();
-    private ArrayList<Integer> arrayList2 = new ArrayList<>();
+    private List<Integer> arrayList1 = new ArrayList<>();
+    private List<Integer> arrayList2 = new ArrayList<>();
     private Lock lock1 = new ReentrantLock();
     private Lock lock2 = new ReentrantLock();
 
@@ -21,11 +22,11 @@ public class DeadLockDemo {
      * Calculate ArrayList size
      */
     public void calculateSize() {
-        Thread thread1 = new Thread(() -> {
+        var thread1 = new Thread(() -> {
             fillArrayList(lock1, lock2);
         });
 
-        Thread thread2 = new Thread(() -> {
+        var thread2 = new Thread(() -> {
             fillArrayList(lock2, lock1);
         });
 
@@ -49,14 +50,18 @@ public class DeadLockDemo {
     private void fillArrayList(Lock lock1, Lock lock2) {
         for (int i = 0; i < 1000; i++) {
             lock1.lock();
+            log.debug("[{}] is locked", lock1);
             lock2.lock();
+            log.debug("[{}] is locked", lock2);
 
             try {
                 arrayList1.add(new Random().nextInt(10));
                 arrayList2.add(new Random().nextInt(10));
             } finally {
                 lock1.unlock();
+                log.debug("[{}] is unlocked. It is supposed to be an unreachable statement if a deadlock happened", lock1);
                 lock2.unlock();
+                log.debug("[{}] is unlocked. It is supposed to be an unreachable statement if a deadlock happened", lock2);
             }
         }
     }

@@ -38,7 +38,9 @@ public class RaceConditionSolution {
      */
     private synchronized void fillArrayList() {
         for (int i = 0; i < 1000; i++) {
-            arrayList.add(new Random().nextInt(10));
+            arrayList.add(arrayList.size(), new Random().nextInt(10));
+
+            log.debug("Index [{}] of ArrayList was filled with an element by current thread", arrayList.size() - 1);
         }
     }
 }
