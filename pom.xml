@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.epam.rd.davydova</groupId>
-    <artifactId>repo-java</artifactId>
+    <artifactId>davydova</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>repo-java-api</module>
-        <module>repo-java-db</module>
-        <module>repo-java-impl</module>
+        <module>davydova-api</module>
+        <module>davydova-db</module>
+        <module>davydova-impl</module>
     </modules>
 
     <properties>
@@ -28,17 +28,17 @@
         <dependencies>
             <dependency>
                 <groupId>com.epam.rd.davydova</groupId>
-                <artifactId>repo-java-api</artifactId>
+                <artifactId>davydova-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.epam.rd.davydova</groupId>
-                <artifactId>repo-java-db</artifactId>
+                <artifactId>davydova-db</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.epam.rd.davydova</groupId>
-                <artifactId>repo-java-impl</artifactId>
+                <artifactId>davydova-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
