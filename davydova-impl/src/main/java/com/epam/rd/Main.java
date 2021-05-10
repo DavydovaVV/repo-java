@@ -1,4 +1,4 @@
-package com.epam.rd.davydova;
+package com.epam.rd;
 
 import lombok.extern.slf4j.Slf4j;
 

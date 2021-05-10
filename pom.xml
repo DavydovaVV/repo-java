@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.epam.rd.davydova</groupId>
+    <groupId>com.epam.rd</groupId>
     <artifactId>davydova</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
@@ -27,17 +27,17 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.epam.rd.davydova</groupId>
+                <groupId>com.epam.rd</groupId>
                 <artifactId>davydova-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.epam.rd.davydova</groupId>
+                <groupId>com.epam.rd</groupId>
                 <artifactId>davydova-db</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.epam.rd.davydova</groupId>
+                <groupId>com.epam.rd</groupId>
                 <artifactId>davydova-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
