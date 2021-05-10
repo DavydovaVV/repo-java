@@ -1,4 +1,4 @@
-package com.epam.davydova;
+package com.epam.rd.davydova.assignment;
 
 import lombok.extern.slf4j.Slf4j;
 
