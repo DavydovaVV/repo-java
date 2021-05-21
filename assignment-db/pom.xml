@@ -21,7 +21,7 @@
         <liquibase.schema>davydova</liquibase.schema>
         <liquibase.user>user</liquibase.user>
         <liquibase.password>pass</liquibase.password>
-        <liquibase.changelogfile>src\main\resources\epamcourses-changelog.xml</liquibase.changelogfile>
+        <liquibase.changelogfile>src\main\resources\database_assignment_changelog.xml</liquibase.changelogfile>
     </properties>
 
     <dependencies>
@@ -83,13 +83,6 @@
                     <driver>org.postgresql.Driver</driver>
                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generateChangeLog</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
