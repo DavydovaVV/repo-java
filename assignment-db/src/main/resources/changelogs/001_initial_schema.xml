@@ -53,7 +53,7 @@
             <column name="OrderDate" type="java.sql.timestamp">
                 <constraints nullable="false"/>
             </column>
-            <column name="TotalAmount" type="decimal(12,2)">
+            <column name="TotalAmount" type="java.math.BigDecimal(12,2)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -74,7 +74,7 @@
                              foreignKeyName="fk_supplier_product" referencedTableName="Supplier" referencedColumnNames="SupplierId"
                              unique="true" uniqueConstraintName="supplier_id_ix1"/>
             </column>
-            <column name="UnitPrice" type="decimal(12,2)">
+            <column name="UnitPrice" type="java.math.BigDecimal(12,2)">
                 <constraints nullable="true"/>
             </column>
             <column name="IsDisconnected" type="boolean">
@@ -87,11 +87,13 @@
         <createTable tableName="OrderProduct">
             <column name="OrderId" type="int">
                 <constraints nullable="false"
-                             primaryKey="true" primaryKeyName="pk_order_product"/>
+                             primaryKey="true" primaryKeyName="pk_order_product"
+                             foreignKeyName="fk_order_order_product" referencedTableName="Order" referencedColumnNames="OrderId"/>
             </column>
             <column name="ProductId" type="int">
                 <constraints nullable="false"
-                             primaryKey="true" primaryKeyName="pk_order_product"/>
+                             primaryKey="true" primaryKeyName="pk_order_product"
+                             foreignKeyName="fk_product_order_product" referencedTableName="Product" referencedColumnNames="ProductId"/>
             </column>
         </createTable>
     </changeSet>
