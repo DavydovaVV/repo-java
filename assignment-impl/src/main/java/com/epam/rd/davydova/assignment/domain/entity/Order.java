@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * This is a class that defines Order
@@ -19,19 +20,23 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderId;
 
-    @OneToOne(mappedBy = "order")
-    private OrderProduct orderProduct;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "orderSet")
+    @JoinTable(
+            name = "order_product",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private Set<Product> productSet;
 
-    @Column(unique = true)
+    @Column(unique = true, columnDefinition = "varchar(10)")
     private String orderNumber;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(nullable = false, name = "customer_id")
     private Customer customer;
 
     @Column(nullable = false)
     private Date orderDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 }

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * This is a class that defines Supplier
@@ -17,9 +18,12 @@ public class Supplier implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int supplierId;
 
-    @Column(unique = true, nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "supplier")
+    private Set<Product> productSet;
+
+    @Column(unique = true, nullable = false, columnDefinition = "varchar(40)")
     private String companyName;
 
-    @Column
+    @Column(columnDefinition = "varchar(20)")
     private String phone;
 }

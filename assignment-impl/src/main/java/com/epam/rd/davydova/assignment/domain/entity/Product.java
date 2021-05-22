@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Set;
 
 /**
  * This is a class that defines Product
@@ -18,17 +19,17 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
 
-    @OneToOne(mappedBy = "order")
-    private OrderProduct orderProduct;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "productSet")
+    private Set<Order> orderSet;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, columnDefinition = "varchar(50)")
     private String productName;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(unique = true, nullable = false, name = "supplier_id")
     private Supplier supplier;
 
-    @Column
+    @Column(precision = 12, scale = 2)
     private BigDecimal unitPrice;
 
     @Column(nullable = false)
