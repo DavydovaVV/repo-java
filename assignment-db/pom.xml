@@ -18,7 +18,7 @@
         <liquibase.port>5432</liquibase.port>
         <liquibase.db>epamcourses</liquibase.db>
         <liquibase.schema>davydova</liquibase.schema>
-        <liquibase.user>user</liquibase.user>
+        <liquibase.user>usr</liquibase.user>
         <liquibase.password>pass</liquibase.password>
         <liquibase.changelogfile>src\main\resources\database_assignment_changelog.xml</liquibase.changelogfile>
     </properties>
