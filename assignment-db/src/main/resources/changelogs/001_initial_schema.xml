@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd"
+                   logicalFilePath="001_initial_schema.xml">
+    <changeSet id="21-05-2021 Create table Supplier" author="Victoria_Davydova">
+        <createTable tableName="supplier">
+            <column autoIncrement="true" name="supplier_id" type="int">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_supplier"/>
+            </column>
+            <column name="company_name" type="varchar(40)">
+                <constraints nullable="false"
+                             unique="true" uniqueConstraintName="company_name_ix1"/>
+            </column>
+            <column name="phone" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="21-05-2021 Create table Customer" author="Victoria_Davydova">
+        <createTable tableName="customer">
+            <column autoIncrement="true" name="customer_id" type="int">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_customer"/>
+            </column>
+            <column name="customer_name" type="varchar(50)">
+                <constraints nullable="false"
+                             unique="true" uniqueConstraintName="customer_name_ix1"/>
+            </column>
+            <column name="phone" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="21-05-2021 Create table Order" author="Victoria_Davydova">
+        <createTable tableName="order">
+            <column autoIncrement="true" name="order_id" type="int">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_order"/>
+            </column>
+            <column name="order_number" type="varchar(10)">
+                <constraints nullable="true"
+                             unique="true" uniqueConstraintName="order_number_ix1"/>
+            </column>
+            <column name="customer_id" type="int">
+                <constraints nullable="false"
+                             foreignKeyName="fk_customer_order" referencedTableName="customer" referencedColumnNames="customer_id"/>
+            </column>
+            <column name="order_date" type="java.sql.timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_amount" type="java.math.BigDecimal(12,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="21-05-2021 Create table Product" author="Victoria_Davydova">
+        <createTable tableName="product">
+            <column autoIncrement="true" name="product_id" type="int">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_product"/>
+            </column>
+            <column name="product_name" type="varchar(50)">
+                <constraints nullable="false"
+                             unique="true" uniqueConstraintName="product_name_ix1"/>
+            </column>
+            <column name="supplier_id" type="int">
+                <constraints nullable="false"
+                             foreignKeyName="fk_supplier_product" referencedTableName="supplier" referencedColumnNames="supplier_id"
+                             unique="true" uniqueConstraintName="supplier_id_ix1"/>
+            </column>
+            <column name="unit_price" type="java.math.BigDecimal(12,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_discontinued" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="21-05-2021 Create table OrderId" author="Victoria_Davydova">
+        <createTable tableName="order_product">
+            <column name="order_id" type="int">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_order_product"
+                             foreignKeyName="fk_order_order_product" referencedTableName="order" referencedColumnNames="order_id"/>
+            </column>
+            <column name="product_id" type="int">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_order_product"
+                             foreignKeyName="fk_product_order_product" referencedTableName="product" referencedColumnNames="product_id"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
