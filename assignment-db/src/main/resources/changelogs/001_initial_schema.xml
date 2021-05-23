@@ -77,7 +77,7 @@
             <column name="unit_price" type="java.math.BigDecimal(12,2)">
                 <constraints nullable="true"/>
             </column>
-            <column name="is_disconnected" type="boolean">
+            <column name="is_discontinued" type="boolean">
                 <constraints nullable="false"/>
             </column>
         </createTable>

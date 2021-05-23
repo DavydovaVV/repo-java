@@ -11,8 +11,10 @@
             <property name="javax.persistence.jdbc.user" value="usr"/>
             <property name="javax.persistence.jdbc.password" value="pass"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.physical_naming_strategy"
+                      value="com.vladmihalcea.hibernate.type.util.CamelCaseToSnakeCaseNamingStrategy"/>
         </properties>
     </persistence-unit>
 </persistence>
