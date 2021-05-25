@@ -4,8 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a class that defines Product
@@ -20,8 +20,8 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
 
-    @ManyToMany(mappedBy = "productSet")
-    private Set<Order> orderSet = new HashSet<>();
+    @ManyToMany(mappedBy = "productList", cascade = CascadeType.REMOVE)
+    private List<Order> orderList = new ArrayList<>();
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(50)")
     private String productName;
@@ -36,14 +36,12 @@ public class Product {
     @Column(nullable = false)
     private boolean isDiscontinued;
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "productId=" + productId +
-                ", productName='" + productName + '\'' +
-                ", supplier=" + supplier +
-                ", unitPrice=" + unitPrice +
-                ", isDiscontinued=" + isDiscontinued +
-                '}';
+    /**
+     * Add order to list
+     *
+     * @param order order
+     */
+    public void addToList(Order order) {
+        orderList.add(order);
     }
 }

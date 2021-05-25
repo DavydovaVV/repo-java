@@ -1,20 +1,15 @@
 package com.epam.rd.davydova.assignment.domain.entity;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a class that defines Customer
  */
 @Data
-@RequiredArgsConstructor
-@NoArgsConstructor
 @Entity
 @NamedQuery(name = Customer.FIND_CUSTOMER_BY_NAME, query = "SELECT c FROM Customer c WHERE c.customerName = ?1")
 public class Customer {
@@ -24,22 +19,21 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int customerId;
 
-    @OneToMany(mappedBy = "customer")
-    private Set<Order> orderSet = new HashSet<>();
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    private List<Order> orderList = new ArrayList<>();
 
-    @NonNull
     @Column(unique = true, nullable = false, columnDefinition = "varchar(50)")
     private String customerName;
 
     @Column(columnDefinition = "varchar(20)")
     private String phone;
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "customerId=" + customerId +
-                ", customerName='" + customerName + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
+    /**
+     * Add order to list
+     *
+     * @param order order
+     */
+    public void addToList(Order order) {
+        orderList.add(order);
     }
 }
