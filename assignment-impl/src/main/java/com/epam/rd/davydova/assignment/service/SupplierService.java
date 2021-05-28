@@ -125,4 +125,11 @@ public class SupplierService {
             entityManager.close();
         }
     }
+
+    /**
+     * Close EntityManagerFactory
+     */
+    public void close() {
+        ENTITY_MANAGER_FACTORY.close();
+    }
 }

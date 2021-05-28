@@ -27,13 +27,4 @@ public class Customer {
 
     @Column(columnDefinition = "varchar(20)")
     private String phone;
-
-    /**
-     * Add order to list
-     *
-     * @param order order
-     */
-    public void addToList(Order order) {
-        orderList.add(order);
-    }
 }

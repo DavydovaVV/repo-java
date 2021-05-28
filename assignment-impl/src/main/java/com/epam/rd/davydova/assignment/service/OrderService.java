@@ -147,4 +147,11 @@ public class OrderService {
             entityManager.close();
         }
     }
+
+    /**
+     * Close EntityManagerFactory
+     */
+    public void close() {
+        ENTITY_MANAGER_FACTORY.close();
+    }
 }

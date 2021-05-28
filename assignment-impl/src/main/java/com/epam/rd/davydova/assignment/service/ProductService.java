@@ -133,4 +133,11 @@ public class ProductService {
             entityManager.close();
         }
     }
+
+    /**
+     * Close EntityManagerFactory
+     */
+    public void close() {
+        ENTITY_MANAGER_FACTORY.close();
+    }
 }

@@ -29,13 +29,4 @@ public class Supplier {
 
     @Column(columnDefinition = "varchar(20)")
     private String phone;
-
-    /**
-     * Add product to list
-     *
-     * @param product product
-     */
-    public void addToList(Product product) {
-        productList.add(product);
-    }
 }
