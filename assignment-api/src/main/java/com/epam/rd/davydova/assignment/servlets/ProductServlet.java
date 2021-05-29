@@ -4,12 +4,13 @@ import com.epam.rd.davydova.assignment.domain.service.ProductService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-
-import static jakarta.servlet.http.HttpServletResponse.SC_OK;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is a class of ProductServlet
@@ -21,13 +22,6 @@ public class ProductServlet extends HttpServlet {
     private ProductService productService = new ProductService();
 
     /**
-     * Default constructor
-     */
-    public ProductServlet() {
-        super();
-    }
-
-    /**
      * Post product to database
      *
      * @param request  request
@@ -35,25 +29,12 @@ public class ProductServlet extends HttpServlet {
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
-        var productName = request.getParameter("product_name");
-        var supplierId = Integer.parseInt(request.getParameter("supplier_id"));
-        var unitPrice = Double.parseDouble(request.getParameter("unit_price"));
-        productService.add(productName, supplierId, unitPrice);
+        var jsonRequest = readRequest(request).get();
+        var productName = jsonRequest.optString("product_name");
+        var supplierId = Integer.parseInt(jsonRequest.optString("supplier_id"));
+        var unitPrice = Double.parseDouble(jsonRequest.optString("unit_price"));
 
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
-        var product = productService.findBy(productName);
-        if (product.isPresent()) {
-            var jsonProduct = new JSONObject(product.get());
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(jsonProduct);
-                log("Product is added");
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Product is not present");
-        }
+        productService.add(productName, supplierId, unitPrice);
     }
 
     /**
@@ -65,8 +46,8 @@ public class ProductServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         var productId = request.getParameter("product_id");
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
+
+        setTypeAndEncoding(response);
 
         if (productId != null) {
             var product = productService.findBy(Integer.parseInt(productId));
@@ -103,24 +84,11 @@ public class ProductServlet extends HttpServlet {
      */
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) {
-        var productId = request.getParameter("product_id");
-        var isDiscontinued = Boolean.parseBoolean(request.getParameter("is_discontinued"));
+        var jsonRequest = readRequest(request).get();
+        var productId = jsonRequest.optString("product_id");
+        var isDiscontinued = Boolean.parseBoolean(jsonRequest.optString("is_discontinued"));
 
         productService.update(Integer.parseInt(productId), isDiscontinued);
-
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
-        var product = productService.findBy(productId);
-        if (product.isPresent()) {
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(SC_OK);
-                log("Product is updated");
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Product is not present");
-        }
     }
 
     /**
@@ -131,21 +99,38 @@ public class ProductServlet extends HttpServlet {
      */
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) {
-        var productId = request.getParameter("product_id");
+        var jsonRequest = readRequest(request).get();
+        var productId = jsonRequest.optString("product_id");
 
         productService.delete(Integer.parseInt(productId));
+    }
 
+    /**
+     * Read result from InputStream
+     *
+     * @param request request
+     * @return Optional of resulted string
+     */
+    private Optional<JSONObject> readRequest(HttpServletRequest request) {
+        try {
+            var inputStream = request.getInputStream();
+            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            JSONObject jsonObject = new JSONObject(result);
+
+            return Optional.of(jsonObject);
+        } catch (IOException e) {
+            log("Exception is: ", e);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Set type and encoding of response
+     *
+     * @param response response
+     */
+    private void setTypeAndEncoding(HttpServletResponse response) {
         response.setContentType(CONTENT_TYPE);
         response.setCharacterEncoding(ENCODING);
-        var product = productService.findBy(productId);
-        if (product.isEmpty()) {
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(SC_OK);
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Product is deleted");
-        }
     }
 }

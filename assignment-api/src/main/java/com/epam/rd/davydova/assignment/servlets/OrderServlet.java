@@ -4,12 +4,13 @@ import com.epam.rd.davydova.assignment.domain.service.OrderService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-
-import static jakarta.servlet.http.HttpServletResponse.SC_OK;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is a class of OrderServlet
@@ -21,13 +22,6 @@ public class OrderServlet extends HttpServlet {
     private OrderService orderService = new OrderService();
 
     /**
-     * Default constructor
-     */
-    public OrderServlet() {
-        super();
-    }
-
-    /**
      * Post order to database
      *
      * @param request  request
@@ -35,27 +29,13 @@ public class OrderServlet extends HttpServlet {
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
-        var productId = Integer.parseInt(request.getParameter("product_id"));
-        var customerId = Integer.parseInt(request.getParameter("customer_id"));
-        var orderNumber = request.getParameter("order_number");
-        var numberOfProducts = Integer.parseInt(request.getParameter("number_of_products"));
+        var jsonRequest = readRequest(request).get();
+        var productId = Integer.parseInt(jsonRequest.optString("product_id"));
+        var customerId = Integer.parseInt(jsonRequest.optString("customer_id"));
+        var orderNumber = jsonRequest.optString("order_number");
+        var numberOfProducts = Integer.parseInt(jsonRequest.optString("number_of_products"));
 
         orderService.add(productId, customerId, orderNumber, numberOfProducts);
-
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
-        var order = orderService.findBy(orderNumber);
-        if (order.isPresent()) {
-            var jsonOrder = new JSONObject(order.get());
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(jsonOrder);
-                log("Order is added");
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Order is not present");
-        }
     }
 
     /**
@@ -67,8 +47,8 @@ public class OrderServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         var orderId = request.getParameter("order_id");
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
+
+        setTypeAndEncoding(response);
 
         if (orderId != null) {
             var order = orderService.findBy(Integer.parseInt(orderId));
@@ -105,26 +85,13 @@ public class OrderServlet extends HttpServlet {
      */
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) {
-        var orderId = Integer.parseInt(request.getParameter("order_id"));
-        var productId = Integer.parseInt(request.getParameter("product_id"));
-        var orderNumber = request.getParameter("order_number");
-        var numberOfProducts = Integer.parseInt(request.getParameter("number_of_products"));
+        var jsonRequest = readRequest(request).get();
+        var orderId = Integer.parseInt(jsonRequest.optString("order_id"));
+        var productId = Integer.parseInt(jsonRequest.optString("product_id"));
+        var orderNumber = jsonRequest.optString("order_number");
+        var numberOfProducts = Integer.parseInt(jsonRequest.optString("number_of_products"));
 
         orderService.update(orderId, orderNumber, productId, numberOfProducts);
-
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
-        var order = orderService.findBy(orderId);
-        if (order.isPresent()) {
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(SC_OK);
-                log("Order is updated");
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Order is not present");
-        }
     }
 
     /**
@@ -135,21 +102,38 @@ public class OrderServlet extends HttpServlet {
      */
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) {
-        var orderId = request.getParameter("order_id");
+        var jsonRequest = readRequest(request).get();
+        var orderId = jsonRequest.optString("order_id");
 
         orderService.delete(Integer.parseInt(orderId));
+    }
 
+    /**
+     * Read result from InputStream
+     *
+     * @param request request
+     * @return Optional of resulted string
+     */
+    private Optional<JSONObject> readRequest(HttpServletRequest request) {
+        try {
+            var inputStream = request.getInputStream();
+            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            JSONObject jsonObject = new JSONObject(result);
+
+            return Optional.of(jsonObject);
+        } catch (IOException e) {
+            log("Exception is: ", e);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Set type and encoding of response
+     *
+     * @param response response
+     */
+    private void setTypeAndEncoding(HttpServletResponse response) {
         response.setContentType(CONTENT_TYPE);
         response.setCharacterEncoding(ENCODING);
-        var order = orderService.findBy(orderId);
-        if (order.isEmpty()) {
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(SC_OK);
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Order is deleted");
-        }
     }
 }

@@ -4,28 +4,24 @@ import com.epam.rd.davydova.assignment.domain.service.CustomerService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-
-import static jakarta.servlet.http.HttpServletResponse.SC_OK;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is a class of CustomerServlet
  */
+@Slf4j
 public class CustomerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
     private CustomerService customerService = new CustomerService();
-
-    /**
-     * Default constructor
-     */
-    public CustomerServlet() {
-        super();
-    }
 
     /**
      * Post customer to database
@@ -35,24 +31,11 @@ public class CustomerServlet extends HttpServlet {
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
-        var customerName = request.getParameter("customer_name");
-        var phone = request.getParameter("phone");
-        customerService.add(customerName, phone);
+        var jsonRequest = readRequest(request).get();
+        var customerName = jsonRequest.optString("customer_name");
+        var phone = jsonRequest.optString("phone");
 
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
-        var customer = customerService.findBy(customerName);
-        if (customer.isPresent()) {
-            var jsonCustomer = new JSONObject(customer.get());
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(jsonCustomer);
-                log("Customer is added");
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Customer is not present");
-        }
+        customerService.add(customerName, phone);
     }
 
     /**
@@ -64,8 +47,8 @@ public class CustomerServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         var customerId = request.getParameter("customer_id");
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
+
+        setTypeAndEncoding(response);
 
         if (customerId != null) {
             var customer = customerService.findBy(Integer.parseInt(customerId));
@@ -102,24 +85,11 @@ public class CustomerServlet extends HttpServlet {
      */
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) {
-        var customerId = request.getParameter("customer_id");
-        var phone = request.getParameter("phone");
+        var jsonRequest = readRequest(request).get();
+        var customerId = jsonRequest.optString("customer_id");
+        var phone = jsonRequest.optString("phone");
 
         customerService.update(Integer.parseInt(customerId), phone);
-
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
-        var customer = customerService.findBy(customerId);
-        if (customer.isPresent()) {
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(SC_OK);
-                log("Customer is updated");
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Customer is not present");
-        }
     }
 
     /**
@@ -130,21 +100,38 @@ public class CustomerServlet extends HttpServlet {
      */
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) {
-        var customerId = request.getParameter("customer_id");
+        var jsonRequest = readRequest(request).get();
+        var customerId = jsonRequest.optString("customer_id");
 
         customerService.delete(Integer.parseInt(customerId));
+    }
 
+    /**
+     * Read result from InputStream
+     *
+     * @param request request
+     * @return Optional of resulted string
+     */
+    private Optional<JSONObject> readRequest(HttpServletRequest request) {
+        try {
+            var inputStream = request.getInputStream();
+            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            JSONObject jsonObject = new JSONObject(result);
+
+            return Optional.of(jsonObject);
+        } catch (IOException e) {
+            log("Exception is: ", e);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Set type and encoding of response
+     *
+     * @param response response
+     */
+    private void setTypeAndEncoding(HttpServletResponse response) {
         response.setContentType(CONTENT_TYPE);
         response.setCharacterEncoding(ENCODING);
-        var customer = customerService.findBy(customerId);
-        if (customer.isEmpty()) {
-            try (var printWriter = response.getWriter()) {
-                printWriter.print(SC_OK);
-            } catch (IOException e) {
-                log("Exception is: ", e);
-            }
-        } else {
-            log("Customer is deleted");
-        }
     }
 }
