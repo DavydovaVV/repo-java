@@ -9,6 +9,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -79,6 +80,65 @@ public class ProductService {
                 transaction.rollback();
             }
             log.error("Product is not found. Exception is: ", e);
+        } finally {
+            entityManager.close();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Find product by Id
+     *
+     * @param productId product Id
+     * @return Optional of product instance
+     */
+    public Optional<Product> findBy(int productId) {
+        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            var product = entityManager.find(Product.class, productId);
+            transaction.commit();
+            var foundProduct = Optional.ofNullable(product);
+            if (foundProduct.isPresent()) {
+                log.info("Product is found");
+                return foundProduct;
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            log.error("Product is not found. Exception is: ", e);
+        } finally {
+            entityManager.close();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Find all products
+     *
+     * @return Optional of List of products
+     */
+    public Optional<List> findAll() {
+        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            var productList = entityManager.createNamedQuery(Product.FIND_ALL_PRODUCTS).getResultList();
+            transaction.commit();
+            var foundProductList = Optional.ofNullable(productList);
+            if (foundProductList.isPresent()) {
+                log.info("List of products is found");
+                return foundProductList;
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            log.error("List of products is not found. Exception is: ", e);
         } finally {
             entityManager.close();
         }

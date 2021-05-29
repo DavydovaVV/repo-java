@@ -1,6 +1,6 @@
 package com.epam.rd.davydova.assignment.servlets;
 
-import com.epam.rd.davydova.assignment.domain.service.CustomerService;
+import com.epam.rd.davydova.assignment.domain.service.ProductService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,139 +12,140 @@ import java.io.IOException;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 /**
- * This is a class of CustomerServlet
+ * This is a class of ProductServlet
  */
-public class CustomerServlet extends HttpServlet {
+public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
-    private CustomerService customerService = new CustomerService();
+    private ProductService productService = new ProductService();
 
     /**
      * Default constructor
      */
-    public CustomerServlet() {
+    public ProductServlet() {
         super();
     }
 
     /**
-     * Post customer to database
+     * Post product to database
      *
      * @param request  request
      * @param response response
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
-        var customerName = request.getParameter("customer_name");
-        var phone = request.getParameter("phone");
-        customerService.add(customerName, phone);
+        var productName = request.getParameter("product_name");
+        var supplierId = Integer.parseInt(request.getParameter("supplier_id"));
+        var unitPrice = Double.parseDouble(request.getParameter("unit_price"));
+        productService.add(productName, supplierId, unitPrice);
 
         response.setContentType(CONTENT_TYPE);
         response.setCharacterEncoding(ENCODING);
-        var customer = customerService.findBy(customerName);
-        if (customer.isPresent()) {
-            var jsonCustomer = new JSONObject(customer.get());
+        var product = productService.findBy(productName);
+        if (product.isPresent()) {
+            var jsonProduct = new JSONObject(product.get());
             try (var printWriter = response.getWriter()) {
-                printWriter.print(jsonCustomer);
-                log("Customer is added");
+                printWriter.print(jsonProduct);
+                log("Product is added");
             } catch (IOException e) {
                 log("Exception is: ", e);
             }
         } else {
-            log("Customer is not present");
+            log("Product is not present");
         }
     }
 
     /**
-     * Get customer from database
+     * Get product by Id or all product list from database
      *
      * @param request  request
      * @param response response
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        var customerId = request.getParameter("customer_id");
+        var productId = request.getParameter("product_id");
         response.setContentType(CONTENT_TYPE);
         response.setCharacterEncoding(ENCODING);
 
-        if (customerId != null) {
-            var customer = customerService.findBy(Integer.parseInt(customerId));
-            if (customer.isPresent()) {
-                var jsonCustomer = new JSONObject(customer.get());
+        if (productId != null) {
+            var product = productService.findBy(Integer.parseInt(productId));
+            if (product.isPresent()) {
+                var jsonProduct = new JSONObject(product.get());
                 try (var printWriter = response.getWriter()) {
-                    printWriter.print(jsonCustomer);
+                    printWriter.print(jsonProduct);
                 } catch (IOException e) {
                     log("Exception is: ", e);
                 }
             } else {
-                log("Customer is not present");
+                log("Product is not present");
             }
         } else {
-            var allCustomers = customerService.findAll();
-            if (allCustomers.isPresent()) {
-                var jsonCustomerArray = new JSONArray(allCustomers.get());
+            var allProducts = productService.findAll();
+            if (allProducts.isPresent()) {
+                var jsonProductArray = new JSONArray(allProducts.get());
                 try (var printWriter = response.getWriter()) {
-                    printWriter.print(jsonCustomerArray);
+                    printWriter.print(jsonProductArray);
                 } catch (IOException e) {
                     log("Exception is: ", e);
                 }
             } else {
-                log("Customer list is not present");
+                log("Product list is not present");
             }
         }
     }
 
     /**
-     * Update customer in database
+     * Update product in database
      *
      * @param request  request
      * @param response response
      */
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) {
-        var customerId = request.getParameter("customer_id");
-        var phone = request.getParameter("phone");
+        var productId = request.getParameter("product_id");
+        var isDiscontinued = Boolean.parseBoolean(request.getParameter("is_discontinued"));
 
-        customerService.update(Integer.parseInt(customerId), phone);
+        productService.update(Integer.parseInt(productId), isDiscontinued);
 
         response.setContentType(CONTENT_TYPE);
         response.setCharacterEncoding(ENCODING);
-        var customer = customerService.findBy(customerId);
-        if (customer.isPresent()) {
+        var product = productService.findBy(productId);
+        if (product.isPresent()) {
             try (var printWriter = response.getWriter()) {
                 printWriter.print(SC_OK);
-                log("Customer is updated");
+                log("Product is updated");
             } catch (IOException e) {
                 log("Exception is: ", e);
             }
         } else {
-            log("Customer is not present");
+            log("Product is not present");
         }
     }
 
     /**
-     * Delete customer from database
+     * Delete product from database
      *
      * @param request  request
      * @param response response
      */
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) {
-        var customerId = request.getParameter("customer_id");
+        var productId = request.getParameter("product_id");
 
-        customerService.delete(Integer.parseInt(customerId));
+        productService.delete(Integer.parseInt(productId));
 
         response.setContentType(CONTENT_TYPE);
         response.setCharacterEncoding(ENCODING);
-        var customer = customerService.findBy(customerId);
-        if (customer.isEmpty()) {
+        var product = productService.findBy(productId);
+        if (product.isEmpty()) {
             try (var printWriter = response.getWriter()) {
                 printWriter.print(SC_OK);
             } catch (IOException e) {
                 log("Exception is: ", e);
             }
         } else {
-            log("Customer is deleted");
+            log("Product is deleted");
         }
     }
 }

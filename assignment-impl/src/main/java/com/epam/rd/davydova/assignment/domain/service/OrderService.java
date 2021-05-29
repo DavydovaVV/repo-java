@@ -11,6 +11,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -27,9 +28,10 @@ public class OrderService {
      *
      * @param productId        product Id
      * @param customerId       customer Id
-     * @param numberOfProducts quantity of product unit in order
+     * @param orderNumber      order number
+     * @param numberOfProducts number of products
      */
-    public void add(int productId, int customerId, int numberOfProducts) {
+    public void add(int productId, int customerId, String orderNumber, int numberOfProducts) {
         var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -40,6 +42,7 @@ public class OrderService {
             var pricePerUnit = product.getUnitPrice().doubleValue();
             order.setOrderDate(new Date());
             order.setCustomer(entityManager.find(Customer.class, customerId));
+            order.setOrderNumber(orderNumber);
             order.setTotalAmount(BigDecimal.valueOf(pricePerUnit * numberOfProducts));
             order.addToList(product);
             product.addToList(order);
@@ -84,6 +87,65 @@ public class OrderService {
                 transaction.rollback();
             }
             log.error("Order is not found. Exception is: ", e);
+        } finally {
+            entityManager.close();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Find order by Id
+     *
+     * @param orderId order Id
+     * @return Optional of order instance
+     */
+    public Optional<Order> findBy(int orderId) {
+        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            var order = entityManager.find(Order.class, orderId);
+            transaction.commit();
+            var foundOrder = Optional.ofNullable(order);
+            if (foundOrder.isPresent()) {
+                log.info("Order is found");
+                return foundOrder;
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            log.error("Order is not found. Exception is: ", e);
+        } finally {
+            entityManager.close();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Find all orders
+     *
+     * @return Optional of List of orders
+     */
+    public Optional<List> findAll() {
+        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            var orderList = entityManager.createNamedQuery(Order.FIND_ALL_ORDERS).getResultList();
+            transaction.commit();
+            var foundOrderList = Optional.ofNullable(orderList);
+            if (foundOrderList.isPresent()) {
+                log.info("List of orders is found");
+                return foundOrderList;
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            log.error("List of orders is not found. Exception is: ", e);
         } finally {
             entityManager.close();
         }

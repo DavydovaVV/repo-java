@@ -14,13 +14,14 @@ import java.util.List;
 @Data
 @Entity
 @NamedQueries({
-        @NamedQuery(name = Order.FIND_ORDER_BY_NUMBER,
-                query = "SELECT o FROM Order o WHERE o.orderNumber = ?1"),
+        @NamedQuery(name = Order.FIND_ORDER_BY_NUMBER, query = "SELECT o FROM Order o WHERE o.orderNumber = ?1"),
+        @NamedQuery(name = Order.FIND_ALL_ORDERS, query = "SELECT o FROM Order o"),
         @NamedQuery(name = Order.FIND_TOTAL_AMOUNT_PER_ORDER,
                 query = "SELECT SUM(totalAmount) FROM Order o WHERE o.orderId = ?1")})
 @Table(name = "[order]")
 public class Order {
-    public static final String FIND_ORDER_BY_NUMBER = "findOrderById";
+    public static final String FIND_ORDER_BY_NUMBER = "findOrderByCustomerId";
+    public static final String FIND_ALL_ORDERS = "findAllOrders";
     public static final String FIND_TOTAL_AMOUNT_PER_ORDER = "findTotalSumPerOrder";
     private static final long serialVersionUID = 1L;
 

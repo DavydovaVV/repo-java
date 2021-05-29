@@ -13,9 +13,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
-@NamedQuery(name = Supplier.FIND_SUPPLIER_BY_NAME, query = "SELECT s FROM Supplier s WHERE s.companyName = ?1")
+@NamedQueries({
+        @NamedQuery(name = Supplier.FIND_SUPPLIER_BY_NAME, query = "SELECT s FROM Supplier s WHERE s.companyName = ?1"),
+        @NamedQuery(name = Supplier.FIND_ALL_SUPPLIERS, query = "SELECT s FROM Supplier s")})
 public class Supplier {
     public static final String FIND_SUPPLIER_BY_NAME = "findSupplierByName";
+    public static final String FIND_ALL_SUPPLIERS = "findAllSuppliers";
     private static final long serialVersionUID = 1L;
 
     @Id
