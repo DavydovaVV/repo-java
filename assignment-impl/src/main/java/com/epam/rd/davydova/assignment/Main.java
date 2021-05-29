@@ -4,11 +4,11 @@ import com.epam.rd.davydova.assignment.domain.service.CustomerService;
 import com.epam.rd.davydova.assignment.domain.service.OrderService;
 import com.epam.rd.davydova.assignment.domain.service.ProductService;
 import com.epam.rd.davydova.assignment.domain.service.SupplierService;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Main {
-
 	public static void main (String[] args) {
 		var customerService = new CustomerService();
 		var supplierService = new SupplierService();
@@ -58,6 +58,7 @@ public class Main {
 
 		customerService.findBy(1);
 		customerService.findAll();
+
 		customerService.close();
 	}
 }
