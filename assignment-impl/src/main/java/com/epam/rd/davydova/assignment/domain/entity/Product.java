@@ -4,8 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a class that defines Product
@@ -15,13 +15,14 @@ import java.util.Set;
 @NamedQuery(name = Product.FIND_PRODUCT_BY_NAME, query = "SELECT p FROM Product p WHERE p.productName = ?1")
 public class Product {
     public static final String FIND_PRODUCT_BY_NAME = "findProductByName";
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
 
-    @ManyToMany(mappedBy = "productSet")
-    private Set<Order> orderSet = new HashSet<>();
+    @ManyToMany(mappedBy = "productList", cascade = CascadeType.REMOVE)
+    private List<Order> orderList = new ArrayList<>();
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(50)")
     private String productName;
@@ -36,14 +37,12 @@ public class Product {
     @Column(nullable = false)
     private boolean isDiscontinued;
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "productId=" + productId +
-                ", productName='" + productName + '\'' +
-                ", supplier=" + supplier +
-                ", unitPrice=" + unitPrice +
-                ", isDiscontinued=" + isDiscontinued +
-                '}';
+    /**
+     * Add order to list
+     *
+     * @param order order
+     */
+    public void addToList(Order order) {
+        orderList.add(order);
     }
 }
