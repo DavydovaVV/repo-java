@@ -1,10 +1,9 @@
-package com.epam.rd.davydova.assignment.servlets;
+package com.epam.rd.davydova.assignment.domain.servlets;
 
-import com.epam.rd.davydova.assignment.domain.service.CustomerService;
+import com.epam.rd.davydova.assignment.domain.service.OrderService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,17 +13,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
- * This is a class of CustomerServlet
+ * This is a class of OrderServlet
  */
-@Slf4j
-public class CustomerServlet extends HttpServlet {
+public class OrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
-    private CustomerService customerService = new CustomerService();
+    private OrderService orderService = new OrderService();
 
     /**
-     * Post customer to database
+     * Post order to database
      *
      * @param request  request
      * @param response response
@@ -32,53 +30,55 @@ public class CustomerServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var customerName = jsonRequest.optString("customer_name");
-        var phone = jsonRequest.optString("phone");
+        var productId = Integer.parseInt(jsonRequest.optString("product_id"));
+        var customerId = Integer.parseInt(jsonRequest.optString("customer_id"));
+        var orderNumber = jsonRequest.optString("order_number");
+        var numberOfProducts = Integer.parseInt(jsonRequest.optString("number_of_products"));
 
-        customerService.add(customerName, phone);
+        orderService.add(productId, customerId, orderNumber, numberOfProducts);
     }
 
     /**
-     * Get customer from database
+     * Get order by Id or all order list from database
      *
      * @param request  request
      * @param response response
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        var customerId = request.getParameter("customer_id");
+        var orderId = request.getParameter("order_id");
 
         setTypeAndEncoding(response);
 
-        if (customerId != null) {
-            var customer = customerService.findBy(Integer.parseInt(customerId));
-            if (customer.isPresent()) {
-                var jsonCustomer = new JSONObject(customer.get());
+        if (orderId != null) {
+            var order = orderService.findBy(Integer.parseInt(orderId));
+            if (order.isPresent()) {
+                var jsonOrder = new JSONObject(order.get());
                 try (var printWriter = response.getWriter()) {
-                    printWriter.print(jsonCustomer);
+                    printWriter.print(jsonOrder);
                 } catch (IOException e) {
                     log("Exception is: ", e);
                 }
             } else {
-                log("Customer is not present");
+                log("Order is not present");
             }
         } else {
-            var allCustomers = customerService.findAll();
-            if (allCustomers.isPresent()) {
-                var jsonCustomerArray = new JSONArray(allCustomers.get());
+            var allOrders = orderService.findAll();
+            if (allOrders.isPresent()) {
+                var jsonOrderArray = new JSONArray(allOrders.get());
                 try (var printWriter = response.getWriter()) {
-                    printWriter.print(jsonCustomerArray);
+                    printWriter.print(jsonOrderArray);
                 } catch (IOException e) {
                     log("Exception is: ", e);
                 }
             } else {
-                log("Customer list is not present");
+                log("Order list is not present");
             }
         }
     }
 
     /**
-     * Update customer in database
+     * Update order in database
      *
      * @param request  request
      * @param response response
@@ -86,14 +86,16 @@ public class CustomerServlet extends HttpServlet {
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var customerId = jsonRequest.optString("customer_id");
-        var phone = jsonRequest.optString("phone");
+        var orderId = Integer.parseInt(jsonRequest.optString("order_id"));
+        var productId = Integer.parseInt(jsonRequest.optString("product_id"));
+        var orderNumber = jsonRequest.optString("order_number");
+        var numberOfProducts = Integer.parseInt(jsonRequest.optString("number_of_products"));
 
-        customerService.update(Integer.parseInt(customerId), phone);
+        orderService.update(orderId, orderNumber, productId, numberOfProducts);
     }
 
     /**
-     * Delete customer from database
+     * Delete order from database
      *
      * @param request  request
      * @param response response
@@ -101,9 +103,9 @@ public class CustomerServlet extends HttpServlet {
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var customerId = jsonRequest.optString("customer_id");
+        var orderId = jsonRequest.optString("order_id");
 
-        customerService.delete(Integer.parseInt(customerId));
+        orderService.delete(Integer.parseInt(orderId));
     }
 
     /**

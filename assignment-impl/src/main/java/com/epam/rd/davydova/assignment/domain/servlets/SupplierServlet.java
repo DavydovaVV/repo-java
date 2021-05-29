@@ -1,6 +1,6 @@
-package com.epam.rd.davydova.assignment.servlets;
+package com.epam.rd.davydova.assignment.domain.servlets;
 
-import com.epam.rd.davydova.assignment.domain.service.OrderService;
+import com.epam.rd.davydova.assignment.domain.service.SupplierService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,16 +13,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
- * This is a class of OrderServlet
+ * This is a class of SupplierServlet
  */
-public class OrderServlet extends HttpServlet {
+public class SupplierServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
-    private OrderService orderService = new OrderService();
+    private SupplierService supplierService = new SupplierService();
 
     /**
-     * Post order to database
+     * Post supplier to database
      *
      * @param request  request
      * @param response response
@@ -30,55 +30,54 @@ public class OrderServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var productId = Integer.parseInt(jsonRequest.optString("product_id"));
-        var customerId = Integer.parseInt(jsonRequest.optString("customer_id"));
-        var orderNumber = jsonRequest.optString("order_number");
-        var numberOfProducts = Integer.parseInt(jsonRequest.optString("number_of_products"));
+        var companyName = jsonRequest.optString("company_name");
+        var phone = jsonRequest.optString("phone");
 
-        orderService.add(productId, customerId, orderNumber, numberOfProducts);
+        supplierService.add(companyName, phone);
+
     }
 
     /**
-     * Get order by Id or all order list from database
+     * Get supplier by Id or all suppliers from database
      *
      * @param request  request
      * @param response response
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        var orderId = request.getParameter("order_id");
+        var supplierId = request.getParameter("supplier_id");
 
         setTypeAndEncoding(response);
 
-        if (orderId != null) {
-            var order = orderService.findBy(Integer.parseInt(orderId));
-            if (order.isPresent()) {
-                var jsonOrder = new JSONObject(order.get());
+        if (supplierId != null) {
+            var supplier = supplierService.findBy(Integer.parseInt(supplierId));
+            if (supplier.isPresent()) {
+                var jsonSupplier = new JSONObject(supplier.get());
                 try (var printWriter = response.getWriter()) {
-                    printWriter.print(jsonOrder);
+                    printWriter.print(jsonSupplier);
                 } catch (IOException e) {
                     log("Exception is: ", e);
                 }
             } else {
-                log("Order is not present");
+                log("Supplier is not present");
             }
         } else {
-            var allOrders = orderService.findAll();
-            if (allOrders.isPresent()) {
-                var jsonOrderArray = new JSONArray(allOrders.get());
+            var allSuppliers = supplierService.findAll();
+            if (allSuppliers.isPresent()) {
+                var jsonSupplierArray = new JSONArray(allSuppliers.get());
                 try (var printWriter = response.getWriter()) {
-                    printWriter.print(jsonOrderArray);
+                    printWriter.print(jsonSupplierArray);
                 } catch (IOException e) {
                     log("Exception is: ", e);
                 }
             } else {
-                log("Order list is not present");
+                log("Supplier list is not present");
             }
         }
     }
 
     /**
-     * Update order in database
+     * Update supplier in database
      *
      * @param request  request
      * @param response response
@@ -86,16 +85,14 @@ public class OrderServlet extends HttpServlet {
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var orderId = Integer.parseInt(jsonRequest.optString("order_id"));
-        var productId = Integer.parseInt(jsonRequest.optString("product_id"));
-        var orderNumber = jsonRequest.optString("order_number");
-        var numberOfProducts = Integer.parseInt(jsonRequest.optString("number_of_products"));
+        var supplierId = jsonRequest.optString("supplier_id");
+        var phone = jsonRequest.optString("phone");
 
-        orderService.update(orderId, orderNumber, productId, numberOfProducts);
+        supplierService.update(Integer.parseInt(supplierId), phone);
     }
 
     /**
-     * Delete order from database
+     * Delete supplier from database
      *
      * @param request  request
      * @param response response
@@ -103,9 +100,9 @@ public class OrderServlet extends HttpServlet {
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var orderId = jsonRequest.optString("order_id");
+        var supplierId = jsonRequest.optString("supplier_id");
 
-        orderService.delete(Integer.parseInt(orderId));
+        supplierService.delete(Integer.parseInt(supplierId));
     }
 
     /**
