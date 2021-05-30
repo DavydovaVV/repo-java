@@ -4,7 +4,6 @@ import com.epam.rd.davydova.assignment.domain.service.CustomerService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,7 +15,6 @@ import java.util.Optional;
 /**
  * This is a class of CustomerServlet
  */
-@Slf4j
 public class CustomerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";

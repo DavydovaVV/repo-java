@@ -29,7 +29,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderId;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "order_product",
             joinColumns = @JoinColumn(name = "order_id"),

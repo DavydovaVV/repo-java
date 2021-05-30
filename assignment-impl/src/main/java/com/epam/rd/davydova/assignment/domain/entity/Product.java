@@ -24,13 +24,13 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
 
-    @ManyToMany(mappedBy = "productList", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "productList", cascade = CascadeType.MERGE)
     private List<Order> orderList = new ArrayList<>();
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(50)")
     private String productName;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true, nullable = false, name = "supplier_id")
     private Supplier supplier;
 
