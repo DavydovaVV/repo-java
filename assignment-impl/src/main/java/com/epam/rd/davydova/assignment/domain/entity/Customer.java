@@ -11,9 +11,13 @@ import java.util.List;
  */
 @Data
 @Entity
-@NamedQuery(name = Customer.FIND_CUSTOMER_BY_NAME, query = "SELECT c FROM Customer c WHERE c.customerName = ?1")
+@NamedQueries({
+        @NamedQuery(name = Customer.FIND_CUSTOMER_BY_NAME, query = "SELECT c FROM Customer c WHERE c.customerName = ?1"),
+        @NamedQuery(name = Customer.FIND_ALL_CUSTOMERS, query = "SELECT c FROM Customer c")})
 public class Customer {
     public static final String FIND_CUSTOMER_BY_NAME = "findCustomerByName";
+    public static final String FIND_ALL_CUSTOMERS = "findAllCustomers";
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

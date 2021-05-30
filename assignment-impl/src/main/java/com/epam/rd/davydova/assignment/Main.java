@@ -1,14 +1,14 @@
 package com.epam.rd.davydova.assignment;
 
-import com.epam.rd.davydova.assignment.service.CustomerService;
-import com.epam.rd.davydova.assignment.service.OrderService;
-import com.epam.rd.davydova.assignment.service.ProductService;
-import com.epam.rd.davydova.assignment.service.SupplierService;
+import com.epam.rd.davydova.assignment.domain.service.CustomerService;
+import com.epam.rd.davydova.assignment.domain.service.OrderService;
+import com.epam.rd.davydova.assignment.domain.service.ProductService;
+import com.epam.rd.davydova.assignment.domain.service.SupplierService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Main {
-	
+
 	public static void main (String[] args) {
 		var customerService = new CustomerService();
 		var supplierService = new SupplierService();
@@ -37,24 +37,34 @@ public class Main {
 		productService.add("Cheese", 5, 25);
 
 		//added 5 orders
-		orderService.add(1,1,3);
-		orderService.add(2,3,1);
-		orderService.add(3,1,1);
-		orderService.add(4,4,1);
-		orderService.add(5, 2,2);
+		orderService.add(1,4,"u001", 1);
+		orderService.add(2,3,"u002", 3);
+		orderService.add(3,5,"u003", 4);
+		orderService.add(4,4,"u004", 6);
+		orderService.add(5, 2,"u005", 2);
 
-		//updated: customer no.2, supplier no.2, product no.5, order no.2
+		//updated: customer no.2, supplier no.2, product no.1,2,5, order no.2
 		customerService.update(2, "010101");
 		supplierService.update(2, "12345");
 		productService.update(5, true);
-		orderService.update(2,"u_001", 2,2);
+		orderService.update(2,"u0021", 2,2);
+		orderService.update(2,"u0022", 1, 1);
+		productService.update(1, true);
+		orderService.update(2,"u0023", 1, 2);
+		productService.update(2, true);
+		orderService.update(2, "u0024", 2, 2);
 
 		//deleted: customer no.1 (cascade removal of order no.1), supplier no.5 (cascade removal of product no.5),
-		//product no.4, order no.1 (should catch exception as customer no.1 was deleted)
+		//product no.2,4(cascade removal of supplier no.2,4), order no.1 (should catch exception as customer no.1 was deleted)
 		customerService.delete(1);
 		supplierService.delete(5);
 		productService.delete(4);
 		orderService.delete(1);
+		productService.delete(2);
+
+		customerService.findBy(1);
+		customerService.findAll();
+		orderService.findBy(1);
 
 		customerService.close();
 	}

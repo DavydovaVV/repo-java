@@ -12,21 +12,25 @@ import java.util.List;
  */
 @Data
 @Entity
-@NamedQuery(name = Product.FIND_PRODUCT_BY_NAME, query = "SELECT p FROM Product p WHERE p.productName = ?1")
+@NamedQueries({
+        @NamedQuery(name = Product.FIND_PRODUCT_BY_NAME, query = "SELECT p FROM Product p WHERE p.productName = ?1"),
+        @NamedQuery(name = Product.FIND_ALL_PRODUCTS, query = "SELECT p FROM Product p")})
 public class Product {
     public static final String FIND_PRODUCT_BY_NAME = "findProductByName";
+    public static final String FIND_ALL_PRODUCTS = "findAllProducts";
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
 
-    @ManyToMany(mappedBy = "productList", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "productList", cascade = CascadeType.MERGE)
     private List<Order> orderList = new ArrayList<>();
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(50)")
     private String productName;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true, nullable = false, name = "supplier_id")
     private Supplier supplier;
 

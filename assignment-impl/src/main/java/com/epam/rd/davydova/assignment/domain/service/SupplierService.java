@@ -1,23 +1,26 @@
-package com.epam.rd.davydova.assignment.service;
+package com.epam.rd.davydova.assignment.domain.service;
 
 import com.epam.rd.davydova.assignment.domain.entity.Supplier;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 import java.util.Optional;
 
 /**
  * This is a class for operations with Supplier entity and database
  */
 @Slf4j
+@Data
 public class SupplierService {
-    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
+    public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
             .createEntityManagerFactory("PurchasePU");
 
     /**
-     * Add customer to database
+     * Add supplier to database
      *
      * @param companyName supplier instance
      */
@@ -43,9 +46,9 @@ public class SupplierService {
     }
 
     /**
-     * Find customer by their name
+     * Find supplier by their name
      *
-     * @param companyName customer's name
+     * @param companyName company name
      * @return supplier instance
      */
     public Optional<Supplier> findBy(String companyName) {
@@ -77,10 +80,69 @@ public class SupplierService {
     }
 
     /**
+     * Find supplier by Id
+     *
+     * @param supplierId supplier Id
+     * @return Optional of supplier instance
+     */
+    public Optional<Supplier> findBy(int supplierId) {
+        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            var supplier = entityManager.find(Supplier.class, supplierId);
+            transaction.commit();
+            var foundSupplier = Optional.ofNullable(supplier);
+            if (foundSupplier.isPresent()) {
+                log.info("Supplier is found");
+                return foundSupplier;
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            log.error("Supplier is not found. Exception is: ", e);
+        } finally {
+            entityManager.close();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Find all suppliers
+     *
+     * @return Optional of List of suppliers
+     */
+    public Optional<List> findAll() {
+        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            var supplierList = entityManager.createNamedQuery(Supplier.FIND_ALL_SUPPLIERS).getResultList();
+            transaction.commit();
+            var foundSupplierList = Optional.ofNullable(supplierList);
+            if (foundSupplierList.isPresent()) {
+                log.info("List of suppliers is found");
+                return foundSupplierList;
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            log.error("List of suppliers is not found. Exception is: ", e);
+        } finally {
+            entityManager.close();
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Update supplier's company name and phone number
      *
-     * @param supplierId  supplier Id
-     * @param phone       phone number
+     * @param supplierId supplier Id
+     * @param phone      phone number
      */
     public void update(int supplierId, String phone) {
         var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -106,7 +168,7 @@ public class SupplierService {
     /**
      * Delete supplier from database
      *
-     * @param supplierId customer Id
+     * @param supplierId supplier Id
      */
     public void delete(int supplierId) {
         var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
