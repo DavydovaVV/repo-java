@@ -171,11 +171,18 @@ public class OrderService {
             var pricePerUnit = product.getUnitPrice().doubleValue();
             order.setOrderDate(new Date());
             order.setOrderNumber(orderNumber);
-            var singleResult = (BigDecimal) entityManager
+            var currentTotalAmount = (BigDecimal) entityManager
                     .createNamedQuery(Order.FIND_TOTAL_AMOUNT_PER_ORDER)
                     .setParameter(1, orderId)
                     .getSingleResult();
-            order.setTotalAmount(BigDecimal.valueOf(pricePerUnit * numberOfProducts).add(singleResult));
+            order.setTotalAmount(BigDecimal.valueOf(pricePerUnit * numberOfProducts)
+                    .add(currentTotalAmount));
+
+            if (!order.getProductList().contains(product)) {
+                order.addToList(product);
+                product.addToList(order);
+            }
+
             entityManager.merge(order);
             transaction.commit();
             log.info("Order is updated");

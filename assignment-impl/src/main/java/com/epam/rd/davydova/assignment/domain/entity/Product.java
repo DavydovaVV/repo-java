@@ -30,7 +30,7 @@ public class Product {
     @Column(unique = true, nullable = false, columnDefinition = "varchar(50)")
     private String productName;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(unique = true, nullable = false, name = "supplier_id")
     private Supplier supplier;
 

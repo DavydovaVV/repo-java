@@ -31,26 +31,27 @@ public class Main {
 
 		//added 5 products
 		productService.add("Snails",1, 150);
-		productService.add("Beans", 6, 5);
+		productService.add("Beans", 2, 5);
 		productService.add("Towel", 3, 9);
 		productService.add("Papayas", 4, 50);
 		productService.add("Cheese", 5, 25);
 
 		//added 5 orders
-		orderService.add(6,4,"u001", 1);
-		orderService.add(7,3,"u002", 3);
-		orderService.add(8,5,"u003", 4);
-		orderService.add(10,4,"u004", 6);
-		orderService.add(11, 2,"u005", 2);
+		orderService.add(1,4,"u001", 1);
+		orderService.add(2,3,"u002", 3);
+		orderService.add(3,5,"u003", 4);
+		orderService.add(4,4,"u004", 6);
+		orderService.add(5, 2,"u005", 2);
 
 		//updated: customer no.2, supplier no.2, product no.5, order no.2
 		customerService.update(2, "010101");
 		supplierService.update(2, "12345");
 		productService.update(5, true);
 		orderService.update(2,"u0021", 2,2);
+		orderService.update(2,"u0022", 1, 1);
 
 		//deleted: customer no.1 (cascade removal of order no.1), supplier no.5 (cascade removal of product no.5),
-		//product no.4, order no.1 (should catch exception as customer no.1 was deleted)
+		//product no.4(cascade removal of supplier no.4), order no.1 (should catch exception as customer no.1 was deleted)
 		customerService.delete(1);
 		supplierService.delete(5);
 		productService.delete(4);
