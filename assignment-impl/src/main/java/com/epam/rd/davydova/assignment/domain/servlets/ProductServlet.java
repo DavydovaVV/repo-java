@@ -114,8 +114,8 @@ public class ProductServlet extends HttpServlet {
     private Optional<JSONObject> readRequest(HttpServletRequest request) {
         try {
             var inputStream = request.getInputStream();
-            String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            JSONObject jsonObject = new JSONObject(result);
+            var result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            var jsonObject = new JSONObject(result);
 
             return Optional.of(jsonObject);
         } catch (IOException e) {
