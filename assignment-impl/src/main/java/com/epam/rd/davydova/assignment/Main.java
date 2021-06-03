@@ -1,39 +1,51 @@
 package com.epam.rd.davydova.assignment;
 
 import com.epam.rd.davydova.assignment.config.ComponentConfig;
-import com.epam.rd.davydova.assignment.config.LocalBeanConfig;
 import com.epam.rd.davydova.assignment.config.MessageSourceConfig;
-import com.epam.rd.davydova.assignment.domain.service.CustomerService;
-import com.epam.rd.davydova.assignment.stub.model.Customer;
-import com.epam.rd.davydova.assignment.stub.model.Order;
+import com.epam.rd.davydova.assignment.service.impl.CustomerService;
+import com.epam.rd.davydova.assignment.service.impl.OrderService;
+import com.epam.rd.davydova.assignment.service.impl.ProductService;
+import com.epam.rd.davydova.assignment.service.impl.SupplierService;
+import com.epam.rd.davydova.assignment.service.stub.impl.CustomerServiceStub;
+import com.epam.rd.davydova.assignment.service.stub.impl.OrderServiceStub;
+import com.epam.rd.davydova.assignment.service.stub.impl.ProductServiceStub;
+import com.epam.rd.davydova.assignment.service.stub.impl.SupplierServiceStub;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import javax.persistence.EntityManager;
 
 @Slf4j
 public class Main {
 
 	public static void main (String[] args) {
-		var context = new AnnotationConfigApplicationContext(ComponentConfig.class,
-				LocalBeanConfig.class, MessageSourceConfig.class);
+		var context = new AnnotationConfigApplicationContext(ComponentConfig.class, MessageSourceConfig.class);
 
-		var entityManager = (EntityManager) context.getBean("entityManager");
+		//Profile local
+		var customerServiceStub = (CustomerServiceStub) context.getBean("customerServiceStub");
+		var orderServiceStub = (OrderServiceStub) context.getBean("orderServiceStub");
+		var productServiceStub = (ProductServiceStub) context.getBean("productServiceStub");
+		var supplierServiceStub = (SupplierServiceStub) context.getBean("supplierServiceStub");
 
-		var customer = (Customer)context.getBean("customer");
-		customer.getObject("en-US");
+		customerServiceStub.findAll("ru-RU");
+		orderServiceStub.findAll("ru-RU");
+		productServiceStub.findAll("ru-RU");
+		supplierServiceStub.findAll("ru-RU");
 
-		var order = (Order)context.getBean("order");
-		order.getObject("ru-RU");
+		customerServiceStub.findAll("en-US");
+		orderServiceStub.findAll("en-US");
+		productServiceStub.findAll("en-US");
+		supplierServiceStub.findAll("en-US");
 
-		var customerService = new CustomerService(entityManager);
-		customerService.add("Wynnie Ramsdale","11-12-13");
-		customerService.update(1, "010101");
-		customerService.findBy(1);
-		customerService.findBy("Wynnie Ramsdale");
-		customerService.findAll();
-		customerService.delete(1);
+		//Profile !local
+		var customerService = (CustomerService)context.getBean("customerService");
+		var supplierService = (SupplierService)context.getBean("supplierService");
+		var productService = (ProductService)context.getBean("productService");
+		var orderService = (OrderService)context.getBean("orderService");
 
-		entityManager.close();
+		customerService.add("Berni Brill", "12-32-52");
+		supplierService.add("Simonis", "65-98-63");
+		productService.add("Beans", 1, 120);
+		orderService.add(1, 1,"u001", 2);
+
+		orderService.update(1, "u0011", 1, 1);
 	}
 }
