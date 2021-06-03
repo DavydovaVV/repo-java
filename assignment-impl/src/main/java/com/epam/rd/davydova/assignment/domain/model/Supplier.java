@@ -1,7 +1,6 @@
-package com.epam.rd.davydova.assignment.domain.entity;
+package com.epam.rd.davydova.assignment.domain.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.List;
  * This is a class that defines Supplier
  */
 @Data
-@NoArgsConstructor
 @Entity
 @NamedQueries({
         @NamedQuery(name = Supplier.FIND_SUPPLIER_BY_NAME, query = "SELECT s FROM Supplier s WHERE s.companyName = ?1"),

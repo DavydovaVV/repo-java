@@ -1,4 +1,4 @@
-package com.epam.rd.davydova.assignment.domain.entity;
+package com.epam.rd.davydova.assignment.domain.model;
 
 import lombok.Data;
 

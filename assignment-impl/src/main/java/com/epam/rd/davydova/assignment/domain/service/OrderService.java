@@ -1,14 +1,16 @@
 package com.epam.rd.davydova.assignment.domain.service;
 
-import com.epam.rd.davydova.assignment.domain.entity.Customer;
-import com.epam.rd.davydova.assignment.domain.entity.Order;
-import com.epam.rd.davydova.assignment.domain.entity.Product;
+import com.epam.rd.davydova.assignment.domain.model.Customer;
+import com.epam.rd.davydova.assignment.domain.model.Order;
+import com.epam.rd.davydova.assignment.domain.model.Product;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -19,9 +21,15 @@ import java.util.Optional;
  */
 @Slf4j
 @Data
+@NoArgsConstructor
+@Service
 public class OrderService {
-    public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
-            .createEntityManagerFactory("PurchasePU");
+    private EntityManager entityManager;
+
+    @Autowired
+    public OrderService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     /**
      * Add order to database
@@ -32,7 +40,6 @@ public class OrderService {
      * @param numberOfProducts number of products
      */
     public void add(int productId, int customerId, String orderNumber, int numberOfProducts) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -54,8 +61,6 @@ public class OrderService {
                 transaction.rollback();
             }
             log.error("Order is not added. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
     }
 
@@ -66,7 +71,6 @@ public class OrderService {
      * @return Optional of order instance
      */
     public Optional<Order> findBy(String orderNumber) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         Order order = null;
         try {
@@ -87,8 +91,6 @@ public class OrderService {
                 transaction.rollback();
             }
             log.error("Order is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -100,7 +102,6 @@ public class OrderService {
      * @return Optional of order instance
      */
     public Optional<Order> findBy(int orderId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -117,8 +118,6 @@ public class OrderService {
                 transaction.rollback();
             }
             log.error("Order is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -129,7 +128,6 @@ public class OrderService {
      * @return Optional of List of orders
      */
     public Optional<List> findAll() {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -146,8 +144,6 @@ public class OrderService {
                 transaction.rollback();
             }
             log.error("List of orders is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -161,7 +157,6 @@ public class OrderService {
      * @param numberOfProducts quantity of product unit in order
      */
     public void update(int orderId, String orderNumber, int productId, int numberOfProducts) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -191,8 +186,6 @@ public class OrderService {
                 transaction.rollback();
             }
             log.error("Order is not updated. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
     }
 
@@ -202,7 +195,6 @@ public class OrderService {
      * @param orderId order Id
      */
     public void delete(int orderId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -214,15 +206,6 @@ public class OrderService {
                 transaction.rollback();
             }
             log.error("Order is not deleted. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
-    }
-
-    /**
-     * Close EntityManagerFactory
-     */
-    public void close() {
-        ENTITY_MANAGER_FACTORY.close();
     }
 }

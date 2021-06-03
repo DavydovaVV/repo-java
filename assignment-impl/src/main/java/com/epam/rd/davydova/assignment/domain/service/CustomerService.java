@@ -1,12 +1,14 @@
 package com.epam.rd.davydova.assignment.domain.service;
 
-import com.epam.rd.davydova.assignment.domain.entity.Customer;
+import com.epam.rd.davydova.assignment.domain.model.Customer;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +17,15 @@ import java.util.Optional;
  */
 @Slf4j
 @Data
+@NoArgsConstructor
+@Service
 public class CustomerService {
-    public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
-            .createEntityManagerFactory("PurchasePU");
+    private EntityManager entityManager;
+
+    @Autowired
+    public CustomerService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     /**
      * Add customer to database
@@ -25,7 +33,6 @@ public class CustomerService {
      * @param customerName customer instance
      */
     public void add(String customerName, String phone) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -40,8 +47,6 @@ public class CustomerService {
                 transaction.rollback();
             }
             log.error("Customer is not added. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
     }
 
@@ -52,7 +57,6 @@ public class CustomerService {
      * @return customer instance
      */
     public Optional<Customer> findBy(String customerName) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -72,8 +76,6 @@ public class CustomerService {
                 transaction.rollback();
             }
             log.error("Customer is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -85,7 +87,6 @@ public class CustomerService {
      * @return Optional of customer instance
      */
     public Optional<Customer> findBy(int customerId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -102,8 +103,6 @@ public class CustomerService {
                 transaction.rollback();
             }
             log.error("Customer is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -114,7 +113,6 @@ public class CustomerService {
      * @return Optional of List of customers
      */
     public Optional<List> findAll() {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -131,8 +129,6 @@ public class CustomerService {
                 transaction.rollback();
             }
             log.error("List of customers is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -144,7 +140,6 @@ public class CustomerService {
      * @param phone      phone number
      */
     public void update(int customerId, String phone) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -159,8 +154,6 @@ public class CustomerService {
                 transaction.rollback();
             }
             log.error("Customer is not updated. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
     }
 
@@ -170,7 +163,6 @@ public class CustomerService {
      * @param customerId customer Id
      */
     public void delete(int customerId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -182,15 +174,6 @@ public class CustomerService {
                 transaction.rollback();
             }
             log.error("Customer is not deleted. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
-    }
-
-    /**
-     * Close EntityManagerFactory
-     */
-    public void close() {
-        ENTITY_MANAGER_FACTORY.close();
     }
 }

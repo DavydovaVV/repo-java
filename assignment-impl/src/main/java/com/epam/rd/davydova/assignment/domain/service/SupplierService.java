@@ -1,12 +1,14 @@
 package com.epam.rd.davydova.assignment.domain.service;
 
-import com.epam.rd.davydova.assignment.domain.entity.Supplier;
+import com.epam.rd.davydova.assignment.domain.model.Supplier;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +17,15 @@ import java.util.Optional;
  */
 @Slf4j
 @Data
+@NoArgsConstructor
+@Service
 public class SupplierService {
-    public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
-            .createEntityManagerFactory("PurchasePU");
+    private EntityManager entityManager;
+
+    @Autowired
+    public SupplierService (EntityManager entityManager){
+        this.entityManager = entityManager;
+    }
 
     /**
      * Add supplier to database
@@ -25,7 +33,6 @@ public class SupplierService {
      * @param companyName supplier instance
      */
     public void add(String companyName, String phone) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -40,8 +47,6 @@ public class SupplierService {
                 transaction.rollback();
             }
             log.error("Supplier is not added. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
     }
 
@@ -52,13 +57,11 @@ public class SupplierService {
      * @return supplier instance
      */
     public Optional<Supplier> findBy(String companyName) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
-        Supplier supplier = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            supplier = (Supplier) entityManager
+            var supplier = (Supplier) entityManager
                     .createNamedQuery(Supplier.FIND_SUPPLIER_BY_NAME)
                     .setParameter(1, companyName)
                     .getSingleResult();
@@ -73,8 +76,6 @@ public class SupplierService {
                 transaction.rollback();
             }
             log.error("Supplier is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -86,7 +87,6 @@ public class SupplierService {
      * @return Optional of supplier instance
      */
     public Optional<Supplier> findBy(int supplierId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -103,8 +103,6 @@ public class SupplierService {
                 transaction.rollback();
             }
             log.error("Supplier is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -115,7 +113,6 @@ public class SupplierService {
      * @return Optional of List of suppliers
      */
     public Optional<List> findAll() {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -132,8 +129,6 @@ public class SupplierService {
                 transaction.rollback();
             }
             log.error("List of suppliers is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -145,7 +140,6 @@ public class SupplierService {
      * @param phone      phone number
      */
     public void update(int supplierId, String phone) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -160,8 +154,6 @@ public class SupplierService {
                 transaction.rollback();
             }
             log.error("Supplier is not updated. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
     }
 
@@ -171,7 +163,6 @@ public class SupplierService {
      * @param supplierId supplier Id
      */
     public void delete(int supplierId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -183,15 +174,6 @@ public class SupplierService {
                 transaction.rollback();
             }
             log.error("Supplier is not deleted. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
-    }
-
-    /**
-     * Close EntityManagerFactory
-     */
-    public void close() {
-        ENTITY_MANAGER_FACTORY.close();
     }
 }

@@ -1,13 +1,15 @@
 package com.epam.rd.davydova.assignment.domain.service;
 
-import com.epam.rd.davydova.assignment.domain.entity.Product;
-import com.epam.rd.davydova.assignment.domain.entity.Supplier;
+import com.epam.rd.davydova.assignment.domain.model.Product;
+import com.epam.rd.davydova.assignment.domain.model.Supplier;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -17,9 +19,15 @@ import java.util.Optional;
  */
 @Slf4j
 @Data
+@NoArgsConstructor
+@Service
 public class ProductService {
-    public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
-            .createEntityManagerFactory("PurchasePU");
+    private EntityManager entityManager;
+
+    @Autowired
+    public ProductService(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     /**
      * Add product to database
@@ -29,7 +37,6 @@ public class ProductService {
      * @param unitPrice price per unit
      */
     public void add(String productName, int supplierId, double unitPrice) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -47,8 +54,6 @@ public class ProductService {
                 transaction.rollback();
             }
             log.error("Product is not added. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
     }
 
@@ -59,7 +64,6 @@ public class ProductService {
      * @return Optional of product instance
      */
     public Optional<Product> findBy(String productName) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         Product product = null;
         try {
@@ -80,8 +84,6 @@ public class ProductService {
                 transaction.rollback();
             }
             log.error("Product is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -93,7 +95,6 @@ public class ProductService {
      * @return Optional of product instance
      */
     public Optional<Product> findBy(int productId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -110,8 +111,6 @@ public class ProductService {
                 transaction.rollback();
             }
             log.error("Product is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -122,7 +121,6 @@ public class ProductService {
      * @return Optional of List of products
      */
     public Optional<List> findAll() {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -139,8 +137,6 @@ public class ProductService {
                 transaction.rollback();
             }
             log.error("List of products is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
         return Optional.empty();
     }
@@ -152,7 +148,6 @@ public class ProductService {
      * @param isDiscontinued product status
      */
     public void update(int productId, boolean isDiscontinued) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -167,8 +162,6 @@ public class ProductService {
                 transaction.rollback();
             }
             log.error("Product is not updated. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
     }
 
@@ -178,7 +171,6 @@ public class ProductService {
      * @param productId product Id
      */
     public void delete(int productId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -191,15 +183,6 @@ public class ProductService {
                 transaction.rollback();
             }
             log.error("Product is not deleted. Exception is: ", e);
-        } finally {
-            entityManager.close();
         }
-    }
-
-    /**
-     * Close EntityManagerFactory
-     */
-    public void close() {
-        ENTITY_MANAGER_FACTORY.close();
     }
 }
