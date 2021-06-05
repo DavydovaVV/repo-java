@@ -1,9 +1,10 @@
-package com.epam.rd.davydova.assignment.domain.servlets;
+package com.epam.rd.davydova.assignment.servlets;
 
-import com.epam.rd.davydova.assignment.domain.service.CustomerService;
+import com.epam.rd.davydova.assignment.service.impl.CustomerServiceImpl;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,11 +16,12 @@ import java.util.Optional;
 /**
  * This is a class of CustomerServlet
  */
+@RequiredArgsConstructor
 public class CustomerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
-    private CustomerService customerService = new CustomerService();
+    private final CustomerServiceImpl customerServiceImpl;
 
     /**
      * Post customer to database
@@ -31,9 +33,9 @@ public class CustomerServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
         var customerName = jsonRequest.optString("customer_name");
-        var phone = jsonRequest.optString("phone");
+        var phone = jsonRequest.optString("customer_phone");
 
-        customerService.add(customerName, phone);
+        customerServiceImpl.add(customerName, phone);
     }
 
     /**
@@ -49,7 +51,7 @@ public class CustomerServlet extends HttpServlet {
         setTypeAndEncoding(response);
 
         if (customerId != null) {
-            var customer = customerService.findBy(Integer.parseInt(customerId));
+            var customer = customerServiceImpl.findBy(Integer.parseInt(customerId));
             if (customer.isPresent()) {
                 var jsonCustomer = new JSONObject(customer.get());
                 try (var printWriter = response.getWriter()) {
@@ -61,7 +63,7 @@ public class CustomerServlet extends HttpServlet {
                 log("Customer is not present");
             }
         } else {
-            var allCustomers = customerService.findAll();
+            var allCustomers = customerServiceImpl.findAll();
             if (allCustomers.isPresent()) {
                 var jsonCustomerArray = new JSONArray(allCustomers.get());
                 try (var printWriter = response.getWriter()) {
@@ -85,9 +87,9 @@ public class CustomerServlet extends HttpServlet {
     public void doPut(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
         var customerId = jsonRequest.optString("customer_id");
-        var phone = jsonRequest.optString("phone");
+        var phone = jsonRequest.optString("customer_phone");
 
-        customerService.update(Integer.parseInt(customerId), phone);
+        customerServiceImpl.update(Integer.parseInt(customerId), phone);
     }
 
     /**
@@ -101,7 +103,7 @@ public class CustomerServlet extends HttpServlet {
         var jsonRequest = readRequest(request).get();
         var customerId = jsonRequest.optString("customer_id");
 
-        customerService.delete(Integer.parseInt(customerId));
+        customerServiceImpl.delete(Integer.parseInt(customerId));
     }
 
     /**

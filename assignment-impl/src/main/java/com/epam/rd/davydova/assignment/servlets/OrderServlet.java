@@ -1,9 +1,10 @@
-package com.epam.rd.davydova.assignment.domain.servlets;
+package com.epam.rd.davydova.assignment.servlets;
 
-import com.epam.rd.davydova.assignment.domain.service.OrderService;
+import com.epam.rd.davydova.assignment.service.impl.OrderServiceImpl;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,11 +16,12 @@ import java.util.Optional;
 /**
  * This is a class of OrderServlet
  */
+@RequiredArgsConstructor
 public class OrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
-    private OrderService orderService = new OrderService();
+    private final OrderServiceImpl orderServiceImpl;
 
     /**
      * Post order to database
@@ -35,7 +37,7 @@ public class OrderServlet extends HttpServlet {
         var orderNumber = jsonRequest.optString("order_number");
         var numberOfProducts = Integer.parseInt(jsonRequest.optString("number_of_products"));
 
-        orderService.add(productId, customerId, orderNumber, numberOfProducts);
+        orderServiceImpl.add(productId, customerId, orderNumber, numberOfProducts);
     }
 
     /**
@@ -51,7 +53,7 @@ public class OrderServlet extends HttpServlet {
         setTypeAndEncoding(response);
 
         if (orderId != null) {
-            var order = orderService.findBy(Integer.parseInt(orderId));
+            var order = orderServiceImpl.findBy(Integer.parseInt(orderId));
             if (order.isPresent()) {
                 var jsonOrder = new JSONObject(order.get());
                 try (var printWriter = response.getWriter()) {
@@ -63,7 +65,7 @@ public class OrderServlet extends HttpServlet {
                 log("Order is not present");
             }
         } else {
-            var allOrders = orderService.findAll();
+            var allOrders = orderServiceImpl.findAll();
             if (allOrders.isPresent()) {
                 var jsonOrderArray = new JSONArray(allOrders.get());
                 try (var printWriter = response.getWriter()) {
@@ -91,7 +93,7 @@ public class OrderServlet extends HttpServlet {
         var orderNumber = jsonRequest.optString("order_number");
         var numberOfProducts = Integer.parseInt(jsonRequest.optString("number_of_products"));
 
-        orderService.update(orderId, orderNumber, productId, numberOfProducts);
+        orderServiceImpl.update(orderId, orderNumber, productId, numberOfProducts);
     }
 
     /**
@@ -105,7 +107,7 @@ public class OrderServlet extends HttpServlet {
         var jsonRequest = readRequest(request).get();
         var orderId = jsonRequest.optString("order_id");
 
-        orderService.delete(Integer.parseInt(orderId));
+        orderServiceImpl.delete(Integer.parseInt(orderId));
     }
 
     /**

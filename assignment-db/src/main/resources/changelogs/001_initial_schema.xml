@@ -12,7 +12,7 @@
             </column>
             <column name="company_name" type="varchar(40)">
                 <constraints nullable="false"
-                             unique="true"/>
+                             unique="true" uniqueConstraintName="company_name_ix1"/>
             </column>
             <column name="phone" type="varchar(20)">
                 <constraints nullable="true"/>
@@ -28,7 +28,7 @@
             </column>
             <column name="customer_name" type="varchar(50)">
                 <constraints nullable="false"
-                             unique="true"/>
+                             unique="true" uniqueConstraintName="customer_name_ix1"/>
             </column>
             <column name="phone" type="varchar(20)">
                 <constraints nullable="true"/>
@@ -44,10 +44,11 @@
             </column>
             <column name="order_number" type="varchar(10)">
                 <constraints nullable="true"
-                             unique="true"/>
+                             unique="true" uniqueConstraintName="order_number_ix1"/>
             </column>
             <column name="customer_id" type="int">
-                <constraints nullable="false"/>
+                <constraints nullable="false"
+                             foreignKeyName="fk_customer_order" referencedTableName="customer" referencedColumnNames="customer_id"/>
             </column>
             <column name="order_date" type="java.sql.timestamp">
                 <constraints nullable="false"/>
@@ -56,12 +57,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="order"
-                                 baseColumnNames="customer_id"
-                                 constraintName="fk_customer_order"
-                                 referencedTableName="customer"
-                                 referencedColumnNames="customer_id"
-                                 onDelete="CASCADE"/>
     </changeSet>
 
     <changeSet id="21-05-2021 Create table Product" author="Victoria_Davydova">
@@ -72,10 +67,12 @@
             </column>
             <column name="product_name" type="varchar(50)">
                 <constraints nullable="false"
-                             unique="true"/>
+                             unique="true" uniqueConstraintName="product_name_ix1"/>
             </column>
             <column name="supplier_id" type="int">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"
+                             foreignKeyName="fk_supplier_product" referencedTableName="supplier" referencedColumnNames="supplier_id"
+                             unique="true" uniqueConstraintName="supplier_id_ix1"/>
             </column>
             <column name="unit_price" type="java.math.BigDecimal(12,2)">
                 <constraints nullable="true"/>
@@ -84,36 +81,20 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="product"
-                                 baseColumnNames="supplier_id"
-                                 constraintName="fk_supplier_product"
-                                 referencedTableName="supplier"
-                                 referencedColumnNames="supplier_id"
-                                 onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="21-05-2021 Create table OrderProduct" author="Victoria_Davydova">
+    <changeSet id="21-05-2021 Create table OrderId" author="Victoria_Davydova">
         <createTable tableName="order_product">
             <column name="order_id" type="int">
                 <constraints nullable="false"
-                             primaryKey="true" primaryKeyName="pk_order_product"/>
+                             primaryKey="true" primaryKeyName="pk_order_product"
+                             foreignKeyName="fk_order_order_product" referencedTableName="order" referencedColumnNames="order_id"/>
             </column>
             <column name="product_id" type="int">
                 <constraints nullable="false"
-                             primaryKey="true" primaryKeyName="pk_order_product"/>
+                             primaryKey="true" primaryKeyName="pk_order_product"
+                             foreignKeyName="fk_product_order_product" referencedTableName="product" referencedColumnNames="product_id"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="order_product"
-                                 baseColumnNames="order_id"
-                                 constraintName="fk_order_product_order"
-                                 referencedTableName="order"
-                                 referencedColumnNames="order_id"
-                                 onDelete="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="order_product"
-                                 baseColumnNames="product_id"
-                                 constraintName="fk_order_product_product"
-                                 referencedTableName="product"
-                                 referencedColumnNames="product_id"
-                                 onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

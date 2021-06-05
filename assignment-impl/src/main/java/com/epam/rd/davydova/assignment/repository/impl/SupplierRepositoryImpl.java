@@ -1,64 +1,63 @@
-package com.epam.rd.davydova.assignment.domain.service;
+package com.epam.rd.davydova.assignment.repository.impl;
 
 import com.epam.rd.davydova.assignment.domain.entity.Supplier;
-import lombok.Data;
+import com.epam.rd.davydova.assignment.repository.SupplierRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * This is a class for operations with Supplier entity and database
+ * This is a class for crud-operations with database
  */
 @Slf4j
-@Data
-public class SupplierService {
-    public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
-            .createEntityManagerFactory("PurchasePU");
+@RequiredArgsConstructor
+@Profile("!local")
+@Component
+public class SupplierRepositoryImpl implements SupplierRepository {
+    private final EntityManager entityManager;
 
     /**
-     * Add supplier to database
+     * Save to database
      *
-     * @param companyName supplier instance
+     * @param supplier Supplier object
      */
-    public void add(String companyName, String phone) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    @Override
+    public void save(Supplier supplier) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var supplier = new Supplier();
-            supplier.setCompanyName(companyName);
-            supplier.setPhone(phone);
             entityManager.persist(supplier);
             transaction.commit();
+            log.info("Supplier is added");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Supplier is not added. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Exception is: ", e);
         }
     }
 
     /**
-     * Find supplier by their name
+     * Find object in database by name
      *
      * @param companyName company name
-     * @return supplier instance
+     * @return Optional of Supplier object
      */
+    @Override
     public Optional<Supplier> findBy(String companyName) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
-        Supplier supplier = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            supplier = (Supplier) entityManager
+            var supplier = (Supplier) entityManager
                     .createNamedQuery(Supplier.FIND_SUPPLIER_BY_NAME)
                     .setParameter(1, companyName)
                     .getSingleResult();
@@ -68,25 +67,23 @@ public class SupplierService {
                 log.info("Supplier is found");
                 return foundSupplier;
             }
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Supplier is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Supplier with such a name is not found");
         }
         return Optional.empty();
     }
 
     /**
-     * Find supplier by Id
+     * Find object in database by Id
      *
      * @param supplierId supplier Id
-     * @return Optional of supplier instance
+     * @return Optional of Supplier object
      */
+    @Override
     public Optional<Supplier> findBy(int supplierId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -98,24 +95,22 @@ public class SupplierService {
                 log.info("Supplier is found");
                 return foundSupplier;
             }
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Supplier is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Supplier with such an Id is not found");
         }
         return Optional.empty();
     }
 
     /**
-     * Find all suppliers
+     * Find list of objects in database
      *
-     * @return Optional of List of suppliers
+     * @return Optional of List
      */
+    @Override
     public Optional<List> findAll() {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -127,31 +122,26 @@ public class SupplierService {
                 log.info("List of suppliers is found");
                 return foundSupplierList;
             }
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("List of suppliers is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("List of suppliers is not found");
         }
         return Optional.empty();
     }
 
     /**
-     * Update supplier's company name and phone number
+     * Update object in database
      *
-     * @param supplierId supplier Id
-     * @param phone      phone number
+     * @param supplier Supplier object
      */
-    public void update(int supplierId, String phone) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    @Override
+    public void update(Supplier supplier) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var supplier = entityManager.find(Supplier.class, supplierId);
-            supplier.setPhone(phone);
             entityManager.merge(supplier);
             transaction.commit();
             log.info("Supplier is updated");
@@ -159,39 +149,37 @@ public class SupplierService {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Supplier is not updated. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Exception is: ", e);
         }
     }
 
     /**
-     * Delete supplier from database
+     * Delete object from database
      *
-     * @param supplierId supplier Id
+     * @param supplier Supplier object
      */
-    public void delete(int supplierId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    @Override
+    public void delete(Supplier supplier) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.remove(entityManager.find(Supplier.class, supplierId));
+            entityManager.remove(supplier);
             transaction.commit();
+            log.info("Supplier is deleted");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Supplier is not deleted. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Exception is: ", e);
         }
     }
 
     /**
-     * Close EntityManagerFactory
+     * Close EntityManages session
      */
+    @Override
     public void close() {
-        ENTITY_MANAGER_FACTORY.close();
+        entityManager.close();
     }
 }

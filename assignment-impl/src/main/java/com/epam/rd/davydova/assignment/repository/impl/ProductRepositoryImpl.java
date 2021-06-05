@@ -1,44 +1,39 @@
-package com.epam.rd.davydova.assignment.domain.service;
+package com.epam.rd.davydova.assignment.repository.impl;
 
 import com.epam.rd.davydova.assignment.domain.entity.Product;
-import com.epam.rd.davydova.assignment.domain.entity.Supplier;
-import lombok.Data;
+import com.epam.rd.davydova.assignment.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import java.math.BigDecimal;
+import javax.persistence.NoResultException;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * This is a class for operations with Product entity and database
+ * This is a class for crud-operations with database
  */
 @Slf4j
-@Data
-public class ProductService {
-    public static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
-            .createEntityManagerFactory("PurchasePU");
+@RequiredArgsConstructor
+@Profile("!local")
+@Component
+public class ProductRepositoryImpl implements ProductRepository {
+    private final EntityManager entityManager;
 
     /**
-     * Add product to database
+     * Save to database
      *
-     * @param productName product name
-     * @param supplierId  supplier Id
-     * @param unitPrice price per unit
+     * @param product Product object
      */
-    public void add(String productName, int supplierId, double unitPrice) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    @Override
+    public void save(Product product) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var product = new Product();
-            product.setProductName(productName);
-            product.setSupplier(entityManager.find(Supplier.class, supplierId));
-            product.setUnitPrice(BigDecimal.valueOf(unitPrice));
-            product.setDiscontinued(false);
             entityManager.persist(product);
             transaction.commit();
             log.info("Product is added");
@@ -46,26 +41,23 @@ public class ProductService {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Product is not added. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Exception is: ", e);
         }
     }
 
     /**
-     * Find product by name
+     * Find object in database by name
      *
      * @param productName product name
-     * @return Optional of product instance
+     * @return Optional of Product object
      */
+    @Override
     public Optional<Product> findBy(String productName) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
-        Product product = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            product = (Product) entityManager
+            var product = (Product) entityManager
                     .createNamedQuery(Product.FIND_PRODUCT_BY_NAME)
                     .setParameter(1, productName)
                     .getSingleResult();
@@ -75,25 +67,23 @@ public class ProductService {
                 log.info("Product is found");
                 return foundProduct;
             }
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Product is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Product with such a name is not found");
         }
         return Optional.empty();
     }
 
     /**
-     * Find product by Id
+     * Find object in database by Id
      *
      * @param productId product Id
-     * @return Optional of product instance
+     * @return Optional of Product object
      */
+    @Override
     public Optional<Product> findBy(int productId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -105,24 +95,22 @@ public class ProductService {
                 log.info("Product is found");
                 return foundProduct;
             }
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Product is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Product with such an Id is not found");
         }
         return Optional.empty();
     }
 
     /**
-     * Find all products
+     * Find list of objects in database
      *
-     * @return Optional of List of products
+     * @return Optional of List
      */
+    @Override
     public Optional<List> findAll() {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
@@ -134,31 +122,26 @@ public class ProductService {
                 log.info("List of products is found");
                 return foundProductList;
             }
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("List of products is not found. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("List of products is not found");
         }
         return Optional.empty();
     }
 
     /**
-     * Update product status
+     * Update object in database
      *
-     * @param productId      product Id
-     * @param isDiscontinued product status
+     * @param product Product object
      */
-    public void update(int productId, boolean isDiscontinued) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    @Override
+    public void update(Product product) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var product = entityManager.find(Product.class, productId);
-            product.setDiscontinued(isDiscontinued);
             entityManager.merge(product);
             transaction.commit();
             log.info("Product is updated");
@@ -166,40 +149,37 @@ public class ProductService {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Product is not updated. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Exception is: ", e);
         }
     }
 
     /**
-     * Delete product from database
+     * Delete object from database
      *
-     * @param productId product Id
+     * @param product Product object
      */
-    public void delete(int productId) {
-        var entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+    @Override
+    public void delete(Product product) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.remove(entityManager.find(Product.class, productId));
+            entityManager.remove(product);
             transaction.commit();
             log.info("Product is deleted");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Product is not deleted. Exception is: ", e);
-        } finally {
-            entityManager.close();
+            log.error("Exception is: ", e);
         }
     }
 
     /**
-     * Close EntityManagerFactory
+     * Close EntityManages session
      */
+    @Override
     public void close() {
-        ENTITY_MANAGER_FACTORY.close();
+        entityManager.close();
     }
 }

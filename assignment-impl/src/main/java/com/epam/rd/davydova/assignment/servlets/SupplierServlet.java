@@ -1,9 +1,10 @@
-package com.epam.rd.davydova.assignment.domain.servlets;
+package com.epam.rd.davydova.assignment.servlets;
 
-import com.epam.rd.davydova.assignment.domain.service.ProductService;
+import com.epam.rd.davydova.assignment.service.impl.SupplierServiceImpl;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,16 +14,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
- * This is a class of ProductServlet
+ * This is a class of SupplierServlet
  */
-public class ProductServlet extends HttpServlet {
+@RequiredArgsConstructor
+public class SupplierServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
-    private ProductService productService = new ProductService();
+    private final SupplierServiceImpl supplierServiceImpl;
 
     /**
-     * Post product to database
+     * Post supplier to database
      *
      * @param request  request
      * @param response response
@@ -30,54 +32,53 @@ public class ProductServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var productName = jsonRequest.optString("product_name");
-        var supplierId = Integer.parseInt(jsonRequest.optString("supplier_id"));
-        var unitPrice = Double.parseDouble(jsonRequest.optString("unit_price"));
+        var companyName = jsonRequest.optString("company_name");
+        var phone = jsonRequest.optString("customer_phone");
 
-        productService.add(productName, supplierId, unitPrice);
+        supplierServiceImpl.add(companyName, phone);
     }
 
     /**
-     * Get product by Id or all product list from database
+     * Get supplier by Id or all suppliers from database
      *
      * @param request  request
      * @param response response
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        var productId = request.getParameter("product_id");
+        var supplierId = request.getParameter("supplier_id");
 
         setTypeAndEncoding(response);
 
-        if (productId != null) {
-            var product = productService.findBy(Integer.parseInt(productId));
-            if (product.isPresent()) {
-                var jsonProduct = new JSONObject(product.get());
+        if (supplierId != null) {
+            var supplier = supplierServiceImpl.findBy(Integer.parseInt(supplierId));
+            if (supplier.isPresent()) {
+                var jsonSupplier = new JSONObject(supplier.get());
                 try (var printWriter = response.getWriter()) {
-                    printWriter.print(jsonProduct);
+                    printWriter.print(jsonSupplier);
                 } catch (IOException e) {
                     log("Exception is: ", e);
                 }
             } else {
-                log("Product is not present");
+                log("Supplier is not present");
             }
         } else {
-            var allProducts = productService.findAll();
-            if (allProducts.isPresent()) {
-                var jsonProductArray = new JSONArray(allProducts.get());
+            var allSuppliers = supplierServiceImpl.findAll();
+            if (allSuppliers.isPresent()) {
+                var jsonSupplierArray = new JSONArray(allSuppliers.get());
                 try (var printWriter = response.getWriter()) {
-                    printWriter.print(jsonProductArray);
+                    printWriter.print(jsonSupplierArray);
                 } catch (IOException e) {
                     log("Exception is: ", e);
                 }
             } else {
-                log("Product list is not present");
+                log("Supplier list is not present");
             }
         }
     }
 
     /**
-     * Update product in database
+     * Update supplier in database
      *
      * @param request  request
      * @param response response
@@ -85,14 +86,14 @@ public class ProductServlet extends HttpServlet {
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var productId = jsonRequest.optString("product_id");
-        var isDiscontinued = Boolean.parseBoolean(jsonRequest.optString("is_discontinued"));
+        var supplierId = jsonRequest.optString("supplier_id");
+        var phone = jsonRequest.optString("customer_phone");
 
-        productService.update(Integer.parseInt(productId), isDiscontinued);
+        supplierServiceImpl.update(Integer.parseInt(supplierId), phone);
     }
 
     /**
-     * Delete product from database
+     * Delete supplier from database
      *
      * @param request  request
      * @param response response
@@ -100,9 +101,9 @@ public class ProductServlet extends HttpServlet {
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) {
         var jsonRequest = readRequest(request).get();
-        var productId = jsonRequest.optString("product_id");
+        var supplierId = jsonRequest.optString("supplier_id");
 
-        productService.delete(Integer.parseInt(productId));
+        supplierServiceImpl.delete(Integer.parseInt(supplierId));
     }
 
     /**
