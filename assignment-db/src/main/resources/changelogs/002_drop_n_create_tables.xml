@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd"
+                   logicalFilePath="001_initial_schema.xml">
+
+    <changeSet  id="05-06-2021 drop_tables" author="Victoria_Davydova">
+        <dropTable  cascadeConstraints="true"
+                    catalogName="epamcourses"
+                    schemaName="davydova"
+                    tableName="order"/>
+        <dropTable  cascadeConstraints="true"
+                    catalogName="epamcourses"
+                    schemaName="davydova"
+                    tableName="product"/>
+        <dropTable  cascadeConstraints="true"
+                    catalogName="epamcourses"
+                    schemaName="davydova"
+                    tableName="order_product"/>
+    </changeSet>
+
+    <changeSet  id="05-06-2021 change_id_types" author="Victoria_Davydova">
+        <modifyDataType  catalogName="epamcourses"
+                         schemaName="davydova"
+                         tableName="customer"
+                         columnName="customer_id"
+                         newDataType="bigint"/>
+        <modifyDataType  catalogName="epamcourses"
+                         schemaName="davydova"
+                         tableName="supplier"
+                         columnName="supplier_id"
+                         newDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="05-06-2021 create_table_order" author="Victoria_Davydova">
+        <createTable tableName="order">
+            <column autoIncrement="true" name="order_id" type="bigint">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_order"/>
+            </column>
+            <column name="order_number" type="varchar(10)">
+                <constraints nullable="true"
+                             unique="true"/>
+            </column>
+            <column name="customer_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_date" type="java.sql.timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_amount" type="java.math.BigDecimal(12,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="order"
+                                 baseColumnNames="customer_id"
+                                 constraintName="fk_customer_order"
+                                 referencedTableName="customer"
+                                 referencedColumnNames="customer_id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="05-06-2021 create_table_product" author="Victoria_Davydova">
+        <createTable tableName="product">
+            <column autoIncrement="true" name="product_id" type="bigint">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_product"/>
+            </column>
+            <column name="product_name" type="varchar(50)">
+                <constraints nullable="false"
+                             unique="true"/>
+            </column>
+            <column name="supplier_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit_price" type="java.math.BigDecimal(12,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_discontinued" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="product"
+                                 baseColumnNames="supplier_id"
+                                 constraintName="fk_supplier_product"
+                                 referencedTableName="supplier"
+                                 referencedColumnNames="supplier_id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="05-06-2021 create_table_order_product" author="Victoria_Davydova">
+        <createTable tableName="order_product">
+            <column name="order_id" type="bigint">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_order_product"/>
+            </column>
+            <column name="product_id" type="bigint">
+                <constraints nullable="false"
+                             primaryKey="true" primaryKeyName="pk_order_product"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="order_product"
+                                 baseColumnNames="order_id"
+                                 constraintName="fk_order_product_order"
+                                 referencedTableName="order"
+                                 referencedColumnNames="order_id"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="order_product"
+                                 baseColumnNames="product_id"
+                                 constraintName="fk_order_product_product"
+                                 referencedTableName="product"
+                                 referencedColumnNames="product_id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
