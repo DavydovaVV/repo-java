@@ -1,4 +1,4 @@
-package com.epam.rd.davydova.assignment.service.interfaces;
+package com.epam.rd.davydova.assignment.service;
 
 import com.epam.rd.davydova.assignment.domain.entity.Order;
 
@@ -8,8 +8,8 @@ import java.util.Optional;
 /**
  * This is an interface that wraps interface for crud-operations with database
  */
-public interface IOrderService {
-    void add(int productId, int customerId, String orderNumber, int numberOfProducts);
+public interface OrderService {
+    Optional<Order> add(int productId, int customerId, String orderNumber, int numberOfProducts);
 
     Optional<Order> findBy(String orderNumber);
 
@@ -17,9 +17,9 @@ public interface IOrderService {
 
     Optional<List> findAll();
 
-    void update(int orderId, String orderNumber, int productId, int numberOfProducts);
+    Optional<Order> update(int orderId, String orderNumber, int productId, int numberOfProducts);
 
-    void delete(int orderId);
+    boolean delete(int orderId);
 
     void close();
 }

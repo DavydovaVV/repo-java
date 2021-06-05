@@ -1,6 +1,6 @@
 package com.epam.rd.davydova.assignment.servlets;
 
-import com.epam.rd.davydova.assignment.service.impl.SupplierService;
+import com.epam.rd.davydova.assignment.service.impl.SupplierServiceImpl;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ public class SupplierServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
-    private final SupplierService supplierService;
+    private final SupplierServiceImpl supplierServiceImpl;
 
     /**
      * Post supplier to database
@@ -35,7 +35,7 @@ public class SupplierServlet extends HttpServlet {
         var companyName = jsonRequest.optString("company_name");
         var phone = jsonRequest.optString("customer_phone");
 
-        supplierService.add(companyName, phone);
+        supplierServiceImpl.add(companyName, phone);
     }
 
     /**
@@ -51,7 +51,7 @@ public class SupplierServlet extends HttpServlet {
         setTypeAndEncoding(response);
 
         if (supplierId != null) {
-            var supplier = supplierService.findBy(Integer.parseInt(supplierId));
+            var supplier = supplierServiceImpl.findBy(Integer.parseInt(supplierId));
             if (supplier.isPresent()) {
                 var jsonSupplier = new JSONObject(supplier.get());
                 try (var printWriter = response.getWriter()) {
@@ -63,7 +63,7 @@ public class SupplierServlet extends HttpServlet {
                 log("Supplier is not present");
             }
         } else {
-            var allSuppliers = supplierService.findAll();
+            var allSuppliers = supplierServiceImpl.findAll();
             if (allSuppliers.isPresent()) {
                 var jsonSupplierArray = new JSONArray(allSuppliers.get());
                 try (var printWriter = response.getWriter()) {
@@ -89,7 +89,7 @@ public class SupplierServlet extends HttpServlet {
         var supplierId = jsonRequest.optString("supplier_id");
         var phone = jsonRequest.optString("customer_phone");
 
-        supplierService.update(Integer.parseInt(supplierId), phone);
+        supplierServiceImpl.update(Integer.parseInt(supplierId), phone);
     }
 
     /**
@@ -103,7 +103,7 @@ public class SupplierServlet extends HttpServlet {
         var jsonRequest = readRequest(request).get();
         var supplierId = jsonRequest.optString("supplier_id");
 
-        supplierService.delete(Integer.parseInt(supplierId));
+        supplierServiceImpl.delete(Integer.parseInt(supplierId));
     }
 
     /**

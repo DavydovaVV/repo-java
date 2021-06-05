@@ -1,9 +1,9 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
 import com.epam.rd.davydova.assignment.domain.entity.Product;
-import com.epam.rd.davydova.assignment.repository.impl.ProductRepository;
-import com.epam.rd.davydova.assignment.repository.impl.SupplierRepository;
-import com.epam.rd.davydova.assignment.service.interfaces.IProductService;
+import com.epam.rd.davydova.assignment.repository.impl.ProductRepositoryImpl;
+import com.epam.rd.davydova.assignment.repository.impl.SupplierRepositoryImpl;
+import com.epam.rd.davydova.assignment.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,9 +18,9 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class ProductService implements IProductService {
-    private final ProductRepository productRepository;
-    private final SupplierRepository supplierRepository;
+public class ProductServiceImpl implements ProductService {
+    private final ProductRepositoryImpl productRepositoryImpl;
+    private final SupplierRepositoryImpl supplierRepositoryImpl;
 
     /**
      * Add product to database
@@ -30,24 +30,30 @@ public class ProductService implements IProductService {
      * @param unitPrice price per unit
      */
     @Override
-    public void add(String productName, int supplierId, double unitPrice) {
-        var productOptional = productRepository.findBy(productName);
-        var supplierOptional = supplierRepository.findBy(supplierId);
+    public Optional<Product> add(String productName, int supplierId, double unitPrice) {
+        var productOptional = productRepositoryImpl.findBy(productName);
+        var supplierOptional = supplierRepositoryImpl.findBy(supplierId);
 
         if (productOptional.isEmpty()) {
             if (supplierOptional.isPresent()) {
-                var product = new Product();
                 var supplier = supplierOptional.get();
-                product.setProductName(productName);
-                product.setSupplier(supplier);
-                product.setUnitPrice(BigDecimal.valueOf(unitPrice));
-                productRepository.save(product);
+                if (supplier.getProductList().isEmpty()) {
+                    var product = new Product();
+                    product.setProductName(productName);
+                    product.setSupplier(supplier);
+                    product.setUnitPrice(BigDecimal.valueOf(unitPrice));
+                    productRepositoryImpl.save(product);
+                    return productRepositoryImpl.findBy(product.getProductId());
+                } else {
+                    log.error("Supplier supplies another product. Product cannot be added");
+                }
             } else {
                 log.error("Supplier is not added. Product cannot be added");
             }
         } else {
             log.error("Product with such a name is already added");
         }
+        return Optional.empty();
     }
 
     /**
@@ -58,7 +64,7 @@ public class ProductService implements IProductService {
      */
     @Override
     public Optional<Product> findBy(String productName) {
-        return productRepository.findBy(productName);
+        return productRepositoryImpl.findBy(productName);
     }
 
     /**
@@ -69,7 +75,7 @@ public class ProductService implements IProductService {
      */
     @Override
     public Optional<Product> findBy(int productId) {
-        return productRepository.findBy(productId);
+        return productRepositoryImpl.findBy(productId);
     }
 
     /**
@@ -79,7 +85,7 @@ public class ProductService implements IProductService {
      */
     @Override
     public Optional<List> findAll() {
-        return productRepository.findAll();
+        return productRepositoryImpl.findAll();
     }
 
     /**
@@ -87,35 +93,41 @@ public class ProductService implements IProductService {
      *
      * @param productId      product Id
      * @param isDiscontinued product status
+     * @return
      */
     @Override
-    public void update(int productId, boolean isDiscontinued) {
-        var productOptional = productRepository.findBy(productId);
+    public Optional<Product> update(int productId, boolean isDiscontinued) {
+        var productOptional = productRepositoryImpl.findBy(productId);
 
         if (productOptional.isPresent()) {
             var product = productOptional.get();
             product.setDiscontinued(isDiscontinued);
-            productRepository.update(product);
+            productRepositoryImpl.update(product);
+            return productRepositoryImpl.findBy(productId);
         } else {
             log.error("Product is not present to be updated");
         }
+        return Optional.empty();
     }
 
     /**
      * Delete product from database
      *
      * @param productId product Id
+     * @return
      */
     @Override
-    public void delete(int productId) {
-        var productOptional = productRepository.findBy(productId);
+    public boolean delete(int productId) {
+        var productOptional = productRepositoryImpl.findBy(productId);
 
         if (productOptional.isPresent()) {
             var product = productOptional.get();
-            productRepository.delete(product);
+            productRepositoryImpl.delete(product);
+            return productRepositoryImpl.findBy(productId).isEmpty();
         } else {
             log.error("Product is not present to be deleted");
         }
+        return false;
     }
 
     /**
@@ -123,6 +135,6 @@ public class ProductService implements IProductService {
      */
     @Override
     public void close() {
-        productRepository.close();
+        productRepositoryImpl.close();
     }
 }

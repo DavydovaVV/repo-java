@@ -1,9 +1,10 @@
 package com.epam.rd.davydova.assignment.repository.impl;
 
-import com.epam.rd.davydova.assignment.domain.entity.Order;
-import com.epam.rd.davydova.assignment.repository.interfaces.IOrderRepository;
+import com.epam.rd.davydova.assignment.domain.entity.Customer;
+import com.epam.rd.davydova.assignment.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -17,24 +18,25 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Profile("!local")
 @Component
-public class OrderRepository implements IOrderRepository {
+public class CustomerRepositoryImpl implements CustomerRepository {
     private final EntityManager entityManager;
 
     /**
      * Save to database
      *
-     * @param order Order object
+     * @param customer Customer object
      */
     @Override
-    public void save(Order order) {
+    public void save(Customer customer) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.persist(order);
+            entityManager.persist(customer);
             transaction.commit();
-            log.info("Order is added");
+            log.info("Customer is added");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -44,32 +46,32 @@ public class OrderRepository implements IOrderRepository {
     }
 
     /**
-     * Find object in database by number
+     * Find object in database by name
      *
-     * @param orderNumber order number
-     * @return Optional of Order object
+     * @param customerName customer name
+     * @return Optional of Customer object
      */
     @Override
-    public Optional<Order> findBy(String orderNumber) {
+    public Optional<Customer> findBy(String customerName) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var order = (Order) entityManager
-                    .createNamedQuery(Order.FIND_ORDER_BY_NUMBER)
-                    .setParameter(1, orderNumber)
+            var customer = (Customer) entityManager
+                    .createNamedQuery(Customer.FIND_CUSTOMER_BY_NAME)
+                    .setParameter(1, customerName)
                     .getSingleResult();
             transaction.commit();
-            var foundOrder = Optional.ofNullable(order);
-            if (foundOrder.isPresent()) {
-                log.info("Order is found");
-                return foundOrder;
+            var foundCustomer = Optional.ofNullable(customer);
+            if (foundCustomer.isPresent()) {
+                log.info("Customer is found");
+                return foundCustomer;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Order with such a number is not found");
+            log.error("Customer with such a name is not found");
         }
         return Optional.empty();
     }
@@ -77,27 +79,27 @@ public class OrderRepository implements IOrderRepository {
     /**
      * Find object in database by Id
      *
-     * @param orderId order Id
-     * @return Optional of Order object
+     * @param customerId customer Id
+     * @return Optional of Customer object
      */
     @Override
-    public Optional<Order> findBy(int orderId) {
+    public Optional<Customer> findBy(int customerId) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var order = entityManager.find(Order.class, orderId);
+            var customer = entityManager.find(Customer.class, customerId);
             transaction.commit();
-            var foundOrder = Optional.ofNullable(order);
-            if (foundOrder.isPresent()) {
-                log.info("Order is found");
-                return foundOrder;
+            var foundCustomer = Optional.ofNullable(customer);
+            if (foundCustomer.isPresent()) {
+                log.info("Customer is found");
+                return foundCustomer;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Order with such an Id is not found");
+            log.error("Customer with such an Id is not found");
         }
         return Optional.empty();
     }
@@ -113,18 +115,18 @@ public class OrderRepository implements IOrderRepository {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var orderList = entityManager.createNamedQuery(Order.FIND_ALL_ORDERS).getResultList();
+            var customerList = entityManager.createNamedQuery(Customer.FIND_ALL_CUSTOMERS).getResultList();
             transaction.commit();
-            var foundOrderList = Optional.ofNullable(orderList);
-            if (foundOrderList.isPresent()) {
-                log.info("List of orders is found");
-                return foundOrderList;
+            var foundCustomerList = Optional.ofNullable(customerList);
+            if (foundCustomerList.isPresent()) {
+                log.info("List of customers is found");
+                return foundCustomerList;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("List of orders is not found");
+            log.error("List of customers is not found");
         }
         return Optional.empty();
     }
@@ -132,17 +134,17 @@ public class OrderRepository implements IOrderRepository {
     /**
      * Update object in database
      *
-     * @param order Order object
+     * @param customer Customer object
      */
     @Override
-    public void update(Order order) {
+    public void update(Customer customer) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.merge(order);
+            entityManager.merge(customer);
             transaction.commit();
-            log.info("Order is updated");
+            log.info("Customer is updated");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -154,17 +156,17 @@ public class OrderRepository implements IOrderRepository {
     /**
      * Delete object from database
      *
-     * @param order Order object
+     * @param customer Customer object
      */
     @Override
-    public void delete(Order order) {
+    public void delete(Customer customer) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.remove(order);
+            entityManager.remove(customer);
             transaction.commit();
-            log.info("Order is deleted");
+            log.info("Customer is deleted");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();

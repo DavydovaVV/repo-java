@@ -1,8 +1,8 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
-import com.epam.rd.davydova.assignment.repository.impl.CustomerRepository;
-import com.epam.rd.davydova.assignment.service.interfaces.ICustomerService;
+import com.epam.rd.davydova.assignment.repository.impl.CustomerRepositoryImpl;
+import com.epam.rd.davydova.assignment.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,27 +16,30 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class CustomerService implements ICustomerService {
-    private final CustomerRepository customerRepository;
+public class CustomerServiceImpl implements CustomerService {
+    private final CustomerRepositoryImpl customerRepositoryImpl;
 
     /**
      * Add customer to database
      *
-     * @param customerName customer instance
+     * @param customerName customer name
      * @param phone        phone number
+     * @return Optional of Customer object
      */
     @Override
-    public void add(String customerName, String phone) {
-        var customerOptional = customerRepository.findBy(customerName);
+    public Optional<Customer> add(String customerName, String phone) {
+        var customerOptional = customerRepositoryImpl.findBy(customerName);
 
         if (customerOptional.isEmpty()) {
             var customer = new Customer();
             customer.setCustomerName(customerName);
             customer.setPhone(phone);
-            customerRepository.save(customer);
+            customerRepositoryImpl.save(customer);
+            return customerRepositoryImpl.findBy(customerName);
         } else {
             log.error("Customer with such a name is already added");
         }
+        return Optional.empty();
     }
 
     /**
@@ -47,7 +50,7 @@ public class CustomerService implements ICustomerService {
      */
     @Override
     public Optional<Customer> findBy(String customerName) {
-        return customerRepository.findBy(customerName);
+        return customerRepositoryImpl.findBy(customerName);
     }
 
     /**
@@ -58,7 +61,7 @@ public class CustomerService implements ICustomerService {
      */
     @Override
     public Optional<Customer> findBy(int customerId) {
-        return customerRepository.findBy(customerId);
+        return customerRepositoryImpl.findBy(customerId);
     }
 
     /**
@@ -68,7 +71,7 @@ public class CustomerService implements ICustomerService {
      */
     @Override
     public Optional<List> findAll() {
-        return customerRepository.findAll();
+        return customerRepositoryImpl.findAll();
     }
 
     /**
@@ -78,16 +81,18 @@ public class CustomerService implements ICustomerService {
      * @param phone      phone number
      */
     @Override
-    public void update(int customerId, String phone) {
-        var customerOptional = customerRepository.findBy(customerId);
+    public Optional<Customer> update(int customerId, String phone) {
+        var customerOptional = customerRepositoryImpl.findBy(customerId);
 
         if (customerOptional.isPresent()) {
             var customer = customerOptional.get();
             customer.setPhone(phone);
-            customerRepository.update(customer);
+            customerRepositoryImpl.update(customer);
+            return customerRepositoryImpl.findBy(customerId);
         } else {
             log.error("Customer is not present to be updated");
         }
+        return Optional.empty();
     }
 
     /**
@@ -96,15 +101,17 @@ public class CustomerService implements ICustomerService {
      * @param customerId customer Id
      */
     @Override
-    public void delete(int customerId) {
-        var customerOptional = customerRepository.findBy(customerId);
+    public boolean delete(int customerId) {
+        var customerOptional = customerRepositoryImpl.findBy(customerId);
 
         if (customerOptional.isPresent()) {
             var customer = customerOptional.get();
-            customerRepository.delete(customer);
+            customerRepositoryImpl.delete(customer);
+            return customerRepositoryImpl.findBy(customerId).isEmpty();
         } else {
             log.error("Customer is not present to be deleted");
         }
+        return false;
     }
 
     /**
@@ -112,6 +119,6 @@ public class CustomerService implements ICustomerService {
      */
     @Override
     public void close() {
-        customerRepository.close();
+        customerRepositoryImpl.close();
     }
 }

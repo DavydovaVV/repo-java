@@ -1,10 +1,10 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
 import com.epam.rd.davydova.assignment.domain.entity.Order;
-import com.epam.rd.davydova.assignment.repository.impl.CustomerRepository;
-import com.epam.rd.davydova.assignment.repository.impl.OrderRepository;
-import com.epam.rd.davydova.assignment.repository.impl.ProductRepository;
-import com.epam.rd.davydova.assignment.service.interfaces.IOrderService;
+import com.epam.rd.davydova.assignment.repository.impl.CustomerRepositoryImpl;
+import com.epam.rd.davydova.assignment.repository.impl.OrderRepositoryImpl;
+import com.epam.rd.davydova.assignment.repository.impl.ProductRepositoryImpl;
+import com.epam.rd.davydova.assignment.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,10 +20,10 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class OrderService implements IOrderService {
-    private final OrderRepository orderRepository;
-    private final CustomerRepository customerRepository;
-    private final ProductRepository productRepository;
+public class OrderServiceImpl implements OrderService {
+    private final OrderRepositoryImpl orderRepositoryImpl;
+    private final CustomerRepositoryImpl customerRepositoryImpl;
+    private final ProductRepositoryImpl productRepositoryImpl;
 
     /**
      * Add order to database
@@ -34,10 +34,10 @@ public class OrderService implements IOrderService {
      * @param numberOfProducts number of products
      */
     @Override
-    public void add(int productId, int customerId, String orderNumber, int numberOfProducts) {
-        var orderOptional = orderRepository.findBy(orderNumber);
-        var customerOptional = customerRepository.findBy(customerId);
-        var productOptional = productRepository.findBy(productId);
+    public Optional<Order> add(int productId, int customerId, String orderNumber, int numberOfProducts) {
+        var orderOptional = orderRepositoryImpl.findBy(orderNumber);
+        var customerOptional = customerRepositoryImpl.findBy(customerId);
+        var productOptional = productRepositoryImpl.findBy(productId);
 
         if (orderOptional.isEmpty()) {
             if (customerOptional.isPresent()) {
@@ -53,7 +53,8 @@ public class OrderService implements IOrderService {
                     order.setTotalAmount(BigDecimal.valueOf(pricePerUnit * numberOfProducts));
                     order.addToList(product);
                     product.addToList(order);
-                    orderRepository.save(order);
+                    orderRepositoryImpl.save(order);
+                    return orderRepositoryImpl.findBy(order.getOrderId());
                 } else {
                     log.error("Product is not added. Order cannot be added");
                 }
@@ -63,6 +64,7 @@ public class OrderService implements IOrderService {
         } else {
             log.error("Order with such a number is already added");
         }
+        return Optional.empty();
     }
 
     /**
@@ -73,7 +75,7 @@ public class OrderService implements IOrderService {
      */
     @Override
     public Optional<Order> findBy(String orderNumber) {
-        return orderRepository.findBy(orderNumber);
+        return orderRepositoryImpl.findBy(orderNumber);
     }
 
     /**
@@ -84,7 +86,7 @@ public class OrderService implements IOrderService {
      */
     @Override
     public Optional<Order> findBy(int orderId) {
-        return orderRepository.findBy(orderId);
+        return orderRepositoryImpl.findBy(orderId);
     }
 
     /**
@@ -94,7 +96,7 @@ public class OrderService implements IOrderService {
      */
     @Override
     public Optional<List> findAll() {
-        return orderRepository.findAll();
+        return orderRepositoryImpl.findAll();
     }
 
     /**
@@ -104,11 +106,12 @@ public class OrderService implements IOrderService {
      * @param orderNumber      order Number
      * @param productId        product Id
      * @param numberOfProducts quantity of product unit in order
+     * @return
      */
     @Override
-    public void update(int orderId, String orderNumber, int productId, int numberOfProducts) {
-        var orderOptional = orderRepository.findBy(orderId);
-        var productOptional = productRepository.findBy(productId);
+    public Optional<Order> update(int orderId, String orderNumber, int productId, int numberOfProducts) {
+        var orderOptional = orderRepositoryImpl.findBy(orderId);
+        var productOptional = productRepositoryImpl.findBy(productId);
 
         if (orderOptional.isPresent()) {
             if (productOptional.isPresent()) {
@@ -122,35 +125,40 @@ public class OrderService implements IOrderService {
                 order.setTotalAmount(BigDecimal.valueOf(pricePerUnit * numberOfProducts)
                         .add(totalAmount));
 
-                if(!order.getProductList().contains(product)) {
+                if (!order.getProductList().contains(product)) {
                     order.addToList(product);
                     product.addToList(order);
                 }
 
-                orderRepository.update(order);
+                orderRepositoryImpl.update(order);
+                return orderRepositoryImpl.findBy(orderId);
             } else {
                 log.error("Product is not present to be added. Order cannot be updated");
             }
         } else {
             log.error("Order is not present to be updated");
         }
+        return Optional.empty();
     }
 
     /**
      * Delete order from database
      *
      * @param orderId order Id
+     * @return status of removal
      */
     @Override
-    public void delete(int orderId) {
-        var orderOptional = orderRepository.findBy(orderId);
+    public boolean delete(int orderId) {
+        var orderOptional = orderRepositoryImpl.findBy(orderId);
 
         if (orderOptional.isPresent()) {
             var order = orderOptional.get();
-            orderRepository.delete(order);
+            orderRepositoryImpl.delete(order);
+            return findBy(order.getOrderId()).isEmpty();
         } else {
             log.error("Order is not present to be deleted");
         }
+        return false;
     }
 
     /**
@@ -158,6 +166,6 @@ public class OrderService implements IOrderService {
      */
     @Override
     public void close() {
-        orderRepository.close();
+        orderRepositoryImpl.close();
     }
 }

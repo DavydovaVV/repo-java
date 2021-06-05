@@ -1,4 +1,4 @@
-package com.epam.rd.davydova.assignment.repository.interfaces;
+package com.epam.rd.davydova.assignment.repository;
 
 import com.epam.rd.davydova.assignment.domain.entity.Order;
 
@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * This is an interface for operations with database
  */
-public interface IOrderRepository {
+public interface OrderRepository {
     void save(Order order);
 
     Optional<Order> findBy(String orderNumber);

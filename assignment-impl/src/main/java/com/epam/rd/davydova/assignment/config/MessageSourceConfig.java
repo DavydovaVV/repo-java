@@ -1,7 +1,10 @@
 package com.epam.rd.davydova.assignment.config;
 
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 /**
@@ -9,8 +12,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
 @Configuration
 @Profile("local")
-@ComponentScan("com.epam.rd.davydova.assignment.service.stub " +
-        "&& com.epam.rd.davydova.assignment.domain.stub")
+@ComponentScan("com.epam.rd.davydova.assignment.repository.stub")
 public class MessageSourceConfig {
 
     @Bean

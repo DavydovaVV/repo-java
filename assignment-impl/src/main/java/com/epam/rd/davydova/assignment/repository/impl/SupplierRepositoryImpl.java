@@ -1,9 +1,10 @@
 package com.epam.rd.davydova.assignment.repository.impl;
 
-import com.epam.rd.davydova.assignment.domain.entity.Product;
-import com.epam.rd.davydova.assignment.repository.interfaces.IProductRepository;
+import com.epam.rd.davydova.assignment.domain.entity.Supplier;
+import com.epam.rd.davydova.assignment.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -17,24 +18,25 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Profile("!local")
 @Component
-public class ProductRepository implements IProductRepository {
+public class SupplierRepositoryImpl implements SupplierRepository {
     private final EntityManager entityManager;
 
     /**
      * Save to database
      *
-     * @param product Product object
+     * @param supplier Supplier object
      */
     @Override
-    public void save(Product product) {
+    public void save(Supplier supplier) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.persist(product);
+            entityManager.persist(supplier);
             transaction.commit();
-            log.info("Product is added");
+            log.info("Supplier is added");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -46,30 +48,30 @@ public class ProductRepository implements IProductRepository {
     /**
      * Find object in database by name
      *
-     * @param productName product name
-     * @return Optional of Product object
+     * @param companyName company name
+     * @return Optional of Supplier object
      */
     @Override
-    public Optional<Product> findBy(String productName) {
+    public Optional<Supplier> findBy(String companyName) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var product = (Product) entityManager
-                    .createNamedQuery(Product.FIND_PRODUCT_BY_NAME)
-                    .setParameter(1, productName)
+            var supplier = (Supplier) entityManager
+                    .createNamedQuery(Supplier.FIND_SUPPLIER_BY_NAME)
+                    .setParameter(1, companyName)
                     .getSingleResult();
             transaction.commit();
-            var foundProduct = Optional.ofNullable(product);
-            if (foundProduct.isPresent()) {
-                log.info("Product is found");
-                return foundProduct;
+            var foundSupplier = Optional.ofNullable(supplier);
+            if (foundSupplier.isPresent()) {
+                log.info("Supplier is found");
+                return foundSupplier;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Product with such a name is not found");
+            log.error("Supplier with such a name is not found");
         }
         return Optional.empty();
     }
@@ -77,27 +79,27 @@ public class ProductRepository implements IProductRepository {
     /**
      * Find object in database by Id
      *
-     * @param productId product Id
-     * @return Optional of Product object
+     * @param supplierId supplier Id
+     * @return Optional of Supplier object
      */
     @Override
-    public Optional<Product> findBy(int productId) {
+    public Optional<Supplier> findBy(int supplierId) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var product = entityManager.find(Product.class, productId);
+            var supplier = entityManager.find(Supplier.class, supplierId);
             transaction.commit();
-            var foundProduct = Optional.ofNullable(product);
-            if (foundProduct.isPresent()) {
-                log.info("Product is found");
-                return foundProduct;
+            var foundSupplier = Optional.ofNullable(supplier);
+            if (foundSupplier.isPresent()) {
+                log.info("Supplier is found");
+                return foundSupplier;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Product with such an Id is not found");
+            log.error("Supplier with such an Id is not found");
         }
         return Optional.empty();
     }
@@ -113,18 +115,18 @@ public class ProductRepository implements IProductRepository {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var productList = entityManager.createNamedQuery(Product.FIND_ALL_PRODUCTS).getResultList();
+            var supplierList = entityManager.createNamedQuery(Supplier.FIND_ALL_SUPPLIERS).getResultList();
             transaction.commit();
-            var foundProductList = Optional.ofNullable(productList);
-            if (foundProductList.isPresent()) {
-                log.info("List of products is found");
-                return foundProductList;
+            var foundSupplierList = Optional.ofNullable(supplierList);
+            if (foundSupplierList.isPresent()) {
+                log.info("List of suppliers is found");
+                return foundSupplierList;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("List of products is not found");
+            log.error("List of suppliers is not found");
         }
         return Optional.empty();
     }
@@ -132,17 +134,17 @@ public class ProductRepository implements IProductRepository {
     /**
      * Update object in database
      *
-     * @param product Product object
+     * @param supplier Supplier object
      */
     @Override
-    public void update(Product product) {
+    public void update(Supplier supplier) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.merge(product);
+            entityManager.merge(supplier);
             transaction.commit();
-            log.info("Product is updated");
+            log.info("Supplier is updated");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -154,17 +156,17 @@ public class ProductRepository implements IProductRepository {
     /**
      * Delete object from database
      *
-     * @param product Product object
+     * @param supplier Supplier object
      */
     @Override
-    public void delete(Product product) {
+    public void delete(Supplier supplier) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.remove(product);
+            entityManager.remove(supplier);
             transaction.commit();
-            log.info("Product is deleted");
+            log.info("Supplier is deleted");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();

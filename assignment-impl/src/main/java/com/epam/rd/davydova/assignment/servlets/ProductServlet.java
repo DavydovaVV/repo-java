@@ -1,6 +1,6 @@
 package com.epam.rd.davydova.assignment.servlets;
 
-import com.epam.rd.davydova.assignment.service.impl.ProductService;
+import com.epam.rd.davydova.assignment.service.impl.ProductServiceImpl;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String CONTENT_TYPE = "application/json";
     private static final String ENCODING = "UTF-8";
-    private final ProductService productService;
+    private final ProductServiceImpl productServiceImpl;
 
     /**
      * Post product to database
@@ -36,7 +36,7 @@ public class ProductServlet extends HttpServlet {
         var supplierId = Integer.parseInt(jsonRequest.optString("supplier_id"));
         var unitPrice = Double.parseDouble(jsonRequest.optString("unit_price"));
 
-        productService.add(productName, supplierId, unitPrice);
+        productServiceImpl.add(productName, supplierId, unitPrice);
     }
 
     /**
@@ -52,7 +52,7 @@ public class ProductServlet extends HttpServlet {
         setTypeAndEncoding(response);
 
         if (productId != null) {
-            var product = productService.findBy(Integer.parseInt(productId));
+            var product = productServiceImpl.findBy(Integer.parseInt(productId));
             if (product.isPresent()) {
                 var jsonProduct = new JSONObject(product.get());
                 try (var printWriter = response.getWriter()) {
@@ -64,7 +64,7 @@ public class ProductServlet extends HttpServlet {
                 log("Product is not present");
             }
         } else {
-            var allProducts = productService.findAll();
+            var allProducts = productServiceImpl.findAll();
             if (allProducts.isPresent()) {
                 var jsonProductArray = new JSONArray(allProducts.get());
                 try (var printWriter = response.getWriter()) {
@@ -90,7 +90,7 @@ public class ProductServlet extends HttpServlet {
         var productId = jsonRequest.optString("product_id");
         var isDiscontinued = Boolean.parseBoolean(jsonRequest.optString("is_discontinued"));
 
-        productService.update(Integer.parseInt(productId), isDiscontinued);
+        productServiceImpl.update(Integer.parseInt(productId), isDiscontinued);
     }
 
     /**
@@ -104,7 +104,7 @@ public class ProductServlet extends HttpServlet {
         var jsonRequest = readRequest(request).get();
         var productId = jsonRequest.optString("product_id");
 
-        productService.delete(Integer.parseInt(productId));
+        productServiceImpl.delete(Integer.parseInt(productId));
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.epam.rd.davydova.assignment.repository.interfaces;
+package com.epam.rd.davydova.assignment.repository;
 
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
 
@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * This is an interface for operations with database
  */
-public interface ICustomerRepository {
+public interface CustomerRepository {
     void save(Customer customer);
 
     Optional<Customer> findBy(String customerName);

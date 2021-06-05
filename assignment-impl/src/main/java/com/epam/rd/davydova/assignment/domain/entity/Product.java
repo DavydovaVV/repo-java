@@ -1,6 +1,6 @@
 package com.epam.rd.davydova.assignment.domain.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,6 +11,7 @@ import java.util.List;
  * This is a class that defines Product
  */
 @Data
+@RequiredArgsConstructor
 @Entity
 @NamedQueries({
         @NamedQuery(name = Product.FIND_PRODUCT_BY_NAME, query = "SELECT p FROM Product p WHERE p.productName = ?1"),
@@ -24,6 +25,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int productId;
 
+    @ToString.Exclude
     @ManyToMany(mappedBy = "productList", cascade = CascadeType.MERGE)
     private List<Order> orderList = new ArrayList<>();
 

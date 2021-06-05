@@ -1,9 +1,10 @@
 package com.epam.rd.davydova.assignment.repository.impl;
 
-import com.epam.rd.davydova.assignment.domain.entity.Customer;
-import com.epam.rd.davydova.assignment.repository.interfaces.ICustomerRepository;
+import com.epam.rd.davydova.assignment.domain.entity.Product;
+import com.epam.rd.davydova.assignment.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -17,24 +18,25 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Profile("!local")
 @Component
-public class CustomerRepository implements ICustomerRepository {
+public class ProductRepositoryImpl implements ProductRepository {
     private final EntityManager entityManager;
 
     /**
      * Save to database
      *
-     * @param customer Customer object
+     * @param product Product object
      */
     @Override
-    public void save(Customer customer) {
+    public void save(Product product) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.persist(customer);
+            entityManager.persist(product);
             transaction.commit();
-            log.info("Customer is added");
+            log.info("Product is added");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -46,30 +48,30 @@ public class CustomerRepository implements ICustomerRepository {
     /**
      * Find object in database by name
      *
-     * @param customerName customer name
-     * @return Optional of Customer object
+     * @param productName product name
+     * @return Optional of Product object
      */
     @Override
-    public Optional<Customer> findBy(String customerName) {
+    public Optional<Product> findBy(String productName) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var customer = (Customer) entityManager
-                    .createNamedQuery(Customer.FIND_CUSTOMER_BY_NAME)
-                    .setParameter(1, customerName)
+            var product = (Product) entityManager
+                    .createNamedQuery(Product.FIND_PRODUCT_BY_NAME)
+                    .setParameter(1, productName)
                     .getSingleResult();
             transaction.commit();
-            var foundCustomer = Optional.ofNullable(customer);
-            if (foundCustomer.isPresent()) {
-                log.info("Customer is found");
-                return foundCustomer;
+            var foundProduct = Optional.ofNullable(product);
+            if (foundProduct.isPresent()) {
+                log.info("Product is found");
+                return foundProduct;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Customer with such a name is not found");
+            log.error("Product with such a name is not found");
         }
         return Optional.empty();
     }
@@ -77,27 +79,27 @@ public class CustomerRepository implements ICustomerRepository {
     /**
      * Find object in database by Id
      *
-     * @param customerId customer Id
-     * @return Optional of Customer object
+     * @param productId product Id
+     * @return Optional of Product object
      */
     @Override
-    public Optional<Customer> findBy(int customerId) {
+    public Optional<Product> findBy(int productId) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var customer = entityManager.find(Customer.class, customerId);
+            var product = entityManager.find(Product.class, productId);
             transaction.commit();
-            var foundCustomer = Optional.ofNullable(customer);
-            if (foundCustomer.isPresent()) {
-                log.info("Customer is found");
-                return foundCustomer;
+            var foundProduct = Optional.ofNullable(product);
+            if (foundProduct.isPresent()) {
+                log.info("Product is found");
+                return foundProduct;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Customer with such an Id is not found");
+            log.error("Product with such an Id is not found");
         }
         return Optional.empty();
     }
@@ -113,18 +115,18 @@ public class CustomerRepository implements ICustomerRepository {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var customerList = entityManager.createNamedQuery(Customer.FIND_ALL_CUSTOMERS).getResultList();
+            var productList = entityManager.createNamedQuery(Product.FIND_ALL_PRODUCTS).getResultList();
             transaction.commit();
-            var foundCustomerList = Optional.ofNullable(customerList);
-            if (foundCustomerList.isPresent()) {
-                log.info("List of customers is found");
-                return foundCustomerList;
+            var foundProductList = Optional.ofNullable(productList);
+            if (foundProductList.isPresent()) {
+                log.info("List of products is found");
+                return foundProductList;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("List of customers is not found");
+            log.error("List of products is not found");
         }
         return Optional.empty();
     }
@@ -132,17 +134,17 @@ public class CustomerRepository implements ICustomerRepository {
     /**
      * Update object in database
      *
-     * @param customer Customer object
+     * @param product Product object
      */
     @Override
-    public void update(Customer customer) {
+    public void update(Product product) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.merge(customer);
+            entityManager.merge(product);
             transaction.commit();
-            log.info("Customer is updated");
+            log.info("Product is updated");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -154,17 +156,17 @@ public class CustomerRepository implements ICustomerRepository {
     /**
      * Delete object from database
      *
-     * @param customer Customer object
+     * @param product Product object
      */
     @Override
-    public void delete(Customer customer) {
+    public void delete(Product product) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.remove(customer);
+            entityManager.remove(product);
             transaction.commit();
-            log.info("Customer is deleted");
+            log.info("Product is deleted");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();

@@ -1,6 +1,6 @@
 package com.epam.rd.davydova.assignment.domain.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,6 +13,7 @@ import java.util.List;
  */
 @Data
 @Entity
+@RequiredArgsConstructor
 @NamedQueries({
         @NamedQuery(name = Order.FIND_ORDER_BY_NUMBER, query = "SELECT o FROM Order o WHERE o.orderNumber = ?1"),
         @NamedQuery(name = Order.FIND_ALL_ORDERS, query = "SELECT o FROM Order o"),})
@@ -26,6 +27,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderId;
 
+    @ToString.Exclude
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "order_product",

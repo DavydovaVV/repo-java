@@ -1,9 +1,10 @@
 package com.epam.rd.davydova.assignment.repository.impl;
 
-import com.epam.rd.davydova.assignment.domain.entity.Supplier;
-import com.epam.rd.davydova.assignment.repository.interfaces.ISupplierRepository;
+import com.epam.rd.davydova.assignment.domain.entity.Order;
+import com.epam.rd.davydova.assignment.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -17,24 +18,25 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Profile("!local")
 @Component
-public class SupplierRepository implements ISupplierRepository {
+public class OrderRepositoryImpl implements OrderRepository {
     private final EntityManager entityManager;
 
     /**
      * Save to database
      *
-     * @param supplier Supplier object
+     * @param order Order object
      */
     @Override
-    public void save(Supplier supplier) {
+    public void save(Order order) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.persist(supplier);
+            entityManager.persist(order);
             transaction.commit();
-            log.info("Supplier is added");
+            log.info("Order is added");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -44,32 +46,32 @@ public class SupplierRepository implements ISupplierRepository {
     }
 
     /**
-     * Find object in database by name
+     * Find object in database by number
      *
-     * @param companyName company name
-     * @return Optional of Supplier object
+     * @param orderNumber order number
+     * @return Optional of Order object
      */
     @Override
-    public Optional<Supplier> findBy(String companyName) {
+    public Optional<Order> findBy(String orderNumber) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var supplier = (Supplier) entityManager
-                    .createNamedQuery(Supplier.FIND_SUPPLIER_BY_NAME)
-                    .setParameter(1, companyName)
+            var order = (Order) entityManager
+                    .createNamedQuery(Order.FIND_ORDER_BY_NUMBER)
+                    .setParameter(1, orderNumber)
                     .getSingleResult();
             transaction.commit();
-            var foundSupplier = Optional.ofNullable(supplier);
-            if (foundSupplier.isPresent()) {
-                log.info("Supplier is found");
-                return foundSupplier;
+            var foundOrder = Optional.ofNullable(order);
+            if (foundOrder.isPresent()) {
+                log.info("Order is found");
+                return foundOrder;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Supplier with such a name is not found");
+            log.error("Order with such a number is not found");
         }
         return Optional.empty();
     }
@@ -77,27 +79,27 @@ public class SupplierRepository implements ISupplierRepository {
     /**
      * Find object in database by Id
      *
-     * @param supplierId supplier Id
-     * @return Optional of Supplier object
+     * @param orderId order Id
+     * @return Optional of Order object
      */
     @Override
-    public Optional<Supplier> findBy(int supplierId) {
+    public Optional<Order> findBy(int orderId) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var supplier = entityManager.find(Supplier.class, supplierId);
+            var order = entityManager.find(Order.class, orderId);
             transaction.commit();
-            var foundSupplier = Optional.ofNullable(supplier);
-            if (foundSupplier.isPresent()) {
-                log.info("Supplier is found");
-                return foundSupplier;
+            var foundOrder = Optional.ofNullable(order);
+            if (foundOrder.isPresent()) {
+                log.info("Order is found");
+                return foundOrder;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Supplier with such an Id is not found");
+            log.error("Order with such an Id is not found");
         }
         return Optional.empty();
     }
@@ -113,18 +115,18 @@ public class SupplierRepository implements ISupplierRepository {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            var supplierList = entityManager.createNamedQuery(Supplier.FIND_ALL_SUPPLIERS).getResultList();
+            var orderList = entityManager.createNamedQuery(Order.FIND_ALL_ORDERS).getResultList();
             transaction.commit();
-            var foundSupplierList = Optional.ofNullable(supplierList);
-            if (foundSupplierList.isPresent()) {
-                log.info("List of suppliers is found");
-                return foundSupplierList;
+            var foundOrderList = Optional.ofNullable(orderList);
+            if (foundOrderList.isPresent()) {
+                log.info("List of orders is found");
+                return foundOrderList;
             }
         } catch (NoResultException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("List of suppliers is not found");
+            log.error("List of orders is not found");
         }
         return Optional.empty();
     }
@@ -132,17 +134,17 @@ public class SupplierRepository implements ISupplierRepository {
     /**
      * Update object in database
      *
-     * @param supplier Supplier object
+     * @param order Order object
      */
     @Override
-    public void update(Supplier supplier) {
+    public void update(Order order) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.merge(supplier);
+            entityManager.merge(order);
             transaction.commit();
-            log.info("Supplier is updated");
+            log.info("Order is updated");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -154,17 +156,17 @@ public class SupplierRepository implements ISupplierRepository {
     /**
      * Delete object from database
      *
-     * @param supplier Supplier object
+     * @param order Order object
      */
     @Override
-    public void delete(Supplier supplier) {
+    public void delete(Order order) {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.remove(supplier);
+            entityManager.remove(order);
             transaction.commit();
-            log.info("Supplier is deleted");
+            log.info("Order is deleted");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();

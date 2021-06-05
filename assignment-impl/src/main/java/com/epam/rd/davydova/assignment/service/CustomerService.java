@@ -1,4 +1,4 @@
-package com.epam.rd.davydova.assignment.service.interfaces;
+package com.epam.rd.davydova.assignment.service;
 
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
 
@@ -8,8 +8,8 @@ import java.util.Optional;
 /**
  * This is an interface that wraps interface for crud-operations with database
  */
-public interface ICustomerService {
-    void add(String customerName, String phone);
+public interface CustomerService {
+    Optional<Customer> add(String customerName, String phone);
 
     Optional<Customer> findBy(String customerName);
 
@@ -17,9 +17,9 @@ public interface ICustomerService {
 
     Optional<List> findAll();
 
-    void update(int customerId, String phone);
+    Optional<Customer> update(int customerId, String phone);
 
-    void delete(int customerId);
+    boolean delete(int customerId);
 
     void close();
 }

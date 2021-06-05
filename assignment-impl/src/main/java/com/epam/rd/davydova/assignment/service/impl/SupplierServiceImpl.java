@@ -1,8 +1,8 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
 import com.epam.rd.davydova.assignment.domain.entity.Supplier;
-import com.epam.rd.davydova.assignment.repository.impl.SupplierRepository;
-import com.epam.rd.davydova.assignment.service.interfaces.ISupplierService;
+import com.epam.rd.davydova.assignment.repository.impl.SupplierRepositoryImpl;
+import com.epam.rd.davydova.assignment.service.SupplierService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,8 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class SupplierService implements ISupplierService {
-    private final SupplierRepository supplierRepository;
+public class SupplierServiceImpl implements SupplierService {
+    private final SupplierRepositoryImpl supplierRepositoryImpl;
 
     /**
      * Add supplier to database
@@ -25,17 +25,19 @@ public class SupplierService implements ISupplierService {
      * @param companyName supplier instance
      */
     @Override
-    public void add(String companyName, String phone) {
-        var supplierOptional = supplierRepository.findBy(companyName);
+    public Optional<Supplier> add(String companyName, String phone) {
+        var supplierOptional = supplierRepositoryImpl.findBy(companyName);
 
         if (supplierOptional.isEmpty()) {
             var supplier = new Supplier();
             supplier.setCompanyName(companyName);
             supplier.setPhone(phone);
-            supplierRepository.save(supplier);
+            supplierRepositoryImpl.save(supplier);
+            return supplierRepositoryImpl.findBy(supplier.getSupplierId());
         } else {
             log.error("Supplier with such a name is already added");
         }
+        return Optional.empty();
     }
 
     /**
@@ -46,7 +48,7 @@ public class SupplierService implements ISupplierService {
      */
     @Override
     public Optional<Supplier> findBy(String companyName) {
-        return supplierRepository.findBy(companyName);
+        return supplierRepositoryImpl.findBy(companyName);
     }
 
     /**
@@ -57,7 +59,7 @@ public class SupplierService implements ISupplierService {
      */
     @Override
     public Optional<Supplier> findBy(int supplierId) {
-        return supplierRepository.findBy(supplierId);
+        return supplierRepositoryImpl.findBy(supplierId);
     }
 
     /**
@@ -67,7 +69,7 @@ public class SupplierService implements ISupplierService {
      */
     @Override
     public Optional<List> findAll() {
-        return supplierRepository.findAll();
+        return supplierRepositoryImpl.findAll();
     }
 
     /**
@@ -77,16 +79,18 @@ public class SupplierService implements ISupplierService {
      * @param phone      phone number
      */
     @Override
-    public void update(int supplierId, String phone) {
-        var supplierOptional = supplierRepository.findBy(supplierId);
+    public Optional<Supplier> update(int supplierId, String phone) {
+        var supplierOptional = supplierRepositoryImpl.findBy(supplierId);
 
         if (supplierOptional.isPresent()) {
             var supplier = supplierOptional.get();
             supplier.setPhone(phone);
-            supplierRepository.update(supplier);
+            supplierRepositoryImpl.update(supplier);
+            return supplierRepositoryImpl.findBy(supplierId);
         } else {
             log.error("Supplier is not present to be updated");
         }
+        return Optional.empty();
     }
 
     /**
@@ -95,15 +99,17 @@ public class SupplierService implements ISupplierService {
      * @param supplierId supplier Id
      */
     @Override
-    public void delete(int supplierId) {
-        var supplierOptional = supplierRepository.findBy(supplierId);
+    public boolean delete(int supplierId) {
+        var supplierOptional = supplierRepositoryImpl.findBy(supplierId);
 
         if (supplierOptional.isPresent()) {
             var supplier = supplierOptional.get();
-            supplierRepository.delete(supplier);
+            supplierRepositoryImpl.delete(supplier);
+            return supplierRepositoryImpl.findBy(supplierId).isEmpty();
         } else {
             log.error("Supplier is not present to be deleted");
         }
+        return false;
     }
 
     /**
@@ -111,6 +117,6 @@ public class SupplierService implements ISupplierService {
      */
     @Override
     public void close() {
-        supplierRepository.close();
+        supplierRepositoryImpl.close();
     }
 }

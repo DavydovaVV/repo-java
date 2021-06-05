@@ -182,6 +182,10 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
+                            <excludes>
+                                <exclude>**/servlets/*</exclude>
+                                <exclude>**/domain/**</exclude>
+                            </excludes>
                             <haltOnFailure>${jacoco-maven-plugin.haltOnFailure}</haltOnFailure>
                             <rules>
                                 <rule>
