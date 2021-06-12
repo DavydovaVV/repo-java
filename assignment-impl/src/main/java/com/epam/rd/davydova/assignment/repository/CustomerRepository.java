@@ -2,14 +2,14 @@ package com.epam.rd.davydova.assignment.repository;
 
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 /**
  * This is an interface for operations with database
  */
+@Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     /**
@@ -18,6 +18,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param customerName customer name
      * @return Optional of customer
      */
-    @Query("select c from Customer c where c.name = :name")
-    Optional<Customer> findByName(@Param("name") String customerName);
+    Optional<Customer> findByCustomerName(String customerName);
 }

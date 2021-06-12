@@ -9,17 +9,18 @@ import java.util.List;
 /**
  * This is an interface to interact with database from api layer
  */
+@RestController
 @RequestMapping("/supplier")
 public interface SupplierResource {
 
     /**
      * Add supplier to database
      *
-     * @param stringSupplier string representation of Supplier object
+     * @param supplierDto DTO of Supplier object
      * @return string result of method
      */
     @PostMapping
-    SupplierDto addSupplier(@RequestBody String stringSupplier);
+    SupplierDto addSupplier(@RequestBody SupplierDto supplierDto);
 
     /**
      * Get supplier from database
@@ -28,16 +29,16 @@ public interface SupplierResource {
      * @return string result of method
      */
     @GetMapping("/{id}")
-    List<SupplierDto> getSupplier(@PathVariable(required = false) Long id);
+    List<SupplierDto> getSupplier(@PathVariable(required = false) long id);
 
     /**
      * Update supplier in database
      *
-     * @param stringSupplier string representation of Supplier object
+     * @param supplierDto DTO of Supplier object
      * @return string result of method
      */
     @PutMapping
-    SupplierDto updateSupplier(@RequestBody String stringSupplier);
+    SupplierDto updateSupplier(@RequestBody SupplierDto supplierDto);
 
     /**
      * Delete supplier from database

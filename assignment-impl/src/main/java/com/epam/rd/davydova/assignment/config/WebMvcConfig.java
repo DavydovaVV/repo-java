@@ -1,9 +1,9 @@
 package com.epam.rd.davydova.assignment.config;
 
-import com.epam.rd.davydova.assignment.converter.entity.StringToCustomerConverter;
-import com.epam.rd.davydova.assignment.converter.entity.StringToOrderConverter;
-import com.epam.rd.davydova.assignment.converter.entity.StringToProductConverter;
-import com.epam.rd.davydova.assignment.converter.entity.StringToSupplierConverter;
+import com.epam.rd.davydova.assignment.converter.CustomerToDtoConverter;
+import com.epam.rd.davydova.assignment.converter.OrderToDtoConverter;
+import com.epam.rd.davydova.assignment.converter.ProductToDtoConverter;
+import com.epam.rd.davydova.assignment.converter.SupplierToDtoConverter;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -21,9 +21,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new StringToCustomerConverter());
-        registry.addConverter(new StringToOrderConverter());
-        registry.addConverter(new StringToProductConverter());
-        registry.addConverter(new StringToSupplierConverter());
+        registry.addConverter(new CustomerToDtoConverter());
+        registry.addConverter(new OrderToDtoConverter());
+        registry.addConverter(new ProductToDtoConverter());
+        registry.addConverter(new SupplierToDtoConverter());
     }
 }

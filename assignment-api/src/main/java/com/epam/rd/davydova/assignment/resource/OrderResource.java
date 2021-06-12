@@ -9,17 +9,18 @@ import java.util.List;
 /**
  * This is an interface to interact with database from api layer
  */
+@RestController
 @RequestMapping("/order")
 public interface OrderResource {
 
     /**
      * Add order to database
      *
-     * @param stringOrder string representation of Order object
+     * @param orderDto DTO of Order object
      * @return string result of method
      */
     @PostMapping
-    OrderDto addOrder (@RequestBody String stringOrder);
+    OrderDto addOrder (@RequestBody OrderDto orderDto);
 
     /**
      * Get order from database
@@ -28,16 +29,16 @@ public interface OrderResource {
      * @return string result of method
      */
     @GetMapping("/{id}")
-    List<OrderDto> getOrder(@PathVariable(required = false) Long id);
+    List<OrderDto> getOrder(@PathVariable(required = false) long id);
 
     /**
      * Update order in database
      *
-     * @param stringOrder string representation of Order object
+     * @param orderDto DTO of Order object
      * @return string result of method
      */
     @PutMapping
-    OrderDto updateOrder(@RequestBody String stringOrder);
+    OrderDto updateOrder(@RequestBody OrderDto orderDto);
 
     /**
      * Delete order from database

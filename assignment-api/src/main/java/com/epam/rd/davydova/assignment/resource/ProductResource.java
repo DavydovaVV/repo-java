@@ -9,17 +9,18 @@ import java.util.List;
 /**
  * This is an interface to interact with database from api layer
  */
+@RestController
 @RequestMapping("/product")
 public interface ProductResource {
 
     /**
      * Add product to database
      *
-     * @param stringProduct string representation of Product object
+     * @param productDto DTO of Product object
      * @return string result of method
      */
     @PostMapping
-    ProductDto addProduct(@RequestBody String stringProduct);
+    ProductDto addProduct(@RequestBody ProductDto productDto);
 
     /**
      * Get product from database
@@ -28,16 +29,16 @@ public interface ProductResource {
      * @return string result of method
      */
     @GetMapping("/{id}")
-    List<ProductDto> getProduct(@PathVariable(required = false) Long id);
+    List<ProductDto> getProduct(@PathVariable(required = false) long id);
 
     /**
      * Update product in database
      *
-     * @param stringProduct string representation of Product object
+     * @param productDto DTO of Product object
      * @return string result of method
      */
     @PutMapping
-    ProductDto updateProduct(@RequestBody String stringProduct);
+    ProductDto updateProduct(@RequestBody ProductDto productDto);
 
     /**
      * Delete product from database

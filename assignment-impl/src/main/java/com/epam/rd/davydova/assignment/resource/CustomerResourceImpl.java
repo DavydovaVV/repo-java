@@ -1,48 +1,41 @@
 package com.epam.rd.davydova.assignment.resource;
 
-import com.epam.rd.davydova.assignment.converter.dto.CustomerToDtoConverter;
-import com.epam.rd.davydova.assignment.converter.entity.StringToCustomerConverter;
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
 import com.epam.rd.davydova.assignment.dto.CustomerDto;
 import com.epam.rd.davydova.assignment.service.impl.CustomerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is a class of CustomerServlet
+ * This is a class of CustomerController
  */
 @Slf4j
-@RestController
-@RestControllerAdvice
 @RequiredArgsConstructor
 public class CustomerResourceImpl implements CustomerResource {
     private final CustomerServiceImpl customerService;
+    private final ConversionService conversionService;
 
     /**
      * Add customer to database
      *
-     * @param stringCustomer string representation of Customer object
+     * @param customerDto DTO of Customer object
      * @return DTO of Customer object
      */
     @Override
-    public CustomerDto addCustomer(String stringCustomer) {
-        var converter = new StringToCustomerConverter();
-
-        var customerDto = converter.convert(stringCustomer);
-
-        var customer = customerService.add(customerDto);
-
-        customerDto.setCustomerId(customer.getCustomerId());
-
+    public CustomerDto addCustomer(CustomerDto customerDto) {
+        var customer = new Customer();
+        customer.setCustomerName(customerDto.getCustomerName())
+                .setPhone(customerDto.getPhone());
+        var addedCustomer = customerService.add(customer);
+        customerDto.setCustomerId(addedCustomer.getCustomerId());
         log.info("addCustomer() - {}", customer);
 
-        return customerDto;
+        return conversionService.convert(customer, CustomerDto.class);
     }
 
     /**
@@ -52,51 +45,46 @@ public class CustomerResourceImpl implements CustomerResource {
      * @return List of CustomerDto objects
      */
     @Override
-    public List<CustomerDto> getCustomer(Long id) {
+    public List<CustomerDto> getCustomer(long id) {
         List<CustomerDto> customerDtoList = new ArrayList<>();
-
-        var converter = new CustomerToDtoConverter();
-
-        if (id != null) {
+        if (id != 0) {
             var customerOptional = customerService.findBy(id);
-
             if (customerOptional.isPresent()) {
                 var customer = customerOptional.get();
-
-                var customerDto = converter.convert(customer);
-
+                var customerDto = conversionService.convert(customer, CustomerDto.class);
                 customerDtoList.add(customerDto);
+                log.info("getCustomer() - {}", customer);
             }
         } else {
             var customerList = customerService.findAll();
-
             for (Customer customer : customerList) {
-                customerDtoList.add(converter.convert(customer));
+                customerDtoList.add(conversionService.convert(customer, CustomerDto.class));
             }
+            log.info("getCustomer() - {}", customerList);
         }
-
-        log.info("getCustomer() - {}", customerDtoList);
-
         return customerDtoList;
     }
 
     /**
      * Update customer in database
      *
-     * @param stringCustomer string representation of Customer object
-     * @return DTO of Customer object
+     * @param customerDto DTO of Customer object
+     * @return string result of method
      */
     @Override
-    public CustomerDto updateCustomer(String stringCustomer) {
-        var converter = new StringToCustomerConverter();
-
-        var customerDto = converter.convert(stringCustomer);
-
-        var customer = customerService.update(customerDto);
-
-        log.info("updateCustomer() - {}", customer);
-
-        return customerDto;
+    public CustomerDto updateCustomer(CustomerDto customerDto) {
+        var customerOptional = customerService.findBy(customerDto.getCustomerId());
+        if (customerOptional.isPresent()) {
+            var customer = customerOptional.get();
+            customer.setCustomerName(customerDto.getCustomerName())
+                    .setPhone(customerDto.getPhone());
+            customerService.update(customer);
+            log.info("updateCustomer() - {}", customer);
+            return customerDto;
+        } else {
+            log.error("Customer Id is not found. Customer is not updated");
+        }
+        return null;
     }
 
     /**
@@ -108,13 +96,10 @@ public class CustomerResourceImpl implements CustomerResource {
     @Override
     public HttpStatus deleteCustomer(long id) {
         var isRemoved = customerService.delete(id);
-
         if (!isRemoved) {
             return HttpStatus.NOT_FOUND;
         }
-
         log.info("deleteCustomer() - {}", id);
-
         return HttpStatus.OK;
     }
 }

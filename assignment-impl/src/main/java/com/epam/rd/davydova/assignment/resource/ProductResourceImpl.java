@@ -1,15 +1,13 @@
 package com.epam.rd.davydova.assignment.resource;
 
-import com.epam.rd.davydova.assignment.converter.dto.ProductToDtoConverter;
-import com.epam.rd.davydova.assignment.converter.entity.StringToProductConverter;
 import com.epam.rd.davydova.assignment.domain.entity.Product;
 import com.epam.rd.davydova.assignment.dto.ProductDto;
 import com.epam.rd.davydova.assignment.service.impl.ProductServiceImpl;
+import com.epam.rd.davydova.assignment.service.impl.SupplierServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,31 +16,38 @@ import java.util.List;
  * This is a class of CustomerServlet
  */
 @Slf4j
-@RestController
-@RestControllerAdvice
 @RequiredArgsConstructor
 public class ProductResourceImpl implements ProductResource {
     private final ProductServiceImpl productService;
+    private final SupplierServiceImpl supplierService;
+    private final ConversionService conversionService;
 
     /**
      * Add product to database
      *
-     * @param stringProduct string representation of Product object
+     * @param productDto DTO of Product object
      * @return DTO of Product object
      */
     @Override
-    public ProductDto addProduct(String stringProduct) {
-        var converter = new StringToProductConverter();
-
-        var productDto = converter.convert(stringProduct);
-
-        var product = productService.add(productDto);
-
-        productDto.setProductId(product.getProductId());
-
-        log.info("addProduct() - {}", product);
-
-        return productDto;
+    public ProductDto addProduct(ProductDto productDto) {
+        var supplierId = productDto.getSupplierId();
+        var supplierOptional = supplierService.findBy(supplierId);
+        if (supplierOptional.isPresent()) {
+            var supplier = supplierOptional.get();
+            var product = new Product()
+                    .setProductName(productDto.getProductName())
+                    .setSupplier(supplier)
+                    .setUnitPrice(productDto.getUnitPrice())
+                    .setDiscontinued(productDto.isDiscontinued());
+            supplier.getProductList().add(product);
+            var addedProduct = productService.add(product);
+            productDto.setProductId(addedProduct.getProductId());
+            log.info("addProduct() - {}", product);
+            return productDto;
+        } else {
+            log.error("Supplier is not found. Product is not added");
+        }
+        return null;
     }
 
     /**
@@ -52,29 +57,20 @@ public class ProductResourceImpl implements ProductResource {
      * @return List of ProductDto objects
      */
     @Override
-    public List<ProductDto> getProduct(Long id) {
+    public List<ProductDto> getProduct(long id) {
         List<ProductDto> productDtoList = new ArrayList<>();
-
-        var converter = new ProductToDtoConverter();
-
-        if (id != null) {
+        if (id != 0) {
             var productOptional = productService.findBy(id);
-
             if (productOptional.isPresent()) {
                 var product = productOptional.get();
-
-                var productDto = converter.convert(product);
-
+                var productDto = conversionService.convert(product, ProductDto.class);
                 productDtoList.add(productDto);
-
                 log.info("getProduct() - {}", product);
             } else {
                 var productList = productService.findAll();
-
                 for (Product product : productList) {
-                    productDtoList.add(converter.convert(product));
+                    productDtoList.add(conversionService.convert(product, ProductDto.class));
                 }
-
                 log.info("getProduct() - {}", productList);
             }
         }
@@ -84,19 +80,32 @@ public class ProductResourceImpl implements ProductResource {
     /**
      * Update product in database
      *
-     * @param stringProduct string representation of Product object
-     * @return DTO of Product object
+     * @param productDto DTO of Product object
+     * @return string result of method
      */
     @Override
-    public ProductDto updateProduct(String stringProduct) {
-        var converter = new StringToProductConverter();
-
-        var productDto = converter.convert(stringProduct);
-
-        var product = productService.update(productDto);
-
-        log.info("updateProduct() - {}", product);
-
+    public ProductDto updateProduct(ProductDto productDto) {
+        var productOptional = productService.findBy(productDto.getProductId());
+        var supplierId = productDto.getSupplierId();
+        if (productOptional.isPresent()) {
+            var supplierOptional = supplierService.findBy(supplierId);
+            if (supplierOptional.isPresent()) {
+                var product = productOptional.get();
+                var supplier = supplierOptional.get();
+                product.setProductName(productDto.getProductName())
+                        .setSupplier(supplier)
+                        .setUnitPrice(productDto.getUnitPrice())
+                        .setDiscontinued(productDto.isDiscontinued());
+                var updatedProduct = productService.update(product);
+                productDto.setProductId(updatedProduct.getProductId());
+                log.info("updateProduct() - {}", product);
+                return productDto;
+            } else {
+                log.error("Supplier is not found. Product is not updated");
+            }
+        } else {
+            log.error("Product is not found. Product is not updated");
+        }
         return productDto;
     }
 
@@ -109,13 +118,10 @@ public class ProductResourceImpl implements ProductResource {
     @Override
     public HttpStatus deleteProduct(long id) {
         var isRemoved = productService.delete(id);
-
         if (!isRemoved) {
             return HttpStatus.NOT_FOUND;
         }
-
         log.info("deleteSupplier() - {}", id);
-
         return HttpStatus.OK;
     }
 }

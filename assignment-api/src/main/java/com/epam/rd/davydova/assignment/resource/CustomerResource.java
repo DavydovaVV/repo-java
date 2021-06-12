@@ -9,17 +9,18 @@ import java.util.List;
 /**
  * This is an interface to interact with database from api layer
  */
+@RestController
 @RequestMapping("/customer")
 public interface CustomerResource {
 
     /**
      * Add customer to database
      *
-     * @param stringCustomer string representation of Customer object
+     * @param customerDto DTO of Customer object
      * @return string result of method
      */
-    @PostMapping(consumes = "application/json", produces = "application/json")
-    CustomerDto addCustomer(@RequestBody String stringCustomer);
+    @PostMapping
+    CustomerDto addCustomer(@RequestBody CustomerDto customerDto);
 
     /**
      * Get customer from database
@@ -27,17 +28,17 @@ public interface CustomerResource {
      * @param id customer Id
      * @return string result of method
      */
-    @GetMapping(value = "/{id}", produces = "application/json")
-    List<CustomerDto> getCustomer(@PathVariable(required = false) Long id);
+    @GetMapping(value = "/{id}")
+    List<CustomerDto> getCustomer(@PathVariable(required = false) long id);
 
     /**
      * Update customer in database
      *
-     * @param stringCustomer string representation of Customer object
+     * @param customerDto DTO of Customer object
      * @return string result of method
      */
     @PutMapping
-    CustomerDto updateCustomer(@RequestBody String stringCustomer);
+    CustomerDto updateCustomer(@RequestBody CustomerDto customerDto);
 
     /**
      * Delete customer from database

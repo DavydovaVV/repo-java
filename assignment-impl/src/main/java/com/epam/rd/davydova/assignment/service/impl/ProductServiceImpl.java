@@ -21,33 +21,17 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
+    private final ProductDto productDto;
 
     /**
      * Add product to database
      *
-     * @param productDto DTO for Product object
+     * @param product Product object
      * @return Optional of Product object
      */
     @Override
-    public Product add(ProductDto productDto) {
-        var product = new Product();
-
-        var supplierId = productDto.getSupplierId();
-
-        if (supplierRepository.existsById(supplierId)) {
-            var supplier = supplierRepository.getById(supplierId);
-
-            product.setProductName(productDto.getProductName())
-                    .setSupplier(supplier)
-                    .setUnitPrice(productDto.getUnitPrice())
-                    .setDiscontinued(productDto.isDiscontinued());
-
-            supplier.getProductList().add(product);
-
-            return productRepository.save(product);
-        }
-
-        return null;
+    public Product add(Product product) {
+        return productRepository.save(product);
     }
 
     /**
@@ -58,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Optional<Product> findBy(String productName) {
-        return productRepository.findByName(productName);
+        return productRepository.findByProductName(productName);
     }
 
     /**
@@ -85,32 +69,12 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Update product status
      *
-     * @param productDto DTO for Product object
+     * @param product product object
      * @return Optional of Product object
      */
     @Override
-    public Product update(ProductDto productDto) {
-        var productOptional = productRepository.findById(productDto.getProductId());
-        var supplierId = productDto.getSupplierId();
-
-        if (productOptional.isPresent()) {
-            if (supplierRepository.existsById(supplierId)) {
-                var product = productOptional.get();
-                var supplier = supplierRepository.getById(supplierId);
-
-                product.setProductName(productDto.getProductName())
-                        .setSupplier(supplier)
-                        .setUnitPrice(productDto.getUnitPrice())
-                        .setDiscontinued(productDto.isDiscontinued());
-
-                return productRepository.save(product);
-            }
-
-        } else {
-            log.error("Product Id is not found. Product is not updated");
-        }
-
-        return null;
+    public Product update(Product product) {
+        return productRepository.save(product);
     }
 
     /**
@@ -122,12 +86,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean delete(long productId) {
         var productOptional = productRepository.findById(productId);
-
         if (productOptional.isPresent()) {
             var product = productOptional.get();
-
             productRepository.delete(product);
-
             if (productRepository.existsById(productId)) {
                 return true;
             }

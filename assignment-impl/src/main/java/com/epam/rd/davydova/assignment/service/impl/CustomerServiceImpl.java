@@ -1,6 +1,5 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
-import com.epam.rd.davydova.assignment.dto.CustomerDto;
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
 import com.epam.rd.davydova.assignment.repository.CustomerRepository;
 import com.epam.rd.davydova.assignment.service.CustomerService;
@@ -23,15 +22,11 @@ public class CustomerServiceImpl implements CustomerService {
     /**
      * Add customer to database
      *
-     * @param customerDto DTO for Customer object
+     * @param customer Customer object
      * @return Optional of Customer object
      */
     @Override
-    public Customer add(CustomerDto customerDto) {
-        var customer = new Customer();
-        customer.setCustomerName(customerDto.getCustomerName())
-                .setPhone(customerDto.getPhone());
-
+    public Customer add(Customer customer) {
         return customerRepository.save(customer);
     }
 
@@ -43,7 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Override
     public Optional<Customer> findBy(String customerName) {
-        return customerRepository.findByName(customerName);
+        return customerRepository.findByCustomerName(customerName);
     }
 
     /**
@@ -70,24 +65,12 @@ public class CustomerServiceImpl implements CustomerService {
     /**
      * Update customer
      *
-     * @param customerDto DTO for Customer object
+     * @param customer Customer object
      * @return
      */
     @Override
-    public Customer update(CustomerDto customerDto) {
-        var customerOptional = customerRepository.findById(customerDto.getCustomerId());
-
-        if (customerOptional.isPresent()) {
-            var customer = customerOptional.get();
-
-            customer.setCustomerName(customerDto.getCustomerName())
-                    .setPhone(customerDto.getPhone());
-
-            return customerRepository.save(customer);
-        } else {
-            log.error("Customer Id is not found. Customer is not updated");
-        }
-        return null;
+    public Customer update(Customer customer) {
+        return customerRepository.save(customer);
     }
 
     /**
@@ -98,12 +81,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean delete(long customerId) {
         var customerOptional = customerRepository.findById(customerId);
-
         if (customerOptional.isPresent()) {
             var customer = customerOptional.get();
-
             customerRepository.delete(customer);
-
             if (!customerRepository.existsById(customerId)) {
                 return true;
             }

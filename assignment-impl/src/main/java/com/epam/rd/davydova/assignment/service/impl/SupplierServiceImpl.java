@@ -19,20 +19,16 @@ import java.util.Optional;
 @Service
 public class SupplierServiceImpl implements SupplierService {
     private final SupplierRepository supplierRepository;
+    private final SupplierDto supplierDto;
 
     /**
      * Add supplier to database
      *
-     * @param supplierDto DTO for Supplier object
+     * @param supplier Supplier object
      * @return Optional of Supplier object
      */
     @Override
-    public Supplier add(SupplierDto supplierDto) {
-        var supplier = new Supplier();
-
-        supplier.setCompanyName(supplierDto.getCompanyName())
-                .setPhone(supplierDto.getPhone());
-
+    public Supplier add(Supplier supplier) {
         return supplierRepository.save(supplier);
     }
 
@@ -44,7 +40,7 @@ public class SupplierServiceImpl implements SupplierService {
      */
     @Override
     public Optional<Supplier> findBy(String companyName) {
-        return supplierRepository.findByName(companyName);
+        return supplierRepository.findByCompanyName(companyName);
     }
 
     /**
@@ -71,24 +67,12 @@ public class SupplierServiceImpl implements SupplierService {
     /**
      * Update supplier's company name and phone number
      *
-     * @param supplierDto DTO for Supplier object
+     * @param supplier Supplier object
      * @return Optional of Supplier object
      */
     @Override
-    public Supplier update(SupplierDto supplierDto) {
-        var supplierOptional = supplierRepository.findById(supplierDto.getSupplierId());
-
-        if (supplierOptional.isPresent()) {
-            var supplier = supplierOptional.get();
-
-            supplier.setCompanyName(supplierDto.getCompanyName())
-                    .setPhone(supplierDto.getPhone());
-
-            return supplierRepository.save(supplier);
-        } else {
-            log.error("Supplier Id is not found. Supplier is not updated");
-        }
-        return null;
+    public Supplier update(Supplier supplier) {
+        return supplierRepository.save(supplier);
     }
 
     /**
@@ -99,12 +83,9 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public boolean delete(long supplierId) {
         var supplierOptional = supplierRepository.findById(supplierId);
-
         if (supplierOptional.isPresent()) {
             var supplier = supplierOptional.get();
-
             supplierRepository.delete(supplier);
-
             if (!supplierRepository.existsById(supplierId)) {
                 return true;
             }

@@ -1,15 +1,12 @@
 package com.epam.rd.davydova.assignment.resource;
 
-import com.epam.rd.davydova.assignment.converter.dto.SupplierToDtoConverter;
-import com.epam.rd.davydova.assignment.converter.entity.StringToSupplierConverter;
 import com.epam.rd.davydova.assignment.domain.entity.Supplier;
 import com.epam.rd.davydova.assignment.dto.SupplierDto;
 import com.epam.rd.davydova.assignment.service.impl.SupplierServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,30 +15,23 @@ import java.util.List;
  * This is a class of CustomerServlet
  */
 @Slf4j
-@RestController
-@RestControllerAdvice
 @RequiredArgsConstructor
 public class SupplierResourceImpl implements SupplierResource {
     private final SupplierServiceImpl supplierService;
+    private final ConversionService conversionService;
 
     /**
      * Add supplier to database
      *
-     * @param stringSupplier string representation of Supplier object
+     * @param supplierDto DTO of Supplier object
      * @return DTO of Supplier object
      */
     @Override
-    public SupplierDto addSupplier(String stringSupplier) {
-        var converter = new StringToSupplierConverter();
-
-        var supplierDto = converter.convert(stringSupplier);
-
-        var supplier = supplierService.add(supplierDto);
-
-        supplierDto.setSupplierId(supplier.getSupplierId());
-
+    public SupplierDto addSupplier(SupplierDto supplierDto) {
+        var supplier = new Supplier()
+                .setCompanyName(supplierDto.getCompanyName())
+                .setPhone(supplierDto.getPhone());
         log.info("addSupplier() - {}", supplier);
-
         return supplierDto;
     }
 
@@ -52,30 +42,20 @@ public class SupplierResourceImpl implements SupplierResource {
      * @return List of SupplierDto objects
      */
     @Override
-    public List<SupplierDto> getSupplier(Long id) {
+    public List<SupplierDto> getSupplier(long id) {
         List<SupplierDto> supplierDtoList = new ArrayList<>();
-
-        var converter = new SupplierToDtoConverter();
-
-        if (id != null) {
+        if (id != 0) {
             var supplierOptional = supplierService.findBy(id);
-
             if (supplierOptional.isPresent()) {
                 var supplier = supplierOptional.get();
-
-                var supplierDto = converter.convert(supplier);
-
+                var supplierDto = conversionService.convert(supplier, SupplierDto.class);
                 supplierDtoList.add(supplierDto);
-
                 log.info("getSupplier() - {}", supplier);
-
             } else {
                 var supplierList = supplierService.findAll();
-
                 for (Supplier supplier : supplierList) {
-                    supplierDtoList.add(converter.convert(supplier));
+                    supplierDtoList.add(conversionService.convert(supplier, SupplierDto.class));
                 }
-
                 log.info("getSupplier() - {}", supplierList);
             }
         }
@@ -85,20 +65,23 @@ public class SupplierResourceImpl implements SupplierResource {
     /**
      * Update supplier in database
      *
-     * @param stringSupplier string representation of Supplier object
-     * @return DTO of Supplier object
+     * @param supplierDto DTO of Supplier object
+     * @return string result of method
      */
     @Override
-    public SupplierDto updateSupplier(String stringSupplier) {
-        var converter = new StringToSupplierConverter();
-
-        var supplierDto = converter.convert(stringSupplier);
-
-        var supplier = supplierService.update(supplierDto);
-
-        log.info("updateSupplier() - {}", supplier);
-
-        return supplierDto;
+    public SupplierDto updateSupplier(SupplierDto supplierDto) {
+        var supplierOptional = supplierService.findBy(supplierDto.getSupplierId());
+        if (supplierOptional.isPresent()) {
+            var supplier = supplierOptional.get();
+            supplier.setCompanyName(supplierDto.getCompanyName())
+                    .setPhone(supplierDto.getPhone());
+            log.info("updateSupplier() - {}", supplier);
+            supplierService.update(supplier);
+            return supplierDto;
+        } else {
+            log.error("Supplier is not found. Supplier is not updated");
+        }
+        return null;
     }
 
     /**
@@ -110,13 +93,10 @@ public class SupplierResourceImpl implements SupplierResource {
     @Override
     public HttpStatus deleteSupplier(long id) {
         var isRemoved = supplierService.delete(id);
-
         if (!isRemoved) {
             return HttpStatus.NOT_FOUND;
         }
-
         log.info("deleteSupplier() - {}", id);
-
         return HttpStatus.OK;
     }
 }

@@ -202,7 +202,6 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>**/servlets/*</exclude>
                                 <exclude>**/domain/**</exclude>
                             </excludes>
                             <haltOnFailure>${jacoco-maven-plugin.haltOnFailure}</haltOnFailure>
@@ -235,8 +234,10 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <url>http://localhost:8080/manager</url>
+                    <url>http://localhost:8080</url>
                     <server>localhost</server>
+                    <username>usr</username>
+                    <password>pass</password>
                     <path>/${project.build.finalName}</path>
                 </configuration>
             </plugin>
