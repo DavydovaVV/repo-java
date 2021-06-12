@@ -6,20 +6,53 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is an interface that wraps interface for crud-operations with database
+ * This is an interface for crud-operations with database
  */
 public interface OrderService {
-    Optional<Order> add(int productId, int customerId, String orderNumber, int numberOfProducts);
+    /**
+     * Add order to database
+     *
+     * @param order Order object
+     * @return Order object
+     */
+    Order add(Order order);
 
+    /**
+     * Find order by number
+     *
+     * @param orderNumber order number
+     * @return Optional of order instance
+     */
     Optional<Order> findBy(String orderNumber);
 
-    Optional<Order> findBy(int orderId);
+    /**
+     * Find order by Id
+     *
+     * @param orderId order Id
+     * @return Optional of order instance
+     */
+    Optional<Order> findBy(long orderId);
 
-    Optional<List> findAll();
+    /**
+     * Find all orders
+     *
+     * @return Optional of List of orders
+     */
+    List<Order> findAll();
 
-    Optional<Order> update(int orderId, String orderNumber, int productId, int numberOfProducts);
+    /**
+     * Update order
+     *
+     * @param order Order object
+     * @return Order object
+     */
+    Order update(Order order);
 
-    boolean delete(int orderId);
-
-    void close();
+    /**
+     * Delete order from database
+     *
+     * @param orderId order Id
+     * @return status of removal
+     */
+    boolean delete(long orderId);
 }

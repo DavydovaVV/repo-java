@@ -1,25 +1,22 @@
 package com.epam.rd.davydova.assignment.repository;
 
 import com.epam.rd.davydova.assignment.domain.entity.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * This is an interface for operations with database
  */
-public interface OrderRepository {
-    void save(Order order);
+@Repository
+public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Optional<Order> findBy(String orderNumber);
-
-    Optional<Order> findBy(int orderId);
-
-    Optional<List> findAll();
-
-    void update(Order order);
-
-    void delete(Order order);
-
-    void close();
+    /**
+     * Find order in database by number
+     *
+     * @param orderNumber order number
+     * @return Optional of order
+     */
+    Optional<Order> findByOrderNumber(String orderNumber);
 }

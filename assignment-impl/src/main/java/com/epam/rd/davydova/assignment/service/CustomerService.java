@@ -6,20 +6,52 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is an interface that wraps interface for crud-operations with database
+ * This is an interface for crud-operations with database
  */
 public interface CustomerService {
-    Optional<Customer> add(String customerName, String phone);
+    /**
+     * Add customer to database
+     *
+     * @param customer Customer object
+     * @return Optional of Customer object
+     */
+    Customer add(Customer customer);
 
+    /**
+     * Find customer by their name
+     *
+     * @param customerName customer's name
+     * @return customer instance
+     */
     Optional<Customer> findBy(String customerName);
 
-    Optional<Customer> findBy(int customerId);
+    /**
+     * Find customer by Id
+     *
+     * @param customerId customer Id
+     * @return Optional of customer instance
+     */
+    Optional<Customer> findBy(long customerId);
 
-    Optional<List> findAll();
+    /**
+     * Find all customers
+     *
+     * @return Optional of List of customers
+     */
+    List<Customer> findAll();
 
-    Optional<Customer> update(int customerId, String phone);
+    /**
+     * Update customer
+     *
+     * @param customer Customer object
+     * @return Customer object
+     */
+    Customer update(Customer customer);
 
-    boolean delete(int customerId);
-
-    void close();
+    /**
+     * Delete customer from database
+     *
+     * @param customerId customer Id
+     */
+    boolean delete(long customerId);
 }

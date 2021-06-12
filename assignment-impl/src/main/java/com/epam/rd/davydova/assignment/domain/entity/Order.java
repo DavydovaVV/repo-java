@@ -1,6 +1,9 @@
 package com.epam.rd.davydova.assignment.domain.entity;
 
-import lombok.*;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -14,18 +17,14 @@ import java.util.List;
 @Data
 @Entity
 @RequiredArgsConstructor
-@NamedQueries({
-        @NamedQuery(name = Order.FIND_ORDER_BY_NUMBER, query = "SELECT o FROM Order o WHERE o.orderNumber = ?1"),
-        @NamedQuery(name = Order.FIND_ALL_ORDERS, query = "SELECT o FROM Order o"),})
+@Accessors(chain = true)
 @Table(name = "[order]")
 public class Order {
-    public static final String FIND_ORDER_BY_NUMBER = "findOrderByCustomerId";
-    public static final String FIND_ALL_ORDERS = "findAllOrders";
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderId;
+    private long orderId;
 
     @ToString.Exclude
     @ManyToMany(cascade = CascadeType.MERGE)
@@ -47,13 +46,4 @@ public class Order {
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
-
-    /**
-     * Add product to list
-     *
-     * @param product product
-     */
-    public void addToList(Product product) {
-        productList.add(product);
-    }
 }

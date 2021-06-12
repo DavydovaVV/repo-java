@@ -1,14 +1,14 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
+import com.epam.rd.davydova.assignment.dto.ProductDto;
 import com.epam.rd.davydova.assignment.domain.entity.Product;
-import com.epam.rd.davydova.assignment.repository.impl.ProductRepositoryImpl;
-import com.epam.rd.davydova.assignment.repository.impl.SupplierRepositoryImpl;
+import com.epam.rd.davydova.assignment.repository.ProductRepository;
+import com.epam.rd.davydova.assignment.repository.SupplierRepository;
 import com.epam.rd.davydova.assignment.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,41 +19,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class ProductServiceImpl implements ProductService {
-    private final ProductRepositoryImpl productRepositoryImpl;
-    private final SupplierRepositoryImpl supplierRepositoryImpl;
+    private final ProductRepository productRepository;
+    private final SupplierRepository supplierRepository;
+    private final ProductDto productDto;
 
     /**
      * Add product to database
      *
-     * @param productName product name
-     * @param supplierId  supplier Id
-     * @param unitPrice price per unit
+     * @param product Product object
+     * @return Optional of Product object
      */
     @Override
-    public Optional<Product> add(String productName, int supplierId, double unitPrice) {
-        var productOptional = productRepositoryImpl.findBy(productName);
-        var supplierOptional = supplierRepositoryImpl.findBy(supplierId);
-
-        if (productOptional.isEmpty()) {
-            if (supplierOptional.isPresent()) {
-                var supplier = supplierOptional.get();
-                if (supplier.getProductList().isEmpty()) {
-                    var product = new Product();
-                    product.setProductName(productName);
-                    product.setSupplier(supplier);
-                    product.setUnitPrice(BigDecimal.valueOf(unitPrice));
-                    productRepositoryImpl.save(product);
-                    return productRepositoryImpl.findBy(product.getProductId());
-                } else {
-                    log.error("Supplier supplies another product. Product cannot be added");
-                }
-            } else {
-                log.error("Supplier is not added. Product cannot be added");
-            }
-        } else {
-            log.error("Product with such a name is already added");
-        }
-        return Optional.empty();
+    public Product add(Product product) {
+        return productRepository.save(product);
     }
 
     /**
@@ -64,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Optional<Product> findBy(String productName) {
-        return productRepositoryImpl.findBy(productName);
+        return productRepository.findByProductName(productName);
     }
 
     /**
@@ -74,8 +52,8 @@ public class ProductServiceImpl implements ProductService {
      * @return Optional of product instance
      */
     @Override
-    public Optional<Product> findBy(int productId) {
-        return productRepositoryImpl.findBy(productId);
+    public Optional<Product> findBy(long productId) {
+        return productRepository.findById(productId);
     }
 
     /**
@@ -84,57 +62,39 @@ public class ProductServiceImpl implements ProductService {
      * @return Optional of List of products
      */
     @Override
-    public Optional<List> findAll() {
-        return productRepositoryImpl.findAll();
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 
     /**
      * Update product status
      *
-     * @param productId      product Id
-     * @param isDiscontinued product status
-     * @return
+     * @param product product object
+     * @return Optional of Product object
      */
     @Override
-    public Optional<Product> update(int productId, boolean isDiscontinued) {
-        var productOptional = productRepositoryImpl.findBy(productId);
-
-        if (productOptional.isPresent()) {
-            var product = productOptional.get();
-            product.setDiscontinued(isDiscontinued);
-            productRepositoryImpl.update(product);
-            return productRepositoryImpl.findBy(productId);
-        } else {
-            log.error("Product is not present to be updated");
-        }
-        return Optional.empty();
+    public Product update(Product product) {
+        return productRepository.save(product);
     }
 
     /**
      * Delete product from database
      *
      * @param productId product Id
-     * @return
+     * @return status of deletion
      */
     @Override
-    public boolean delete(int productId) {
-        var productOptional = productRepositoryImpl.findBy(productId);
-
+    public boolean delete(long productId) {
+        var productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             var product = productOptional.get();
-            productRepositoryImpl.delete(product);
-            return productRepositoryImpl.findBy(productId).isEmpty();
+            productRepository.delete(product);
+            if (productRepository.existsById(productId)) {
+                return true;
+            }
         } else {
-            log.error("Product is not present to be deleted");
+            log.error("Product Id is not found. Product is not deleted");
         }
         return false;
-    }
-
-    /**
-     * Close ProductRepository
-     */
-    @Override
-    public void close() {
-        productRepositoryImpl.close();
     }
 }

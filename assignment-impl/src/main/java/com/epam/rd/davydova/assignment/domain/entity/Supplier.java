@@ -2,6 +2,8 @@ package com.epam.rd.davydova.assignment.domain.entity;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,19 +15,16 @@ import java.util.List;
 @Data
 @Entity
 @RequiredArgsConstructor
-@NamedQueries({
-        @NamedQuery(name = Supplier.FIND_SUPPLIER_BY_NAME, query = "SELECT s FROM Supplier s WHERE s.companyName = ?1"),
-        @NamedQuery(name = Supplier.FIND_ALL_SUPPLIERS, query = "SELECT s FROM Supplier s")})
+@Accessors(chain = true)
 public class Supplier {
-    public static final String FIND_SUPPLIER_BY_NAME = "findSupplierByName";
-    public static final String FIND_ALL_SUPPLIERS = "findAllSuppliers";
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int supplierId;
+    private long supplierId;
 
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.REMOVE)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.MERGE)
     private List<Product> productList = new ArrayList<>();
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(40)")

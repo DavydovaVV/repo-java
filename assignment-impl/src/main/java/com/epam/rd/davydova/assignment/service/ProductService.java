@@ -6,20 +6,53 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is an interface that wraps interface for crud-operations with database
+ * This is an interface for crud-operations with database
  */
 public interface ProductService {
-    Optional<Product> add(String productName, int supplierId, double unitPrice);
+    /**
+     * Add product to database
+     *
+     * @param product Product object
+     * @return Optional of Product object
+     */
+    Product add(Product product);
 
-    Optional<Product> findBy(String name);
+    /**
+     * Find product by name
+     *
+     * @param productName product name
+     * @return Optional of product instance
+     */
+    Optional<Product> findBy(String productName);
 
-    Optional<Product> findBy(int id);
+    /**
+     * Find product by Id
+     *
+     * @param productId product Id
+     * @return Optional of product instance
+     */
+    Optional<Product> findBy(long productId);
 
-    Optional<List> findAll();
+    /**
+     * Find all products
+     *
+     * @return Optional of List of products
+     */
+    List<Product> findAll();
 
-    Optional<Product> update(int productId, boolean isDiscontinued);
+    /**
+     * Update product status
+     *
+     * @param product Product object
+     * @return Optional of Product object
+     */
+    Product update(Product product);
 
-    boolean delete(int productId);
-
-    void close();
+    /**
+     * Delete product from database
+     *
+     * @param productId product Id
+     * @return status of deletion
+     */
+    boolean delete(long productId);
 }

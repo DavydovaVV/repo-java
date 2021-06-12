@@ -10,6 +10,7 @@
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/epamcourses?currentSchema=davydova"/>
             <property name="javax.persistence.jdbc.user" value="usr"/>
             <property name="javax.persistence.jdbc.password" value="pass"/>
+            <property name="hibernate.id.new_generator_mappings" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
