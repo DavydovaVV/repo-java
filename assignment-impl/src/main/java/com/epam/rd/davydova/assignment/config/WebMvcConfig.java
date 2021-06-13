@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = { "com.epam.rd.davydova.assignment" })
+@ComponentScan("com.epam.rd.davydova.assignment")
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override

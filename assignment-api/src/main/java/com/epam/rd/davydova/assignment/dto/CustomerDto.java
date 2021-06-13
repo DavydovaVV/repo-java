@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -20,9 +19,7 @@ public class CustomerDto {
 
     private List<Long> orderIdList;
 
-    @NotNull
     private String customerName;
 
-    @NotNull
     private String phone;
 }

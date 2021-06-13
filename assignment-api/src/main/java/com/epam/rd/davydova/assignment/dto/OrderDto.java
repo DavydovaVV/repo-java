@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -20,13 +19,10 @@ import java.util.List;
 public class OrderDto {
     private long orderId;
 
-    @NotNull
     private List<Long> productIdList;
 
-    @NotNull
     private String orderNumber;
 
-    @NotNull
     private long customerId;
 
     private Date orderDate;

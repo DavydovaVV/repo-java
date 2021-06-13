@@ -5,7 +5,6 @@ import com.epam.rd.davydova.assignment.repository.OrderRepository;
 import com.epam.rd.davydova.assignment.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +14,6 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Service
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 

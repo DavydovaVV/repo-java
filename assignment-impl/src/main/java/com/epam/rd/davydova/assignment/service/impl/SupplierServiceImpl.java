@@ -1,12 +1,10 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
-import com.epam.rd.davydova.assignment.dto.SupplierDto;
 import com.epam.rd.davydova.assignment.domain.entity.Supplier;
 import com.epam.rd.davydova.assignment.repository.SupplierRepository;
 import com.epam.rd.davydova.assignment.service.SupplierService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +14,8 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Service
 public class SupplierServiceImpl implements SupplierService {
     private final SupplierRepository supplierRepository;
-    private final SupplierDto supplierDto;
 
     /**
      * Add supplier to database

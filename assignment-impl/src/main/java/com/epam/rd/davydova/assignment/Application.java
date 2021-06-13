@@ -28,7 +28,7 @@ public class Application implements WebApplicationInitializer {
 
         // Регистрируем dispatcher servlet
         ServletRegistration.Dynamic dispatcher =
-                servletContext.addServlet("com.epam.rd.davydova.assignment", new DispatcherServlet(dispatcherContext));
+                servletContext.addServlet("dispatcher", new DispatcherServlet(dispatcherContext));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 

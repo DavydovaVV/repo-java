@@ -10,7 +10,8 @@ import java.util.List;
  * This is an interface to interact with database from api layer
  */
 @RestController
-@RequestMapping("/product")
+@RestControllerAdvice
+@RequestMapping(value = "/product")
 public interface ProductResource {
 
     /**

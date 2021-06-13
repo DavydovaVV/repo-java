@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -21,15 +20,11 @@ public class ProductDto {
 
     private List<Long> orderIdList;
 
-    @NotNull
     private String productName;
 
-    @NotNull
     private long supplierId;
 
-    @NotNull
     private BigDecimal unitPrice;
 
-    @NotNull
     private boolean isDiscontinued;
 }

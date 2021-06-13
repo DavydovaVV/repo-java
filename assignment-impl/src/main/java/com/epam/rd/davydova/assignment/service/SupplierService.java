@@ -1,6 +1,7 @@
 package com.epam.rd.davydova.assignment.service;
 
 import com.epam.rd.davydova.assignment.domain.entity.Supplier;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.Optional;
 /**
  * This is an interface for crud-operations with database
  */
+@Service
 public interface SupplierService {
     /**
      * Add supplier to database
