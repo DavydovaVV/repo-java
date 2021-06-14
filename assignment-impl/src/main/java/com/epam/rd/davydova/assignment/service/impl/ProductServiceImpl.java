@@ -5,6 +5,7 @@ import com.epam.rd.davydova.assignment.repository.ProductRepository;
 import com.epam.rd.davydova.assignment.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Service
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
@@ -46,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
      * @return Optional of product instance
      */
     @Override
-    public Optional<Product> findBy(long productId) {
+    public Optional<Product> findBy(Long productId) {
         return productRepository.findById(productId);
     }
 
@@ -78,14 +80,12 @@ public class ProductServiceImpl implements ProductService {
      * @return status of deletion
      */
     @Override
-    public boolean delete(long productId) {
+    public boolean delete(Long productId) {
         var productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             var product = productOptional.get();
             productRepository.delete(product);
-            if (productRepository.existsById(productId)) {
-                return true;
-            }
+            return !productRepository.existsById(productId);
         } else {
             log.error("Product Id is not found. Product is not deleted");
         }

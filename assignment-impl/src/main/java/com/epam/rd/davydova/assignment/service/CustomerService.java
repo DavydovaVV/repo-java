@@ -1,7 +1,6 @@
 package com.epam.rd.davydova.assignment.service;
 
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +8,6 @@ import java.util.Optional;
 /**
  * This is an interface for crud-operations with database
  */
-@Service
 public interface CustomerService {
     /**
      * Add customer to database
@@ -33,7 +31,7 @@ public interface CustomerService {
      * @param customerId customer Id
      * @return Optional of customer instance
      */
-    Optional<Customer> findBy(long customerId);
+    Optional<Customer> findBy(Long customerId);
 
     /**
      * Find all customers
@@ -55,5 +53,5 @@ public interface CustomerService {
      *
      * @param customerId customer Id
      */
-    boolean delete(long customerId);
+    boolean delete(Long customerId);
 }

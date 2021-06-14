@@ -22,7 +22,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long productId;
+    private Long productId;
 
     @ToString.Exclude
     @ManyToMany(mappedBy = "productList", cascade = CascadeType.MERGE)

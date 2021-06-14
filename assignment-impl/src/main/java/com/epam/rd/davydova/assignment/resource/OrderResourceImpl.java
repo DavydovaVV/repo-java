@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.List;
  * This is a class of CustomerServlet
  */
 @Slf4j
+@RestController
 @RequiredArgsConstructor
 public class OrderResourceImpl implements OrderResource {
     private final OrderServiceImpl orderService;
@@ -33,6 +36,7 @@ public class OrderResourceImpl implements OrderResource {
      * @param orderDto DTO of Order object
      * @return DTO of Order object
      */
+    @Transactional
     @Override
     public OrderDto addOrder(OrderDto orderDto) {
         var customerId = orderDto.getCustomerId();
@@ -63,7 +67,7 @@ public class OrderResourceImpl implements OrderResource {
             order.setTotalAmount(totalAmount);
             customer.getOrderList().add(order);
             var addedOrder = orderService.add(order);
-            orderDto.setOrderId(addedOrder.getOrderId());
+            orderDto = conversionService.convert(addedOrder, OrderDto.class);
             log.info("addOrder() - {}", order);
             return orderDto;
         } else {
@@ -72,32 +76,33 @@ public class OrderResourceImpl implements OrderResource {
         return null;
     }
 
-        /**
-         * Get order(s) from database
-         *
-         * @param id order Id
-         * @return List of OrderDto objects
-         */
-        @Override
-        public List<OrderDto> getOrder (long id){
-            List<OrderDto> orderDtoList = new ArrayList<>();
-            if (id != 0) {
-                var orderOptional = orderService.findBy(id);
-                if (orderOptional.isPresent()) {
-                    var order = orderOptional.get();
-                    var orderDto = conversionService.convert(order, OrderDto.class);
-                    orderDtoList.add(orderDto);
-                    log.info("getOrder() - {}", order);
-                } else {
-                    var orderList = orderService.findAll();
-                    for (Order order : orderList) {
-                        orderDtoList.add(conversionService.convert(order, OrderDto.class));
-                    }
-                    log.info("getProduct() - {}", orderList);
-                }
+    /**
+     * Get order(s) from database
+     *
+     * @param id order Id
+     * @return List of OrderDto objects
+     */
+    @Transactional
+    @Override
+    public List<OrderDto> getOrder(Long id) {
+        List<OrderDto> orderDtoList = new ArrayList<>();
+        if (id != null) {
+            var orderOptional = orderService.findBy(id);
+            if (orderOptional.isPresent()) {
+                var order = orderOptional.get();
+                var orderDto = conversionService.convert(order, OrderDto.class);
+                orderDtoList.add(orderDto);
+                log.info("getOrder() - {}", order);
             }
-            return orderDtoList;
+        } else {
+            var orderList = orderService.findAll();
+            for (Order order : orderList) {
+                orderDtoList.add(conversionService.convert(order, OrderDto.class));
+            }
+            log.info("getProduct() - {}", orderList);
         }
+        return orderDtoList;
+    }
 
     /**
      * Update order in database
@@ -105,6 +110,7 @@ public class OrderResourceImpl implements OrderResource {
      * @param orderDto DTO of Order object
      * @return string result of method
      */
+    @Transactional
     @Override
     public OrderDto updateOrder(OrderDto orderDto) {
         var orderOptional = orderService.findBy(orderDto.getOrderId());
@@ -113,11 +119,18 @@ public class OrderResourceImpl implements OrderResource {
             var customerId = orderDto.getCustomerId();
             var totalAmount = order.getTotalAmount();
             var productIdList = orderDto.getProductIdList();
-            var productList = new ArrayList<Product>();
-            order.getProductList().clear();
+            var productList = order.getProductList();
+            productList.clear();
             for (long productId : productIdList) {
                 var productOptional = productService.findBy(productId);
-                productOptional.ifPresent(productList::add);
+                if(productOptional.isPresent()) {
+                    var product = productOptional.get();
+                    productList.add(product);
+                    var orderList = product.getOrderList();
+                    if(!orderList.contains(order)) {
+                        orderList.add(order);
+                    }
+                }
             }
             var customerOptional = customerService.findBy(customerId);
             if (customerOptional.isPresent()) {
@@ -137,7 +150,7 @@ public class OrderResourceImpl implements OrderResource {
                 order.setTotalAmount(totalAmount);
                 customer.getOrderList().add(order);
                 var addedOrder = orderService.update(order);
-                orderDto.setOrderId(addedOrder.getOrderId());
+                orderDto = conversionService.convert(addedOrder, OrderDto.class);
                 log.info("updateOrder() - {}", order);
                 return orderDto;
             } else {
@@ -150,18 +163,18 @@ public class OrderResourceImpl implements OrderResource {
     }
 
     /**
-         * Delete order from database
-         *
-         * @param id order Id
-         * @return status of deletion
-         */
-        @Override
-        public HttpStatus deleteOrder (long id){
-            var isRemoved = orderService.delete(id);
-            if (!isRemoved) {
-                return HttpStatus.NOT_FOUND;
-            }
-            log.info("deleteSupplier() - {}", id);
-            return HttpStatus.OK;
+     * Delete order from database
+     *
+     * @param id order Id
+     * @return status of deletion
+     */
+    @Override
+    public HttpStatus deleteOrder(Long id) {
+        var isRemoved = orderService.delete(id);
+        if (!isRemoved) {
+            return HttpStatus.NOT_FOUND;
         }
+        log.info("deleteOrder() - {}", id);
+        return HttpStatus.OK;
     }
+}

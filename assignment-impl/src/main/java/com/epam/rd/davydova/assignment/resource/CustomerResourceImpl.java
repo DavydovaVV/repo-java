@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
  * This is a class of CustomerController
  */
 @Slf4j
+@RestController
 @RequiredArgsConstructor
 public class CustomerResourceImpl implements CustomerResource {
     private final CustomerServiceImpl customerService;
@@ -35,7 +38,7 @@ public class CustomerResourceImpl implements CustomerResource {
         customerDto.setCustomerId(addedCustomer.getCustomerId());
         log.info("addCustomer() - {}", customer);
 
-        return conversionService.convert(customer, CustomerDto.class);
+        return customerDto;
     }
 
     /**
@@ -44,10 +47,11 @@ public class CustomerResourceImpl implements CustomerResource {
      * @param id customer Id
      * @return List of CustomerDto objects
      */
+    @Transactional
     @Override
-    public List<CustomerDto> getCustomer(long id) {
+    public List<CustomerDto> getCustomer(Long id) {
         List<CustomerDto> customerDtoList = new ArrayList<>();
-        if (id != 0) {
+        if (id != null) {
             var customerOptional = customerService.findBy(id);
             if (customerOptional.isPresent()) {
                 var customer = customerOptional.get();
@@ -94,7 +98,7 @@ public class CustomerResourceImpl implements CustomerResource {
      * @return HttpStatus
      */
     @Override
-    public HttpStatus deleteCustomer(long id) {
+    public HttpStatus deleteCustomer(Long id) {
         var isRemoved = customerService.delete(id);
         if (!isRemoved) {
             return HttpStatus.NOT_FOUND;

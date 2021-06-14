@@ -5,6 +5,7 @@ import com.epam.rd.davydova.assignment.repository.SupplierRepository;
 import com.epam.rd.davydova.assignment.service.SupplierService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Service
 public class SupplierServiceImpl implements SupplierService {
     private final SupplierRepository supplierRepository;
 
@@ -46,7 +48,7 @@ public class SupplierServiceImpl implements SupplierService {
      * @return Optional of supplier instance
      */
     @Override
-    public Optional<Supplier> findBy(long supplierId) {
+    public Optional<Supplier> findBy(Long supplierId) {
         return supplierRepository.findById(supplierId);
     }
 
@@ -77,14 +79,12 @@ public class SupplierServiceImpl implements SupplierService {
      * @param supplierId supplier Id
      */
     @Override
-    public boolean delete(long supplierId) {
+    public boolean delete(Long supplierId) {
         var supplierOptional = supplierRepository.findById(supplierId);
         if (supplierOptional.isPresent()) {
             var supplier = supplierOptional.get();
             supplierRepository.delete(supplier);
-            if (!supplierRepository.existsById(supplierId)) {
-                return true;
-            }
+            return !supplierRepository.existsById(supplierId);
         } else {
             log.error("Supplier Id is not found. Supplier is not deleted");
         }

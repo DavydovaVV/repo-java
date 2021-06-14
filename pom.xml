@@ -154,10 +154,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.1</version>
+                <configuration>
+                    <outputEncoding>UTF-8</outputEncoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -196,6 +204,9 @@
                         <configuration>
                             <excludes>
                                 <exclude>**/domain/**</exclude>
+                                <exclude>**/dto/**</exclude>
+                                <exclude>**/config/**</exclude>
+                                <exclude>**/translation/**</exclude>
                             </excludes>
                             <haltOnFailure>${jacoco-maven-plugin.haltOnFailure}</haltOnFailure>
                             <rules>

@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class SupplierDto {
-    private long supplierId;
+    private Long supplierId;
 
     private List<Long> productIdList;
 

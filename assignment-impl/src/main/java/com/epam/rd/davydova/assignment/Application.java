@@ -30,7 +30,7 @@ public class Application implements WebApplicationInitializer {
         ServletRegistration.Dynamic dispatcher =
                 servletContext.addServlet("dispatcher", new DispatcherServlet(dispatcherContext));
         dispatcher.setLoadOnStartup(1);
-        dispatcher.addMapping("/");
+        dispatcher.addMapping("/*");
 
         log.info("Application is running");
     }

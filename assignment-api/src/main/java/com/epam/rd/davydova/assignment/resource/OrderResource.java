@@ -9,8 +9,6 @@ import java.util.List;
 /**
  * This is an interface to interact with database from api layer
  */
-@RestController
-@RestControllerAdvice
 @RequestMapping(value = "/order")
 public interface OrderResource {
 
@@ -21,7 +19,7 @@ public interface OrderResource {
      * @return string result of method
      */
     @PostMapping
-    OrderDto addOrder (@RequestBody OrderDto orderDto);
+    @ResponseBody OrderDto addOrder (@RequestBody OrderDto orderDto);
 
     /**
      * Get order from database
@@ -30,7 +28,7 @@ public interface OrderResource {
      * @return string result of method
      */
     @GetMapping("/{id}")
-    List<OrderDto> getOrder(@PathVariable(required = false) long id);
+    @ResponseBody List<OrderDto> getOrder(@PathVariable(value = "id", required = false) Long id);
 
     /**
      * Update order in database
@@ -39,7 +37,7 @@ public interface OrderResource {
      * @return string result of method
      */
     @PutMapping
-    OrderDto updateOrder(@RequestBody OrderDto orderDto);
+    @ResponseBody OrderDto updateOrder(@RequestBody OrderDto orderDto);
 
     /**
      * Delete order from database
@@ -48,5 +46,5 @@ public interface OrderResource {
      * @return result of deletion
      */
     @DeleteMapping(value = "/{id}")
-    HttpStatus deleteOrder(@PathVariable long id);
+    @ResponseBody HttpStatus deleteOrder(@PathVariable(value = "id") Long id);
 }

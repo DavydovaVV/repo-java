@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
  * This is a class of CustomerServlet
  */
 @Slf4j
+@RestController
 @RequiredArgsConstructor
 public class SupplierResourceImpl implements SupplierResource {
     private final SupplierServiceImpl supplierService;
@@ -31,6 +34,8 @@ public class SupplierResourceImpl implements SupplierResource {
         var supplier = new Supplier()
                 .setCompanyName(supplierDto.getCompanyName())
                 .setPhone(supplierDto.getPhone());
+        var addedSupplier = supplierService.add(supplier);
+        supplierDto.setSupplierId(addedSupplier.getSupplierId());
         log.info("addSupplier() - {}", supplier);
         return supplierDto;
     }
@@ -41,23 +46,24 @@ public class SupplierResourceImpl implements SupplierResource {
      * @param id supplier Id
      * @return List of SupplierDto objects
      */
+    @Transactional
     @Override
-    public List<SupplierDto> getSupplier(long id) {
+    public List<SupplierDto> getSupplier(Long id) {
         List<SupplierDto> supplierDtoList = new ArrayList<>();
-        if (id != 0) {
+        if (id != null) {
             var supplierOptional = supplierService.findBy(id);
             if (supplierOptional.isPresent()) {
                 var supplier = supplierOptional.get();
                 var supplierDto = conversionService.convert(supplier, SupplierDto.class);
                 supplierDtoList.add(supplierDto);
                 log.info("getSupplier() - {}", supplier);
-            } else {
-                var supplierList = supplierService.findAll();
-                for (Supplier supplier : supplierList) {
-                    supplierDtoList.add(conversionService.convert(supplier, SupplierDto.class));
-                }
-                log.info("getSupplier() - {}", supplierList);
             }
+        } else {
+            var supplierList = supplierService.findAll();
+            for (Supplier supplier : supplierList) {
+                supplierDtoList.add(conversionService.convert(supplier, SupplierDto.class));
+            }
+            log.info("getSupplier() - {}", supplierList);
         }
         return supplierDtoList;
     }
@@ -91,7 +97,7 @@ public class SupplierResourceImpl implements SupplierResource {
      * @return status of deletion
      */
     @Override
-    public HttpStatus deleteSupplier(long id) {
+    public HttpStatus deleteSupplier(Long id) {
         var isRemoved = supplierService.delete(id);
         if (!isRemoved) {
             return HttpStatus.NOT_FOUND;

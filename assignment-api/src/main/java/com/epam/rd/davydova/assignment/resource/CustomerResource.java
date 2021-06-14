@@ -9,8 +9,6 @@ import java.util.List;
 /**
  * This is an interface to interact with database from api layer
  */
-@RestController
-@RestControllerAdvice
 @RequestMapping(value = "/customer")
 public interface CustomerResource {
 
@@ -30,7 +28,7 @@ public interface CustomerResource {
      * @return string result of method
      */
     @GetMapping(value = "/{id}")
-    List<CustomerDto> getCustomer(@PathVariable(required = false) long id);
+    @ResponseBody List<CustomerDto> getCustomer(@PathVariable(value = "id", required = false) Long id);
 
     /**
      * Update customer in database
@@ -39,7 +37,7 @@ public interface CustomerResource {
      * @return string result of method
      */
     @PutMapping
-    CustomerDto updateCustomer(@RequestBody CustomerDto customerDto);
+    @ResponseBody CustomerDto updateCustomer(@RequestBody CustomerDto customerDto);
 
     /**
      * Delete customer from database
@@ -48,5 +46,5 @@ public interface CustomerResource {
      * @return result of deletion
      */
     @DeleteMapping(value = "/{id}")
-    HttpStatus deleteCustomer(@PathVariable long id);
+    HttpStatus deleteCustomer(@PathVariable(value = "id") Long id);
 }

@@ -10,7 +10,6 @@ import java.util.List;
  * This is an interface to interact with database from api layer
  */
 @RestController
-@RestControllerAdvice
 @RequestMapping(value = "/product")
 public interface ProductResource {
 
@@ -21,7 +20,7 @@ public interface ProductResource {
      * @return string result of method
      */
     @PostMapping
-    ProductDto addProduct(@RequestBody ProductDto productDto);
+    @ResponseBody ProductDto addProduct(@RequestBody ProductDto productDto);
 
     /**
      * Get product from database
@@ -30,7 +29,7 @@ public interface ProductResource {
      * @return string result of method
      */
     @GetMapping("/{id}")
-    List<ProductDto> getProduct(@PathVariable(required = false) long id);
+    @ResponseBody List<ProductDto> getProduct(@PathVariable(value = "id", required = false) Long id);
 
     /**
      * Update product in database
@@ -39,7 +38,7 @@ public interface ProductResource {
      * @return string result of method
      */
     @PutMapping
-    ProductDto updateProduct(@RequestBody ProductDto productDto);
+    @ResponseBody ProductDto updateProduct(@RequestBody ProductDto productDto);
 
     /**
      * Delete product from database
@@ -47,6 +46,6 @@ public interface ProductResource {
      * @param id product Id
      * @return result of deletion
      */
-    @DeleteMapping(value = "/{id}")
-    HttpStatus deleteProduct(@PathVariable long id);
+    @DeleteMapping("/{id}")
+    HttpStatus deleteProduct(@PathVariable(value = "id") Long id);
 }

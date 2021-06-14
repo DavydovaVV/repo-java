@@ -1,7 +1,6 @@
 package com.epam.rd.davydova.assignment.service;
 
 import com.epam.rd.davydova.assignment.domain.entity.Product;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +8,6 @@ import java.util.Optional;
 /**
  * This is an interface for crud-operations with database
  */
-@Service
 public interface ProductService {
     /**
      * Add product to database
@@ -33,7 +31,7 @@ public interface ProductService {
      * @param productId product Id
      * @return Optional of product instance
      */
-    Optional<Product> findBy(long productId);
+    Optional<Product> findBy(Long productId);
 
     /**
      * Find all products
@@ -56,5 +54,5 @@ public interface ProductService {
      * @param productId product Id
      * @return status of deletion
      */
-    boolean delete(long productId);
+    boolean delete(Long productId);
 }

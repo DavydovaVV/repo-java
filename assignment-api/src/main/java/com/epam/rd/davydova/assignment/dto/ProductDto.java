@@ -16,13 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class ProductDto {
-    private long productId;
+    private Long productId;
 
     private List<Long> orderIdList;
 
     private String productName;
 
-    private long supplierId;
+    private Long supplierId;
 
     private BigDecimal unitPrice;
 

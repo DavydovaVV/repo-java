@@ -29,12 +29,13 @@ public class OrderToDtoConverter implements Converter<Order, OrderDto> {
         for(Product product : productList) {
             productIdList.add(product.getProductId());
         }
-
         var orderDto = new OrderDto()
                 .setOrderId(order.getOrderId())
                 .setOrderNumber(order.getOrderNumber())
                 .setProductIdList(productIdList)
-                .setCustomerId(order.getCustomer().getCustomerId());
+                .setCustomerId(order.getCustomer().getCustomerId())
+                .setOrderDate(order.getOrderDate())
+                .setTotalAmount(order.getTotalAmount());
         log.info("convert() - convert from '{}' to {}", order, orderDto);
         return orderDto;
     }

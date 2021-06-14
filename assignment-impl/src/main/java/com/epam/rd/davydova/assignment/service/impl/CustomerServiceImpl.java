@@ -5,6 +5,7 @@ import com.epam.rd.davydova.assignment.repository.CustomerRepository;
 import com.epam.rd.davydova.assignment.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Service
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
 
@@ -46,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @return Optional of customer instance
      */
     @Override
-    public Optional<Customer> findBy(long customerId) {
+    public Optional<Customer> findBy(Long customerId) {
         return customerRepository.findById(customerId);
     }
 
@@ -64,7 +66,7 @@ public class CustomerServiceImpl implements CustomerService {
      * Update customer
      *
      * @param customer Customer object
-     * @return
+     * @return Customer object
      */
     @Override
     public Customer update(Customer customer) {
@@ -77,14 +79,12 @@ public class CustomerServiceImpl implements CustomerService {
      * @param customerId customer Id
      */
     @Override
-    public boolean delete(long customerId) {
+    public boolean delete(Long customerId) {
         var customerOptional = customerRepository.findById(customerId);
         if (customerOptional.isPresent()) {
             var customer = customerOptional.get();
             customerRepository.delete(customer);
-            if (!customerRepository.existsById(customerId)) {
-                return true;
-            }
+            return !customerRepository.existsById(customerId);
         } else {
             log.error("Customer Id is not found. Customer is not deleted");
         }

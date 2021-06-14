@@ -24,7 +24,7 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long orderId;
+    private Long orderId;
 
     @ToString.Exclude
     @ManyToMany(cascade = CascadeType.MERGE)

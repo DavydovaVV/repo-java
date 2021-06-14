@@ -21,7 +21,7 @@ public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long supplierId;
+    private Long supplierId;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.MERGE)

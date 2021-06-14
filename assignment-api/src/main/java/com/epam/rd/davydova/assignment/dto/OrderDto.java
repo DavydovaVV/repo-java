@@ -1,5 +1,6 @@
 package com.epam.rd.davydova.assignment.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class OrderDto {
-    private long orderId;
+    private Long orderId;
 
     private List<Long> productIdList;
 
@@ -25,6 +26,7 @@ public class OrderDto {
 
     private long customerId;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date orderDate;
 
     private BigDecimal totalAmount;

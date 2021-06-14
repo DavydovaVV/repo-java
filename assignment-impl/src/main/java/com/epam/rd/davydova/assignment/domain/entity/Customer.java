@@ -21,7 +21,7 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long customerId;
+    private Long customerId;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "customer", cascade = CascadeType.MERGE)

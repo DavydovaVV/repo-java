@@ -1,7 +1,6 @@
 package com.epam.rd.davydova.assignment.service;
 
 import com.epam.rd.davydova.assignment.domain.entity.Order;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +8,6 @@ import java.util.Optional;
 /**
  * This is an interface for crud-operations with database
  */
-@Service
 public interface OrderService {
     /**
      * Add order to database
@@ -33,7 +31,7 @@ public interface OrderService {
      * @param orderId order Id
      * @return Optional of order instance
      */
-    Optional<Order> findBy(long orderId);
+    Optional<Order> findBy(Long orderId);
 
     /**
      * Find all orders
@@ -56,5 +54,5 @@ public interface OrderService {
      * @param orderId order Id
      * @return status of removal
      */
-    boolean delete(long orderId);
+    boolean delete(Long orderId);
 }
