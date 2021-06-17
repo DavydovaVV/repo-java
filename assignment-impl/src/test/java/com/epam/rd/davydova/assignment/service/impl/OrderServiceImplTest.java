@@ -9,9 +9,7 @@ import com.epam.rd.davydova.assignment.repository.OrderRepository;
 import com.epam.rd.davydova.assignment.repository.ProductRepository;
 import com.epam.rd.davydova.assignment.repository.SupplierRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -25,7 +23,6 @@ import java.util.List;
  * This is a class to test OrderServiceImpl class
  */
 @DataJpaTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OrderServiceImplTest {
     @Autowired
     private OrderServiceImpl orderService;
@@ -76,15 +73,11 @@ class OrderServiceImplTest {
         }
     }
 
-    @BeforeAll
-    void setup() {
+    @Test
+    void addNewOrderTest() {
         customerService.add(customer);
         supplierService.add(supplier);
         productService.add(product);
-    }
-
-    @Test
-    void addNewOrderTest() {
         var addedOrder = orderService.add(order);
         var foundOrder = orderService.findBy(addedOrder.getOrderId()).get();
         Assertions.assertEquals(order.getOrderNumber(), foundOrder.getOrderNumber());
@@ -92,6 +85,9 @@ class OrderServiceImplTest {
 
     @Test
     void findPresentOrderByNumberTest() {
+        customerService.add(customer);
+        supplierService.add(supplier);
+        productService.add(product);
         var addedOrder = orderService.add(order);
         var foundOrder = orderService.findBy(addedOrder.getOrderNumber()).get();
         Assertions.assertEquals(order.getOrderNumber(), foundOrder.getOrderNumber());
@@ -99,6 +95,9 @@ class OrderServiceImplTest {
 
     @Test
     void findAllOrdersTest() {
+        customerService.add(customer);
+        supplierService.add(supplier);
+        productService.add(product);
         orderService.add(order);
         var foundOrderList = orderService.findAll();
         Assertions.assertEquals(1, foundOrderList.size());
@@ -107,6 +106,9 @@ class OrderServiceImplTest {
 
     @Test
     void updatePresentOrderTest() {
+        customerService.add(customer);
+        supplierService.add(supplier);
+        productService.add(product);
         order.setOrderNumber("u002");
         var updatedOrder = orderService.update(order);
         Assertions.assertEquals("u002", updatedOrder.getOrderNumber());
@@ -114,6 +116,9 @@ class OrderServiceImplTest {
 
     @Test
     void deletePresentOrderTest() {
+        customerService.add(customer);
+        supplierService.add(supplier);
+        productService.add(product);
         var addedOrder = orderService.add(order);
         var result = orderService.delete(addedOrder.getOrderId());
         Assertions.assertTrue(result);

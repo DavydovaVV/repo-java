@@ -5,9 +5,7 @@ import com.epam.rd.davydova.assignment.domain.entity.Supplier;
 import com.epam.rd.davydova.assignment.repository.ProductRepository;
 import com.epam.rd.davydova.assignment.repository.SupplierRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -16,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import java.math.BigDecimal;
 
 @DataJpaTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProductServiceImplTest {
     @Autowired
     private ProductServiceImpl productService;
@@ -44,13 +41,9 @@ class ProductServiceImplTest {
         }
     }
 
-    @BeforeAll
-    void setup() {
-        supplierService.add(supplier);
-    }
-
     @Test
     void addNewProductTest() {
+        supplierService.add(supplier);
         var addedProduct = productService.add(product);
         var foundProduct = productService.findBy(addedProduct.getProductId()).get();
         Assertions.assertEquals(product.getProductName(), foundProduct.getProductName());
@@ -59,6 +52,7 @@ class ProductServiceImplTest {
 
     @Test
     void findPresentProductByNameTest() {
+        supplierService.add(supplier);
         var addedProduct = productService.add(product);
         var foundProduct = productService.findBy(addedProduct.getProductName()).get();
         Assertions.assertEquals(product.getProductName(), foundProduct.getProductName());
@@ -66,6 +60,7 @@ class ProductServiceImplTest {
 
     @Test
     void findAllProductsTest() {
+        supplierService.add(supplier);
         productService.add(product);
         var foundProductList = productService.findAll();
         Assertions.assertEquals(1, foundProductList.size());
@@ -74,6 +69,7 @@ class ProductServiceImplTest {
 
     @Test
     void updatePresentProductTest() {
+        supplierService.add(supplier);
         product.setDiscontinued(true);
         var updatedProduct = productService.update(product);
         var foundProduct = productService.findBy(updatedProduct.getProductId()).get();
@@ -82,6 +78,7 @@ class ProductServiceImplTest {
 
     @Test
     void deletePresentProductTest() {
+        supplierService.add(supplier);
         var addedProduct = productService.add(product);
         var result = productService.delete(addedProduct.getProductId());
         Assertions.assertTrue(result);
