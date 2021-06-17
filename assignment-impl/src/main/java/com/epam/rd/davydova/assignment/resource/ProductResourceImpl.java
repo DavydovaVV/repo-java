@@ -1,5 +1,6 @@
 package com.epam.rd.davydova.assignment.resource;
 
+import com.epam.rd.davydova.assignment.domain.entity.Order;
 import com.epam.rd.davydova.assignment.domain.entity.Product;
 import com.epam.rd.davydova.assignment.dto.ProductDto;
 import com.epam.rd.davydova.assignment.service.impl.OrderServiceImpl;
@@ -47,7 +48,7 @@ public class ProductResourceImpl implements ProductResource {
                     .setDiscontinued(productDto.isDiscontinued());
             supplier.getProductList().add(product);
             var addedProduct = productService.add(product);
-            productDto.setProductId(addedProduct.getProductId());
+            productDto = conversionService.convert(addedProduct, ProductDto.class);
             log.info("addProduct() - {}", product);
             return productDto;
         } else {
@@ -104,8 +105,7 @@ public class ProductResourceImpl implements ProductResource {
                         .setSupplier(supplier)
                         .setUnitPrice(productDto.getUnitPrice())
                         .setDiscontinued(productDto.isDiscontinued());
-                var orderList = product.getOrderList();
-                orderList.clear();
+                var orderList = new ArrayList<Order>();
                 var orderIdList = productDto.getOrderIdList();
                 for(Long orderId : orderIdList) {
                     var orderOptional = orderService.findBy(orderId);
@@ -118,6 +118,7 @@ public class ProductResourceImpl implements ProductResource {
                         }
                     }
                 }
+                product.setOrderList(orderList);
                 var updatedProduct = productService.update(product);
                 productDto = conversionService.convert(updatedProduct, ProductDto.class);
                 log.info("updateProduct() - {}", product);

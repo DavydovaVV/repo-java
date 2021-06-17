@@ -18,7 +18,8 @@ public interface SupplierResource {
      * @param supplierDto DTO of Supplier object
      * @return string result of method
      */
-    @PostMapping
+    @PostMapping(value = "/add")
+    @ResponseBody
     SupplierDto addSupplier(@RequestBody SupplierDto supplierDto);
 
     /**
@@ -27,8 +28,9 @@ public interface SupplierResource {
      * @param id supplier Id
      * @return string result of method
      */
-    @GetMapping("/{id}")
-    @ResponseBody List<SupplierDto> getSupplier(@PathVariable(value = "id", required = false) Long id);
+    @GetMapping(value = "/get")
+    @ResponseBody
+    List<SupplierDto> getSupplier(@RequestParam(value = "id", required = false) Long id);
 
     /**
      * Update supplier in database
@@ -36,8 +38,9 @@ public interface SupplierResource {
      * @param supplierDto DTO of Supplier object
      * @return string result of method
      */
-    @PutMapping
-    @ResponseBody SupplierDto updateSupplier(@RequestBody SupplierDto supplierDto);
+    @PutMapping(value = "/update")
+    @ResponseBody
+    SupplierDto updateSupplier(@RequestBody SupplierDto supplierDto);
 
     /**
      * Delete supplier from database
@@ -45,6 +48,6 @@ public interface SupplierResource {
      * @param id supplier Id
      * @return result of deletion
      */
-    @DeleteMapping(value = "/{id}")
-    HttpStatus deleteSupplier(@PathVariable(value = "id") Long id);
+    @DeleteMapping(value = "/delete")
+    HttpStatus deleteSupplier(@RequestParam(value = "id") Long id);
 }

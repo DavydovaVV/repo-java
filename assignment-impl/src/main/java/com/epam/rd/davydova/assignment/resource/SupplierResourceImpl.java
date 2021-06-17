@@ -35,7 +35,7 @@ public class SupplierResourceImpl implements SupplierResource {
                 .setCompanyName(supplierDto.getCompanyName())
                 .setPhone(supplierDto.getPhone());
         var addedSupplier = supplierService.add(supplier);
-        supplierDto.setSupplierId(addedSupplier.getSupplierId());
+        supplierDto = conversionService.convert(addedSupplier, SupplierDto.class);
         log.info("addSupplier() - {}", supplier);
         return supplierDto;
     }

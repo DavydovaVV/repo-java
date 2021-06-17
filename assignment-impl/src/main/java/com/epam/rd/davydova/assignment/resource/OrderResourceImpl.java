@@ -119,9 +119,8 @@ public class OrderResourceImpl implements OrderResource {
             var customerId = orderDto.getCustomerId();
             var totalAmount = order.getTotalAmount();
             var productIdList = orderDto.getProductIdList();
-            var productList = order.getProductList();
-            productList.clear();
-            for (long productId : productIdList) {
+            var productList = new ArrayList<Product>();
+            for (Long productId : productIdList) {
                 var productOptional = productService.findBy(productId);
                 if(productOptional.isPresent()) {
                     var product = productOptional.get();
@@ -132,6 +131,7 @@ public class OrderResourceImpl implements OrderResource {
                     }
                 }
             }
+            order.setProductList(productList);
             var customerOptional = customerService.findBy(customerId);
             if (customerOptional.isPresent()) {
                 var customer = customerOptional.get();

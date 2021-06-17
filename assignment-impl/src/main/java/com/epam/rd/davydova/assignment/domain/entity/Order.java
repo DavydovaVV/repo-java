@@ -34,7 +34,7 @@ public class Order {
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> productList = new ArrayList<>();
 
-    @Column(unique = true, columnDefinition = "varchar(10), default 'n/a'")
+    @Column(unique = true, columnDefinition = "varchar(10)")
     private String orderNumber;
 
     @ManyToOne

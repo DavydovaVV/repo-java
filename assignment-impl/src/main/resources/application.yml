@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/epamcourses?currentSchema=davydova
+    username: usr
+    password: pass
+
+logger:
+  enabled: true

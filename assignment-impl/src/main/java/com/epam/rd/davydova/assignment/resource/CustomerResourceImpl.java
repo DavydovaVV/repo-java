@@ -35,7 +35,7 @@ public class CustomerResourceImpl implements CustomerResource {
         customer.setCustomerName(customerDto.getCustomerName())
                 .setPhone(customerDto.getPhone());
         var addedCustomer = customerService.add(customer);
-        customerDto.setCustomerId(addedCustomer.getCustomerId());
+        customerDto = conversionService.convert(addedCustomer, CustomerDto.class);
         log.info("addCustomer() - {}", customer);
 
         return customerDto;
