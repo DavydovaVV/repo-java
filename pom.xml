@@ -34,7 +34,6 @@
         <postgresql.version>42.2.13.jre7</postgresql.version>
         <hibernate.version>5.4.31.Final</hibernate.version>
         <hibernate-types.version>2.11.1</hibernate-types.version>
-        <springframework.version>5.3.7</springframework.version>
         <springframework.boot.version>2.5.0</springframework.boot.version>
         <h2database.version>1.4.200</h2database.version>
         <jackson.version>2.12.3</jackson.version>
@@ -59,7 +58,7 @@
             </dependency>
             <dependency>
                 <groupId>com.epam.rd</groupId>
-                <artifactId>logging</artifactId>
+                <artifactId>assignment-logging</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

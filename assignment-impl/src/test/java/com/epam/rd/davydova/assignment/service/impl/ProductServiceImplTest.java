@@ -1,7 +1,6 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
-import com.epam.rd.davydova.assignment.domain.entity.Product;
-import com.epam.rd.davydova.assignment.domain.entity.Supplier;
+import com.epam.rd.davydova.assignment.TestEntityFactory;
 import com.epam.rd.davydova.assignment.repository.ProductRepository;
 import com.epam.rd.davydova.assignment.repository.SupplierRepository;
 import org.junit.jupiter.api.Assertions;
@@ -11,8 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import java.math.BigDecimal;
-
+/**
+ * This is a class to test ProductServiceImpl class
+ */
 @DataJpaTest
 class ProductServiceImplTest {
     @Autowired
@@ -20,15 +20,9 @@ class ProductServiceImplTest {
     @Autowired
     private SupplierServiceImpl supplierService;
 
-    private Supplier supplier = new Supplier()
-            .setCompanyName("KiwiCo")
-            .setPhone("2222");
-
-    private Product product = new Product()
-            .setProductName("Kiwi")
-            .setSupplier(supplier)
-            .setUnitPrice(BigDecimal.valueOf(100));
-
+    /**
+     * Test configuration
+     */
     @TestConfiguration
     static class ProductServiceTestConfiguration {
         @Bean
@@ -42,50 +36,65 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void addNewProductTest() {
-        supplierService.add(supplier);
-        var addedProduct = productService.add(product);
+    public void addNewProductTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var supplier = testEntityFactory.createTestSupplier();
+        var product = testEntityFactory.createTestProduct();
+        var addedSupplier = supplierService.add(supplier);
+        var addedProduct = productService.add(product.setSupplier(addedSupplier));
         var foundProduct = productService.findBy(addedProduct.getProductId()).get();
         Assertions.assertEquals(product.getProductName(), foundProduct.getProductName());
     }
 
 
     @Test
-    void findPresentProductByNameTest() {
-        supplierService.add(supplier);
-        var addedProduct = productService.add(product);
+    public void findPresentProductByNameTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var supplier = testEntityFactory.createTestSupplier();
+        var product = testEntityFactory.createTestProduct();
+        var addedSupplier = supplierService.add(supplier);
+        var addedProduct = productService.add(product.setSupplier(addedSupplier));
         var foundProduct = productService.findBy(addedProduct.getProductName()).get();
         Assertions.assertEquals(product.getProductName(), foundProduct.getProductName());
     }
 
     @Test
-    void findAllProductsTest() {
-        supplierService.add(supplier);
-        productService.add(product);
+    public void findAllProductsTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var supplier = testEntityFactory.createTestSupplier();
+        var product = testEntityFactory.createTestProduct();
+        var addedSupplier = supplierService.add(supplier);
+        productService.add(product.setSupplier(addedSupplier));
         var foundProductList = productService.findAll();
         Assertions.assertEquals(1, foundProductList.size());
         Assertions.assertEquals(product.getProductName(), foundProductList.get(0).getProductName());
     }
 
     @Test
-    void updatePresentProductTest() {
-        supplierService.add(supplier);
-        product.setDiscontinued(true);
-        var updatedProduct = productService.update(product);
+    public void updatePresentProductTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var supplier = testEntityFactory.createTestSupplier();
+        var product = testEntityFactory.createTestProduct();
+        var addedSupplier = supplierService.add(supplier);
+        var addedProduct = productService.add(product.setSupplier(addedSupplier));
+        var updatedProduct = productService.update(addedProduct);
         var foundProduct = productService.findBy(updatedProduct.getProductId()).get();
         Assertions.assertEquals(product.getProductName(), foundProduct.getProductName());
     }
 
     @Test
-    void deletePresentProductTest() {
-        supplierService.add(supplier);
-        var addedProduct = productService.add(product);
+    public void deletePresentProductTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var supplier = testEntityFactory.createTestSupplier();
+        var product = testEntityFactory.createTestProduct();
+        var addedSupplier = supplierService.add(supplier);
+        var addedProduct = productService.add(product.setSupplier(addedSupplier));
         var result = productService.delete(addedProduct.getProductId());
         Assertions.assertTrue(result);
     }
 
     @Test
-    void deleteAbsentProductTest() {
+    public void deleteAbsentProductTest() {
         var result = productService.delete(1L);
         Assertions.assertFalse(result);
     }

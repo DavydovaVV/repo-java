@@ -1,5 +1,6 @@
 package com.epam.rd.davydova.assignment.resource;
 
+import com.epam.rd.davydova.assignment.TestEntityFactory;
 import com.epam.rd.davydova.assignment.converter.CustomerToDtoConverter;
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
 import com.epam.rd.davydova.assignment.dto.CustomerDto;
@@ -11,17 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -36,107 +37,110 @@ class CustomerResourceImplTest {
     @Autowired
     private ConversionService conversionService;
 
-    private Customer customer = new Customer()
-            .setCustomerId(1L)
-            .setCustomerName("Name")
-            .setPhone("1111");
-
     @MockBean
     private CustomerServiceImpl customerServiceImpl;
 
     @Test
-    void addNewCustomerTest() {
+    public void addNewCustomerTest() throws Exception {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
         var customerDto = conversionService.convert(customer, CustomerDto.class);
-        when(customerServiceImpl.add(customer)).thenReturn(customer);
         var mapper = new ObjectMapper();
-
-        try {
-            mockMvc.perform(MockMvcRequestBuilders.post("/customer/add")
-                    .contentType("application/json")
-                    .content(mapper.writeValueAsString(customerDto)))
-                    .andExpect(status().isOk())
-                    .andDo(MockMvcResultHandlers.print())
-                    .andReturn();
-        } catch (Exception e) {
-            log.error("Exception is: ", e);
-        }
+        var json = mapper.writeValueAsString(customerDto);
+        when(customerServiceImpl.add(customer)).thenReturn(customer);
+        when(customerServiceImpl.findBy(customer.getCustomerName()))
+                .thenReturn(Optional.of(customer));
+        mockMvc.perform(MockMvcRequestBuilders.post("/customer/add")
+                .contentType("application/json").content(json))
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(json))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
     }
 
     @Test
-    void getCustomerByIdTest() {
+    public void getCustomerByIdTest() throws Exception {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
+        var customerDto = conversionService.convert(customer, CustomerDto.class);
+        var mapper = new ObjectMapper();
+        var customerDtoList = new ArrayList<CustomerDto>();
+        customerDtoList.add(customerDto);
+        var json = mapper.writeValueAsString(customerDtoList);
         when(customerServiceImpl.findBy(1L))
                 .thenReturn(Optional.ofNullable(customer));
-        try {
-            mockMvc.perform(MockMvcRequestBuilders.get("/customer/get?id=1"))
-                    .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                    .andExpect(status().isOk())
-                    .andDo(MockMvcResultHandlers.print())
-                    .andReturn();
-        } catch (Exception e) {
-            log.error("Exception is: ", e);
-        }
+        mockMvc.perform(MockMvcRequestBuilders.get("/customer/get?id=1"))
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(json))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
     }
 
     @Test
-    void getAllCustomersTest() {
-        List<Customer> customerList = new ArrayList<>();
-        customerList.add(customer);
-        when(customerServiceImpl.findAll()).thenReturn(customerList);
-        try {
-            mockMvc.perform(MockMvcRequestBuilders.get("/customer/get"))
-                    .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                    .andExpect(status().isOk())
-                    .andDo(MockMvcResultHandlers.print())
-                    .andReturn();
-        } catch (Exception e) {
-            log.error("Exception is: ", e);
-        }
-    }
-
-    @Test
-    void updatePresentCustomerTest() {
+    public void getAllCustomersTest() throws Exception {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
         var customerDto = conversionService.convert(customer, CustomerDto.class);
+        var mapper = new ObjectMapper();
+        var customerList = new ArrayList<Customer>();
+        var customerDtoList = new ArrayList<CustomerDto>();
+        customerList.add(customer);
+        customerDtoList.add(customerDto);
+        var json = mapper.writeValueAsString(customerDtoList);
+        when(customerServiceImpl.findAll()).thenReturn(customerList);
+        mockMvc.perform(MockMvcRequestBuilders.get("/customer/get"))
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(json))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+    }
+
+    @Test
+    public void updatePresentCustomerTest() throws Exception {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
+        var customerDto = conversionService.convert(customer, CustomerDto.class);
+        var mapper = new ObjectMapper();
+        var json = mapper.writeValueAsString(customerDto);
         when(customerServiceImpl.findBy(1L))
                 .thenReturn(Optional.ofNullable(customer));
         when(customerServiceImpl.update(customer)).thenReturn(customer);
-        var mapper = new ObjectMapper();
-
-        try {
-            mockMvc.perform(MockMvcRequestBuilders.put("/customer/update")
-                    .contentType("application/json")
-                    .content(mapper.writeValueAsString(customerDto)))
-                    .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                    .andExpect(status().isOk())
-                    .andDo(MockMvcResultHandlers.print())
-                    .andReturn();
-        } catch (Exception e) {
-            log.error("Exception is: ", e);
-        }
+        mockMvc.perform(MockMvcRequestBuilders.put("/customer/update")
+                .contentType("application/json")
+                .content(json))
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(json))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
     }
 
     @Test
-    void deletePresentCustomer() {
+    public void deletePresentCustomer() throws Exception {
         when(customerServiceImpl.delete(1L)).thenReturn(true);
-        try {
-            mockMvc.perform(MockMvcRequestBuilders.delete("/customer/delete?id=1"))
-                    .andExpect(status().isOk())
-                    .andDo(MockMvcResultHandlers.print())
-                    .andReturn();
-        } catch (Exception e) {
-            log.error("Exception is: ", e);
-        }
+        var mapper = new ObjectMapper();
+        var json = mapper.writeValueAsString(HttpStatus.OK);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/customer/delete?id=1"))
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(json))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
     }
 
     @Test
-    void deleteAbsentCustomer() {
+    public void deleteAbsentCustomer() throws Exception {
         when(customerServiceImpl.delete(1L)).thenReturn(false);
-        try {
-            mockMvc.perform(MockMvcRequestBuilders.delete("/customer/delete?id=1"))
-                    .andExpect(status().isOk())
-                    .andDo(MockMvcResultHandlers.print())
-                    .andReturn();
-        } catch (Exception e) {
-            log.error("Exception is: ", e);
-        }
+        var mapper = new ObjectMapper();
+        var json = mapper.writeValueAsString(HttpStatus.NOT_FOUND);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/customer/delete?id=1"))
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(json))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
     }
 }

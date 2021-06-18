@@ -1,23 +1,14 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
-import com.epam.rd.davydova.assignment.domain.entity.Customer;
-import com.epam.rd.davydova.assignment.domain.entity.Order;
-import com.epam.rd.davydova.assignment.domain.entity.Product;
-import com.epam.rd.davydova.assignment.domain.entity.Supplier;
+import com.epam.rd.davydova.assignment.TestEntityFactory;
 import com.epam.rd.davydova.assignment.repository.CustomerRepository;
 import com.epam.rd.davydova.assignment.repository.OrderRepository;
-import com.epam.rd.davydova.assignment.repository.ProductRepository;
-import com.epam.rd.davydova.assignment.repository.SupplierRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This is a class to test OrderServiceImpl class
@@ -28,31 +19,10 @@ class OrderServiceImplTest {
     private OrderServiceImpl orderService;
     @Autowired
     private CustomerServiceImpl customerService;
-    @Autowired
-    private ProductServiceImpl productService;
-    @Autowired
-    private SupplierServiceImpl supplierService;
 
-    private Customer customer = new Customer()
-            .setCustomerName("Name")
-            .setPhone("1111");
-
-    private Supplier supplier = new Supplier()
-            .setCompanyName("KiwiCo")
-            .setPhone("2222");
-
-    private Product product = new Product()
-            .setProductName("Kiwi")
-            .setSupplier(supplier)
-            .setUnitPrice(BigDecimal.valueOf(100));
-
-    private Order order = new Order()
-            .setOrderNumber("u001")
-            .setOrderDate(new Date())
-            .setCustomer(customer)
-            .setProductList(List.of(product))
-            .setTotalAmount(BigDecimal.valueOf(100));
-
+    /**
+     * Test configuration
+     */
     @TestConfiguration
     static class CustomerServiceTestConfiguration {
         @Bean
@@ -63,69 +33,67 @@ class OrderServiceImplTest {
         OrderServiceImpl orderService(OrderRepository repository) {
             return new OrderServiceImpl(repository);
         }
-        @Bean
-        ProductServiceImpl productService(ProductRepository repository) {
-            return new ProductServiceImpl(repository);
-        }
-        @Bean
-        SupplierServiceImpl supplierService(SupplierRepository repository) {
-            return new SupplierServiceImpl(repository);
-        }
     }
 
     @Test
-    void addNewOrderTest() {
-        customerService.add(customer);
-        supplierService.add(supplier);
-        productService.add(product);
-        var addedOrder = orderService.add(order);
+    public void addNewOrderTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
+        var order = testEntityFactory.createTestOrder();
+        var addedCustomer = customerService.add(customer);
+        var addedOrder = orderService.add(order.setCustomer(addedCustomer));
         var foundOrder = orderService.findBy(addedOrder.getOrderId()).get();
         Assertions.assertEquals(order.getOrderNumber(), foundOrder.getOrderNumber());
     }
 
     @Test
-    void findPresentOrderByNumberTest() {
-        customerService.add(customer);
-        supplierService.add(supplier);
-        productService.add(product);
-        var addedOrder = orderService.add(order);
+    public void findPresentOrderByNumberTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
+        var order = testEntityFactory.createTestOrder();
+        var addedCustomer = customerService.add(customer);
+        var addedOrder = orderService.add(order.setCustomer(addedCustomer));
         var foundOrder = orderService.findBy(addedOrder.getOrderNumber()).get();
         Assertions.assertEquals(order.getOrderNumber(), foundOrder.getOrderNumber());
     }
 
     @Test
-    void findAllOrdersTest() {
-        customerService.add(customer);
-        supplierService.add(supplier);
-        productService.add(product);
-        orderService.add(order);
+    public void findAllOrdersTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
+        var order = testEntityFactory.createTestOrder();
+        var addedCustomer = customerService.add(customer);
+        orderService.add(order.setCustomer(addedCustomer));
         var foundOrderList = orderService.findAll();
         Assertions.assertEquals(1, foundOrderList.size());
         Assertions.assertEquals(order.getOrderNumber(), foundOrderList.get(0).getOrderNumber());
     }
 
     @Test
-    void updatePresentOrderTest() {
-        customerService.add(customer);
-        supplierService.add(supplier);
-        productService.add(product);
-        order.setOrderNumber("u002");
-        var updatedOrder = orderService.update(order);
+    public void updatePresentOrderTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
+        var order = testEntityFactory.createTestOrder();
+        var addedCustomer = customerService.add(customer);
+        var addedOrder = orderService.add(order.setCustomer(addedCustomer));
+        addedOrder.setOrderNumber("u002");
+        var updatedOrder = orderService.update(addedOrder);
         Assertions.assertEquals("u002", updatedOrder.getOrderNumber());
     }
 
     @Test
-    void deletePresentOrderTest() {
-        customerService.add(customer);
-        supplierService.add(supplier);
-        productService.add(product);
-        var addedOrder = orderService.add(order);
+    public void deletePresentOrderTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
+        var order = testEntityFactory.createTestOrder();
+        var addedCustomer = customerService.add(customer);
+        var addedOrder = orderService.add(order.setCustomer(addedCustomer));
         var result = orderService.delete(addedOrder.getOrderId());
         Assertions.assertTrue(result);
     }
 
     @Test
-    void deleteAbsentOrderTest() {
+    public void deleteAbsentOrderTest() {
         var result = orderService.delete(1L);
         Assertions.assertFalse(result);
     }

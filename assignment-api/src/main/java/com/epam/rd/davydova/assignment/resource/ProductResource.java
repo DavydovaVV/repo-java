@@ -19,8 +19,8 @@ public interface ProductResource {
      * @param productDto DTO of Product object
      * @return string result of method
      */
-    @PostMapping(value = "/add")
     @ResponseBody
+    @PostMapping(value = "/add")
     ProductDto addProduct(@RequestBody ProductDto productDto);
 
     /**
@@ -29,8 +29,8 @@ public interface ProductResource {
      * @param id product Id
      * @return string result of method
      */
-    @GetMapping(value = "/get")
     @ResponseBody
+    @GetMapping(value = "/get")
     List<ProductDto> getProduct(@RequestParam(value = "id", required = false) Long id);
 
     /**
@@ -39,8 +39,8 @@ public interface ProductResource {
      * @param productDto DTO of Product object
      * @return string result of method
      */
-    @PutMapping(value = "/update")
     @ResponseBody
+    @PutMapping(value = "/update")
     ProductDto updateProduct(@RequestBody ProductDto productDto);
 
     /**
