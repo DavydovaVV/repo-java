@@ -34,8 +34,6 @@
         <postgresql.version>42.2.13.jre7</postgresql.version>
         <hibernate.version>5.4.31.Final</hibernate.version>
         <hibernate-types.version>2.11.1</hibernate-types.version>
-        <springframework.version>5.3.7</springframework.version>
-        <springframework.boot.version>2.5.0</springframework.boot.version>
         <h2database.version>1.4.200</h2database.version>
         <jackson.version>2.12.3</jackson.version>
     </properties>
@@ -59,40 +57,8 @@
             </dependency>
             <dependency>
                 <groupId>com.epam.rd</groupId>
-                <artifactId>logging</artifactId>
+                <artifactId>assignment-logging</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${springframework.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${springframework.boot.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                </exclusions>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-actuator</artifactId>
-                <version>${springframework.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>${springframework.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-aop</artifactId>
-                <version>${springframework.boot.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>

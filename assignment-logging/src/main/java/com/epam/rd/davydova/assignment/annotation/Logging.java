@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Displays method name and input arguments
  */
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Logging {
 }

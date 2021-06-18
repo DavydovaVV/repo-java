@@ -18,8 +18,8 @@ public interface CustomerResource {
      * @param customerDto DTO of Customer object
      * @return string result of method
      */
-    @PostMapping(value = "/add")
     @ResponseBody
+    @PostMapping(value = "/add")
     CustomerDto addCustomer(@RequestBody CustomerDto customerDto);
 
     /**
@@ -28,8 +28,8 @@ public interface CustomerResource {
      * @param id customer Id
      * @return string result of method
      */
-    @GetMapping(value = "/get")
     @ResponseBody
+    @GetMapping(value = "/get")
     List<CustomerDto> getCustomer(@RequestParam(value = "id", required = false) Long id);
 
     /**
@@ -38,8 +38,8 @@ public interface CustomerResource {
      * @param customerDto DTO of Customer object
      * @return string result of method
      */
-    @PutMapping(value = "/update")
     @ResponseBody
+    @PutMapping(value = "/update")
     CustomerDto updateCustomer(@RequestBody CustomerDto customerDto);
 
     /**

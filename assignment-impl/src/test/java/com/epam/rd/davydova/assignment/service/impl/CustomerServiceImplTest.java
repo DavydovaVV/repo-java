@@ -1,6 +1,6 @@
 package com.epam.rd.davydova.assignment.service.impl;
 
-import com.epam.rd.davydova.assignment.domain.entity.Customer;
+import com.epam.rd.davydova.assignment.TestEntityFactory;
 import com.epam.rd.davydova.assignment.repository.CustomerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,10 +19,6 @@ class CustomerServiceImplTest {
     @Autowired
     private CustomerServiceImpl customerServiceImpl;
 
-    private Customer customer = new Customer()
-            .setCustomerName("Name")
-            .setPhone("1111");
-
     @TestConfiguration
     static class CustomerServiceTestConfiguration {
         @Bean
@@ -32,7 +28,9 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void addNewCustomerTest() {
+    public void addNewCustomerTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
         var addedCustomer = customerServiceImpl.add(customer);
         var foundCustomer = customerServiceImpl
                 .findBy(addedCustomer.getCustomerId())
@@ -41,14 +39,18 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void findPresentCustomerByNameTest() {
+    public void findPresentCustomerByNameTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
         customerServiceImpl.add(customer);
         var foundCustomer = customerServiceImpl.findBy("Name").get();
         Assertions.assertEquals(customer.getCustomerName(), foundCustomer.getCustomerName());
     }
 
     @Test
-    void findAllCustomersTest() {
+    public void findAllCustomersTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
         customerServiceImpl.add(customer);
         var foundCustomerList = customerServiceImpl.findAll();
         Assertions.assertEquals(1, foundCustomerList.size());
@@ -56,14 +58,18 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void updatePresentCustomerTest() {
+    public void updatePresentCustomerTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
         customer.setPhone("2222");
         var updatedCustomer = customerServiceImpl.update(customer);
         Assertions.assertEquals("2222", updatedCustomer.getPhone());
     }
 
     @Test
-    void deletePresentCustomerTest() {
+    public void deletePresentCustomerTest() {
+        var testEntityFactory = new TestEntityFactory();
+        var customer = testEntityFactory.createTestCustomer();
         var addedCustomer = customerServiceImpl.add(customer);
         var result = customerServiceImpl.delete(addedCustomer.getCustomerId());
         Assertions.assertTrue(result);
@@ -71,7 +77,7 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void deleteAbsentCustomerTest() {
+    public void deleteAbsentCustomerTest() {
         var result = customerServiceImpl.delete(1L);
         Assertions.assertFalse(result);
     }

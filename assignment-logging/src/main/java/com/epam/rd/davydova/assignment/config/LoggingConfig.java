@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is a class of LoggingBean configuration
+ * This is a class of LoggingAdvice configuration
  */
 @Configuration
 @ConditionalOnProperty(prefix = "logger", name = "enabled", havingValue = "true")

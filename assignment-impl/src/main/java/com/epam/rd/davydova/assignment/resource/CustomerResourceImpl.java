@@ -1,5 +1,6 @@
 package com.epam.rd.davydova.assignment.resource;
 
+import com.epam.rd.davydova.assignment.annotation.Logging;
 import com.epam.rd.davydova.assignment.domain.entity.Customer;
 import com.epam.rd.davydova.assignment.dto.CustomerDto;
 import com.epam.rd.davydova.assignment.service.impl.CustomerServiceImpl;
@@ -29,16 +30,23 @@ public class CustomerResourceImpl implements CustomerResource {
      * @param customerDto DTO of Customer object
      * @return DTO of Customer object
      */
+    @Logging
     @Override
     public CustomerDto addCustomer(CustomerDto customerDto) {
         var customer = new Customer();
         customer.setCustomerName(customerDto.getCustomerName())
                 .setPhone(customerDto.getPhone());
-        var addedCustomer = customerService.add(customer);
-        customerDto = conversionService.convert(addedCustomer, CustomerDto.class);
-        log.info("addCustomer() - {}", customer);
-
-        return customerDto;
+        customerService.add(customer);
+        var customerOptional = customerService.findBy(customer.getCustomerName());
+        if (customerOptional.isPresent()) {
+            customer = customerOptional.get();
+            customerDto = conversionService.convert(customer, CustomerDto.class);
+            log.info("addCustomer() - {}", customer);
+            return customerDto;
+        } else {
+            log.error("Customer is not added");
+        }
+        return null;
     }
 
     /**
@@ -47,6 +55,7 @@ public class CustomerResourceImpl implements CustomerResource {
      * @param id customer Id
      * @return List of CustomerDto objects
      */
+    @Logging
     @Transactional
     @Override
     public List<CustomerDto> getCustomer(Long id) {
@@ -75,6 +84,7 @@ public class CustomerResourceImpl implements CustomerResource {
      * @param customerDto DTO of Customer object
      * @return string result of method
      */
+    @Logging
     @Override
     public CustomerDto updateCustomer(CustomerDto customerDto) {
         var customerOptional = customerService.findBy(customerDto.getCustomerId());
@@ -97,6 +107,7 @@ public class CustomerResourceImpl implements CustomerResource {
      * @param id customer Id
      * @return HttpStatus
      */
+    @Logging
     @Override
     public HttpStatus deleteCustomer(Long id) {
         var isRemoved = customerService.delete(id);

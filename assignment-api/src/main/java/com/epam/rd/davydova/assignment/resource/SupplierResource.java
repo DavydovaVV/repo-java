@@ -18,8 +18,8 @@ public interface SupplierResource {
      * @param supplierDto DTO of Supplier object
      * @return string result of method
      */
-    @PostMapping(value = "/add")
     @ResponseBody
+    @PostMapping(value = "/add")
     SupplierDto addSupplier(@RequestBody SupplierDto supplierDto);
 
     /**
@@ -28,8 +28,8 @@ public interface SupplierResource {
      * @param id supplier Id
      * @return string result of method
      */
-    @GetMapping(value = "/get")
     @ResponseBody
+    @GetMapping(value = "/get")
     List<SupplierDto> getSupplier(@RequestParam(value = "id", required = false) Long id);
 
     /**
@@ -38,8 +38,8 @@ public interface SupplierResource {
      * @param supplierDto DTO of Supplier object
      * @return string result of method
      */
-    @PutMapping(value = "/update")
     @ResponseBody
+    @PutMapping(value = "/update")
     SupplierDto updateSupplier(@RequestBody SupplierDto supplierDto);
 
     /**
