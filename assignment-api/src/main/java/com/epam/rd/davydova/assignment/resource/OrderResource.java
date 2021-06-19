@@ -18,8 +18,9 @@ public interface OrderResource {
      * @param orderDto DTO of Order object
      * @return string result of method
      */
-    @PostMapping
-    @ResponseBody OrderDto addOrder (@RequestBody OrderDto orderDto);
+    @ResponseBody
+    @PostMapping(value = "/add")
+    OrderDto addOrder (@RequestBody OrderDto orderDto);
 
     /**
      * Get order from database
@@ -27,8 +28,9 @@ public interface OrderResource {
      * @param id order Id
      * @return string result of method
      */
-    @GetMapping("/{id}")
-    @ResponseBody List<OrderDto> getOrder(@PathVariable(value = "id", required = false) Long id);
+    @ResponseBody
+    @GetMapping(value = "/get")
+    List<OrderDto> getOrder(@RequestParam(value = "id", required = false) Long id);
 
     /**
      * Update order in database
@@ -36,8 +38,9 @@ public interface OrderResource {
      * @param orderDto DTO of Order object
      * @return string result of method
      */
-    @PutMapping
-    @ResponseBody OrderDto updateOrder(@RequestBody OrderDto orderDto);
+    @ResponseBody
+    @PutMapping(value = "/update")
+    OrderDto updateOrder(@RequestBody OrderDto orderDto);
 
     /**
      * Delete order from database
@@ -45,6 +48,7 @@ public interface OrderResource {
      * @param id order Id
      * @return result of deletion
      */
-    @DeleteMapping(value = "/{id}")
-    @ResponseBody HttpStatus deleteOrder(@PathVariable(value = "id") Long id);
+    @ResponseBody
+    @DeleteMapping(value = "/delete")
+    HttpStatus deleteOrder(@RequestParam(value = "id") Long id);
 }

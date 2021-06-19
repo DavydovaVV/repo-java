@@ -1,5 +1,6 @@
 package com.epam.rd.davydova.assignment.resource;
 
+import com.epam.rd.davydova.assignment.annotation.Logging;
 import com.epam.rd.davydova.assignment.domain.entity.Order;
 import com.epam.rd.davydova.assignment.domain.entity.Product;
 import com.epam.rd.davydova.assignment.dto.OrderDto;
@@ -36,6 +37,7 @@ public class OrderResourceImpl implements OrderResource {
      * @param orderDto DTO of Order object
      * @return DTO of Order object
      */
+    @Logging
     @Transactional
     @Override
     public OrderDto addOrder(OrderDto orderDto) {
@@ -55,21 +57,22 @@ public class OrderResourceImpl implements OrderResource {
                     .setCustomer(customer)
                     .setProductList(productList)
                     .setOrderDate(new Date());
-            List<Order> orderList;
             for (Product product : productList) {
                 totalAmount = totalAmount.add(product.getUnitPrice());
-                if (!(orderList = product.getOrderList()).contains(order)) {
-                    orderList.add(order);
-                } else {
-                    log.debug("Order is already added for this product");
-                }
+                product.getOrderList().add(order);
             }
             order.setTotalAmount(totalAmount);
             customer.getOrderList().add(order);
-            var addedOrder = orderService.add(order);
-            orderDto = conversionService.convert(addedOrder, OrderDto.class);
-            log.info("addOrder() - {}", order);
-            return orderDto;
+            orderService.add(order);
+            var orderOptional = orderService.findBy(orderDto.getOrderNumber());
+            if (orderOptional.isPresent()) {
+                order = orderOptional.get();
+                orderDto = conversionService.convert(order, OrderDto.class);
+                log.info("addOrder() - {}", order);
+                return orderDto;
+            } else {
+                log.error("Order is not added");
+            }
         } else {
             log.error("Customer is not found. Order is not added");
         }
@@ -82,10 +85,11 @@ public class OrderResourceImpl implements OrderResource {
      * @param id order Id
      * @return List of OrderDto objects
      */
+    @Logging
     @Transactional
     @Override
     public List<OrderDto> getOrder(Long id) {
-        List<OrderDto> orderDtoList = new ArrayList<>();
+        var orderDtoList = new ArrayList<OrderDto>();
         if (id != null) {
             var orderOptional = orderService.findBy(id);
             if (orderOptional.isPresent()) {
@@ -110,6 +114,7 @@ public class OrderResourceImpl implements OrderResource {
      * @param orderDto DTO of Order object
      * @return string result of method
      */
+    @Logging
     @Transactional
     @Override
     public OrderDto updateOrder(OrderDto orderDto) {
@@ -119,9 +124,8 @@ public class OrderResourceImpl implements OrderResource {
             var customerId = orderDto.getCustomerId();
             var totalAmount = order.getTotalAmount();
             var productIdList = orderDto.getProductIdList();
-            var productList = order.getProductList();
-            productList.clear();
-            for (long productId : productIdList) {
+            var productList = new ArrayList<Product>();
+            for (Long productId : productIdList) {
                 var productOptional = productService.findBy(productId);
                 if(productOptional.isPresent()) {
                     var product = productOptional.get();
@@ -132,6 +136,7 @@ public class OrderResourceImpl implements OrderResource {
                     }
                 }
             }
+            order.setProductList(productList);
             var customerOptional = customerService.findBy(customerId);
             if (customerOptional.isPresent()) {
                 var customer = customerOptional.get();
@@ -168,6 +173,7 @@ public class OrderResourceImpl implements OrderResource {
      * @param id order Id
      * @return status of deletion
      */
+    @Logging
     @Override
     public HttpStatus deleteOrder(Long id) {
         var isRemoved = orderService.delete(id);

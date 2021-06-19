@@ -1,5 +1,6 @@
 package com.epam.rd.davydova.assignment.resource;
 
+import com.epam.rd.davydova.assignment.annotation.Logging;
 import com.epam.rd.davydova.assignment.domain.entity.Supplier;
 import com.epam.rd.davydova.assignment.dto.SupplierDto;
 import com.epam.rd.davydova.assignment.service.impl.SupplierServiceImpl;
@@ -29,15 +30,21 @@ public class SupplierResourceImpl implements SupplierResource {
      * @param supplierDto DTO of Supplier object
      * @return DTO of Supplier object
      */
+    @Logging
     @Override
     public SupplierDto addSupplier(SupplierDto supplierDto) {
         var supplier = new Supplier()
                 .setCompanyName(supplierDto.getCompanyName())
                 .setPhone(supplierDto.getPhone());
-        var addedSupplier = supplierService.add(supplier);
-        supplierDto.setSupplierId(addedSupplier.getSupplierId());
-        log.info("addSupplier() - {}", supplier);
-        return supplierDto;
+        supplierService.add(supplier);
+        var supplierOptional = supplierService.findBy(supplier.getCompanyName());
+        if (supplierOptional.isPresent()) {
+            supplier = supplierOptional.get();
+            supplierDto = conversionService.convert(supplier, SupplierDto.class);
+            log.info("addSupplier() - {}", supplier);
+            return supplierDto;
+        }
+        return null;
     }
 
     /**
@@ -46,6 +53,7 @@ public class SupplierResourceImpl implements SupplierResource {
      * @param id supplier Id
      * @return List of SupplierDto objects
      */
+    @Logging
     @Transactional
     @Override
     public List<SupplierDto> getSupplier(Long id) {
@@ -74,6 +82,7 @@ public class SupplierResourceImpl implements SupplierResource {
      * @param supplierDto DTO of Supplier object
      * @return string result of method
      */
+    @Logging
     @Override
     public SupplierDto updateSupplier(SupplierDto supplierDto) {
         var supplierOptional = supplierService.findBy(supplierDto.getSupplierId());
@@ -96,6 +105,7 @@ public class SupplierResourceImpl implements SupplierResource {
      * @param id supplier Id
      * @return status of deletion
      */
+    @Logging
     @Override
     public HttpStatus deleteSupplier(Long id) {
         var isRemoved = supplierService.delete(id);

@@ -1,5 +1,7 @@
 package com.epam.rd.davydova.assignment.resource;
 
+import com.epam.rd.davydova.assignment.annotation.Logging;
+import com.epam.rd.davydova.assignment.domain.entity.Order;
 import com.epam.rd.davydova.assignment.domain.entity.Product;
 import com.epam.rd.davydova.assignment.dto.ProductDto;
 import com.epam.rd.davydova.assignment.service.impl.OrderServiceImpl;
@@ -33,6 +35,7 @@ public class ProductResourceImpl implements ProductResource {
      * @param productDto DTO of Product object
      * @return DTO of Product object
      */
+    @Logging
     @Transactional
     @Override
     public ProductDto addProduct(ProductDto productDto) {
@@ -46,10 +49,16 @@ public class ProductResourceImpl implements ProductResource {
                     .setUnitPrice(productDto.getUnitPrice())
                     .setDiscontinued(productDto.isDiscontinued());
             supplier.getProductList().add(product);
-            var addedProduct = productService.add(product);
-            productDto.setProductId(addedProduct.getProductId());
-            log.info("addProduct() - {}", product);
-            return productDto;
+            productService.add(product);
+            var productOptional = productService.findBy(product.getProductName());
+            if (productOptional.isPresent()) {
+                product = productOptional.get();
+                productDto = conversionService.convert(product, ProductDto.class);
+                log.info("addProduct() - {}", product);
+                return productDto;
+            } else {
+                log.error("Product is not added");
+            }
         } else {
             log.error("Supplier is not found. Product is not added");
         }
@@ -62,6 +71,7 @@ public class ProductResourceImpl implements ProductResource {
      * @param id product Id
      * @return List of ProductDto objects
      */
+    @Logging
     @Transactional
     @Override
     public List<ProductDto> getProduct(Long id) {
@@ -90,6 +100,7 @@ public class ProductResourceImpl implements ProductResource {
      * @param productDto DTO of Product object
      * @return string result of method
      */
+    @Logging
     @Transactional
     @Override
     public ProductDto updateProduct(ProductDto productDto) {
@@ -104,8 +115,7 @@ public class ProductResourceImpl implements ProductResource {
                         .setSupplier(supplier)
                         .setUnitPrice(productDto.getUnitPrice())
                         .setDiscontinued(productDto.isDiscontinued());
-                var orderList = product.getOrderList();
-                orderList.clear();
+                var orderList = new ArrayList<Order>();
                 var orderIdList = productDto.getOrderIdList();
                 for(Long orderId : orderIdList) {
                     var orderOptional = orderService.findBy(orderId);
@@ -118,6 +128,7 @@ public class ProductResourceImpl implements ProductResource {
                         }
                     }
                 }
+                product.setOrderList(orderList);
                 var updatedProduct = productService.update(product);
                 productDto = conversionService.convert(updatedProduct, ProductDto.class);
                 log.info("updateProduct() - {}", product);
@@ -128,7 +139,7 @@ public class ProductResourceImpl implements ProductResource {
         } else {
             log.error("Product is not found. Product is not updated");
         }
-        return productDto;
+        return null;
     }
 
     /**
@@ -137,6 +148,7 @@ public class ProductResourceImpl implements ProductResource {
      * @param id product Id
      * @return status of deletion
      */
+    @Logging
     @Override
     public HttpStatus deleteProduct(Long id) {
         var isRemoved = productService.delete(id);

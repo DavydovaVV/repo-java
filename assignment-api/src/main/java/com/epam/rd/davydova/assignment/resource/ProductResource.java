@@ -19,8 +19,9 @@ public interface ProductResource {
      * @param productDto DTO of Product object
      * @return string result of method
      */
-    @PostMapping
-    @ResponseBody ProductDto addProduct(@RequestBody ProductDto productDto);
+    @ResponseBody
+    @PostMapping(value = "/add")
+    ProductDto addProduct(@RequestBody ProductDto productDto);
 
     /**
      * Get product from database
@@ -28,8 +29,9 @@ public interface ProductResource {
      * @param id product Id
      * @return string result of method
      */
-    @GetMapping("/{id}")
-    @ResponseBody List<ProductDto> getProduct(@PathVariable(value = "id", required = false) Long id);
+    @ResponseBody
+    @GetMapping(value = "/get")
+    List<ProductDto> getProduct(@RequestParam(value = "id", required = false) Long id);
 
     /**
      * Update product in database
@@ -37,8 +39,9 @@ public interface ProductResource {
      * @param productDto DTO of Product object
      * @return string result of method
      */
-    @PutMapping
-    @ResponseBody ProductDto updateProduct(@RequestBody ProductDto productDto);
+    @ResponseBody
+    @PutMapping(value = "/update")
+    ProductDto updateProduct(@RequestBody ProductDto productDto);
 
     /**
      * Delete product from database
@@ -46,6 +49,6 @@ public interface ProductResource {
      * @param id product Id
      * @return result of deletion
      */
-    @DeleteMapping("/{id}")
-    HttpStatus deleteProduct(@PathVariable(value = "id") Long id);
+    @DeleteMapping(value = "/delete")
+    HttpStatus deleteProduct(@RequestParam(value = "id") Long id);
 }

@@ -18,7 +18,8 @@ public interface CustomerResource {
      * @param customerDto DTO of Customer object
      * @return string result of method
      */
-    @PostMapping
+    @ResponseBody
+    @PostMapping(value = "/add")
     CustomerDto addCustomer(@RequestBody CustomerDto customerDto);
 
     /**
@@ -27,8 +28,9 @@ public interface CustomerResource {
      * @param id customer Id
      * @return string result of method
      */
-    @GetMapping(value = "/{id}")
-    @ResponseBody List<CustomerDto> getCustomer(@PathVariable(value = "id", required = false) Long id);
+    @ResponseBody
+    @GetMapping(value = "/get")
+    List<CustomerDto> getCustomer(@RequestParam(value = "id", required = false) Long id);
 
     /**
      * Update customer in database
@@ -36,8 +38,9 @@ public interface CustomerResource {
      * @param customerDto DTO of Customer object
      * @return string result of method
      */
-    @PutMapping
-    @ResponseBody CustomerDto updateCustomer(@RequestBody CustomerDto customerDto);
+    @ResponseBody
+    @PutMapping(value = "/update")
+    CustomerDto updateCustomer(@RequestBody CustomerDto customerDto);
 
     /**
      * Delete customer from database
@@ -45,6 +48,6 @@ public interface CustomerResource {
      * @param id customer Id
      * @return result of deletion
      */
-    @DeleteMapping(value = "/{id}")
-    HttpStatus deleteCustomer(@PathVariable(value = "id") Long id);
+    @DeleteMapping(value = "/delete")
+    HttpStatus deleteCustomer(@RequestParam(value = "id") Long id);
 }

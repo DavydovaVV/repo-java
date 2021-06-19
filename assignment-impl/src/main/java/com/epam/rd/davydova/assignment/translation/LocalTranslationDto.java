@@ -1,7 +1,6 @@
 package com.epam.rd.davydova.assignment.translation;
 
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
@@ -15,7 +14,6 @@ import java.util.List;
 @PropertySource("classpath:messages/stub.properties")
 public class LocalTranslationDto {
 
-    @Qualifier
     @Value("#{'${customerValues}'.split(',')}")
     private List<String> customerValues;
 

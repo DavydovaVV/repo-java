@@ -24,7 +24,7 @@ public class OrderDto {
 
     private String orderNumber;
 
-    private long customerId;
+    private Long customerId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date orderDate;
