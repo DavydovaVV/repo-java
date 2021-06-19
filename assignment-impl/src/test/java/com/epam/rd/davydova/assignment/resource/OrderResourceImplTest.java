@@ -151,6 +151,7 @@ class OrderResourceImplTest {
         var mapper = new ObjectMapper();
         var json = mapper.writeValueAsString(HttpStatus.NOT_FOUND);
         mockMvc.perform(MockMvcRequestBuilders.delete("/order/delete?id=1"))
+                .andExpect(content().json(json))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();

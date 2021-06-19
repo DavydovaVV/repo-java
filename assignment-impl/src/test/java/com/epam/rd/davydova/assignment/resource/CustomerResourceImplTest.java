@@ -109,8 +109,7 @@ class CustomerResourceImplTest {
                 .thenReturn(Optional.ofNullable(customer));
         when(customerServiceImpl.update(customer)).thenReturn(customer);
         mockMvc.perform(MockMvcRequestBuilders.put("/customer/update")
-                .contentType("application/json")
-                .content(json))
+                .contentType("application/json").content(json))
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(json))
                 .andExpect(status().isOk())

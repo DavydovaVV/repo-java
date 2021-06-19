@@ -17,7 +17,7 @@ public class LoggingAdvice {
     /**
      * Log annotated method
      *
-     * @param joinPoint proceeding join point
+     * @param joinPoint join point
      */
     @Before("@annotation(com.epam.rd.davydova.assignment.annotation.Logging)")
     public void logMethod(JoinPoint joinPoint) {
